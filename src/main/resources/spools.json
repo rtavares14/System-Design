@@ -1,0 +1,128 @@
+[
+  {
+    "id": 1,
+    "color": "Blue",
+    "filamentType": "PLA",
+    "length": 90.0
+  },
+  {
+    "id": 2,
+    "color": "Red",
+    "filamentType": "PLA",
+    "length": 42.54
+  },
+  {
+    "id": 3,
+    "color": "Green",
+    "filamentType": "PLA",
+    "length": 116.84
+  },
+  {
+    "id": 4,
+    "color": "Blue",
+    "filamentType": "PETG",
+    "length": 135.64
+  },
+  {
+    "id": 5,
+    "color": "Red",
+    "filamentType": "PETG",
+    "length": 95.15
+  },
+  {
+    "id": 6,
+    "color": "Green",
+    "filamentType": "PETG",
+    "length": 119.60
+  },
+  {
+    "id": 7,
+    "color": "Pink",
+    "filamentType": "PETG",
+    "length": 150.72
+  },
+  {
+    "id": 8,
+    "color": "Blue",
+    "filamentType": "ABS",
+    "length": 30.56
+  },
+  {
+    "id": 9,
+    "color": "Red",
+    "filamentType": "ABS",
+    "length": 85.46
+  },
+  {
+    "id": 10,
+    "color": "Green",
+    "filamentType": "ABS",
+    "length": 48.13
+  },
+  {
+    "id": 11,
+    "color": "Blue",
+    "filamentType": "PLA",
+    "length": 132.96
+  },
+  {
+    "id": 12,
+    "color": "Red",
+    "filamentType": "PLA",
+    "length": 130.84
+  },
+  {
+    "id": 13,
+    "color": "Green",
+    "filamentType": "PLA",
+    "length": 145.30
+  },
+  {
+    "id": 14,
+    "color": "Blue",
+    "filamentType": "PETG",
+    "length": 138.60
+  },
+  {
+    "id": 15,
+    "color": "Red",
+    "filamentType": "PETG",
+    "length": 79.74
+  },
+  {
+    "id": 16,
+    "color": "Green",
+    "filamentType": "PETG",
+    "length": 103.70
+  },
+  {
+    "id": 17,
+    "color": "Pink",
+    "filamentType": "PETG",
+    "length": 56.11
+  },
+  {
+    "id": 18,
+    "color": "Blue",
+    "filamentType": "ABS",
+    "length": 84.11
+  },
+  {
+    "id": 19,
+    "color": "Red",
+    "filamentType": "ABS",
+    "length": 23.52
+  },
+  {
+    "id": 20,
+    "color": "Green",
+    "filamentType": "ABS",
+    "length": 62.87
+  },
+  {
+  "id": 21,
+  "color": "Pink",
+  "filamentType": "PLA",
+  "length": 150.72
+}
+]

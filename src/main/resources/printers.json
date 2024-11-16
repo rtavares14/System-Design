@@ -1,0 +1,81 @@
+[
+  {
+    "id": 1,
+    "type": 1,
+    "name": "Enterprise",
+    "model": "Ender 3",
+    "manufacturer": "Creality",
+    "maxX": 220,
+    "maxY": 220,
+    "maxZ": 250,
+    "maxColors": 1
+  },
+  {
+    "id": 2,
+    "type": 1,
+    "name": "Serenity",
+    "model": "Ender 3v2",
+    "manufacturer": "Creality",
+    "maxX": 220,
+    "maxY": 220,
+    "maxZ": 250,
+    "maxColors": 1
+  },
+  {
+    "id": 3,
+    "type": 1,
+    "name": "Red Dwarf",
+    "model": "Ender 5 Plus",
+    "manufacturer": "Creality",
+    "maxX": 350,
+    "maxY": 350,
+    "maxZ": 350,
+    "maxColors": 1
+  },
+  {
+    "id": 4,
+    "type": 3,
+    "name": "Heart of Gold",
+    "model": "i3 MKS3S+",
+    "manufacturer": "Prusa",
+    "maxX": 210,
+    "maxY": 210,
+    "maxZ": 210,
+    "maxColors": 4
+  },
+  {
+    "id": 5,
+    "type": 1,
+    "name": "Tardis",
+    "model": "Mini+",
+    "manufacturer": "Prusa",
+    "maxX": 180,
+    "maxY": 180,
+    "maxZ": 180,
+    "maxColors": 1
+  },
+  {
+    "id": 6,
+    "type": 2,
+    "name": "Rocinante",
+    "model": "Ultimaker 2+",
+    "manufacturer":"Ultimaker",
+    "maxX": 223,
+    "maxY": 220,
+    "maxZ": 205,
+    "maxColors": 1
+  },
+  {
+    "id": 7,
+    "type": 2,
+    "name": "Bebop",
+    "model": "Voxel",
+    "manufacturer": "Monoprice",
+    "maxX": 150,
+    "maxY": 150,
+    "maxZ": 150,
+    "maxColors": 1
+  }
+]
+
+
