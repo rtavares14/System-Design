@@ -1,0 +1,28 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+class Main {
+    + Main()
+    ---
+    + main(String[]): void
+    - startPrintQueue(): void
+    - addNewPrintTask(): void
+    - showSpools(): void
+    - registerPrintCompletion(): void
+    - readSpoolsFromFile(String): void
+    - readPrintsFromFile(String): void
+    - exit(): void
+    - run(String[]): void
+    - showPrinters(): void
+    - stringInput(): String
+    - menuChoice(int): int
+    - numberInput(int, int): int
+    - changePrintStrategy(): void
+    - registerPrinterFailure(): void
+    - showPrints(): void
+    - menu(): void
+    - readPrintersFromFile(String): void
+    - showPendingPrintTasks(): void
+    - numberInput(): int
+}
+@enduml

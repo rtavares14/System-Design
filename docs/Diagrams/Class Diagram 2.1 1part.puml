@@ -1,0 +1,37 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+class Main{}
+class Facade{}
+class PrintManager{}
+class SpoolManager{}
+class PrinterManager{}
+abstract class Printer{}
+class Spool{}
+class Print{}
+class StandardFDM{}
+class MultiColor{}
+class PrintTask{}
+enum FilamentType{}
+
+
+Main -down-> Facade
+
+Facade -down-> PrintManager
+PrintManager -down-> Print
+Print -down-> PrintTask
+PrintTask <|-- FilamentType
+
+Facade -down-> SpoolManager
+SpoolManager -down-> Spool
+Spool <|-- FilamentType
+
+Facade -down-> PrinterManager
+PrinterManager -down-> Printer
+Printer <|-- StandardFDM
+Printer <|-- MultiColor
+
+
+
+
+@enduml

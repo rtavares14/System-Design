@@ -1,0 +1,32 @@
+@startuml
+'https://plantuml.com/class-diagram
+
+class PrinterManager {
+  + PrinterManager()
+--
+  - printers : List<Printer>
+  - prints : List<Print>
+  - spools : List<Spool>
+  - pendingPrintTasks : List<PrintTask>
+--
+  + selectPrintTask(Printer) : void
+  + getSpoolByID(int) : Spool
+  + addPrintTask(String, List<String> , FilamentType) : void
+  + registerPrinterFailure(int) : void
+  + printError(String) : void
+  + addPrinter(int, int, String, String, int, int, int, int,) : void
+  + getPrinterCurrentTask(Printer) : PrintTask
+  + registerCompletion(int) : void
+  + findPrint(String) : Print
+  + addPrint(String,int,int,int,ArrayList<Double>,int) : void
+  + startInitialQueue() : void
+  + findPrinter(int) : Print
+  + containsSpool(List<Spool>, String) : boolean
+  + addSpool(Spool) : void
+--
+  + prints : List<Print>
+  + pendingPrintTasks : List<PrintTask>
+  + printers : List<Printer>
+  + spools : List<Spool>
+}
+@enduml
