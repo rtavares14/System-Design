@@ -28,12 +28,14 @@ class Facade{
 }
 class PrintManager{
  + PrintManager()
-    - readPrintsFromFile(String): void
-     - PrintTask : List<PrintTask>
+
+      - PrintTask : List<PrintTask>
       + addPrintTask(String, List<String> , FilamentType) : void
-        + findPrint(String) : Print
-          + addPrint(String,int,int,int,ArrayList<Double>,int) : void
-            + prints : List<Print>
+
+      - readPrintsFromFile(String): void
+      + findPrint(String) : Print
+      + addPrint(String,int,int,int,ArrayList<Double>,int) : void
+      + prints : List<Print>
 
 }
 class SpoolManager{
@@ -48,25 +50,26 @@ class SpoolManager{
 
 }
 class PrinterManager{
-       + PrinterManager()
+    + PrinterManager()
     - readPrintersFromFile(String): void
-    - printers : Map<Printer , ArrayList<PrintTask>>
-  + selectPrintTask(Printer) : void
-  + registerPrinterFailure(int) : void
-  + printError(String) : void
-  + addPrinter(int, int, String, String, int, int, int, int,) : void
-  + getPrinterCurrentTask(Printer) : PrintTask
+    - Map<Printer , ArrayList<PrintTask>> printers
+    + selectPrintTask(Printer) : void
+    + registerPrinterFailure(int) : void
+    + addPrinter(int, int, String, String, int, int, int, int,) : void
+    + getPrinterCurrentTask(Printer) : PrintTask
 
-  + registerCompletion(int) : void
+    + printError(String) : void
+    + registerCompletion(int) : void
 
- + startInitialQueue() : void
-  + findPrinter(int) : Print
-  + containsSpool(List<Spool>, String) : boolean
+  + startInitialQueue() : void
+  + findPrinter(int) : Printer
 --
   + getPendingPrintTasks : List<PrintTask>
   + getPrinters : List<Printer>
 }
-abstract class Printer{}
+abstract class Printer{
++ containsSpool(List<Spool>, String) : boolean
+}
 class Spool{}
 class Print{}
 class StandardFDM{}
