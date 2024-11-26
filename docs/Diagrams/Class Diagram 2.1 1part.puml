@@ -17,14 +17,15 @@ enum FilamentType{}
 
 Main -down-> Facade
 
+Facade -down-> SpoolManager
+SpoolManager -down-> Spool
+Spool <-- FilamentType
+Spool --* Printer
+
 Facade -down-> PrintManager
 PrintManager -down-> Print
 Print -down-> PrintTask
-PrintTask <|-- FilamentType
-
-Facade -down-> SpoolManager
-SpoolManager -down-> Spool
-Spool <|-- FilamentType
+PrintTask *-- PrinterManager
 
 Facade -down-> PrinterManager
 PrinterManager -down-> Printer
