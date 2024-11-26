@@ -1,11 +1,71 @@
 @startuml
 'https://plantuml.com/sequence-diagram
 
-class Main{}
-class Facade{}
-class PrintManager{}
-class SpoolManager{}
-class PrinterManager{}
+class Main{
+    + main(String[]): void
+    - stringInput(): String
+    - menuChoice(int): int
+    - numberInput(int, int): int
+    - run(String[]): void
+    - menu(): void
+    - numberInput(): int
+    }
+
+class Facade{
+    +SpoolManager
+    +PrintManager
+    +PrinterManager
+    - startPrintQueue(): void
+    - addNewPrintTask(): void
+    - showSpools(): void
+    - registerPrintCompletion(): void
+    - exit(): void
+    - showPrinters(): void
+    - changePrintStrategy(): void
+    - registerPrinterFailure(): void
+    - showPrints(): void
+    - showPendingPrintTasks(): void
+}
+class PrintManager{
+ + PrintManager()
+    - readPrintsFromFile(String): void
+     - PrintTask : List<PrintTask>
+      + addPrintTask(String, List<String> , FilamentType) : void
+        + findPrint(String) : Print
+          + addPrint(String,int,int,int,ArrayList<Double>,int) : void
+            + prints : List<Print>
+
+}
+class SpoolManager{
+       + SpoolManager()
+
+    - readSpoolsFromFile(String): void
+      - spools : List<Spool>
+        + getSpoolByID(int) : Spool
+          + addSpool(Spool) : void
+              + spools : List<Spool>
+
+
+}
+class PrinterManager{
+       + PrinterManager()
+    - readPrintersFromFile(String): void
+    - printers : Map<Printer , ArrayList<PrintTask>>
+  + selectPrintTask(Printer) : void
+  + registerPrinterFailure(int) : void
+  + printError(String) : void
+  + addPrinter(int, int, String, String, int, int, int, int,) : void
+  + getPrinterCurrentTask(Printer) : PrintTask
+
+  + registerCompletion(int) : void
+
+ + startInitialQueue() : void
+  + findPrinter(int) : Print
+  + containsSpool(List<Spool>, String) : boolean
+--
+  + getPendingPrintTasks : List<PrintTask>
+  + getPrinters : List<Printer>
+}
 abstract class Printer{}
 class Spool{}
 class Print{}
