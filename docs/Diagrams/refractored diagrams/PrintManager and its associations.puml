@@ -1,0 +1,40 @@
+@startuml
+
+
+class PrintManager{
+        - List<PrintTask> printTasks
+        - List<Print> prints
+      + PrintManager()
+      + addPrintTask(String, List<String> , FilamentType) : void
+      + addPrint(String,int,int,int,ArrayList<Double>,int) : void
+      + findPrint(String) : Print
+      + {static} readPrintsFromFile(String): List<Print>
+}
+
+class Print{
+- String name
+- int height
+- int width
+- int lenght
+- double filamentLenght
+- int printTime
+---
++ Print()
++ getName(): String
++ getLenght(): double
++ getHeight(): int
++ getWidth(): int
++ getFilamentLenght(): int
+}
+class PrintTask{
+- Print print
+- List<String> colors
+- FilamentType filamentType
++ List<String> getColors()
++ FilamentType getFilamentType()
++ Print getPrint()
+}
+
+PrintManager --> Print
+PrintManager --> PrintTask
+@enduml
