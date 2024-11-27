@@ -35,6 +35,6 @@ class PrintTask{
 + Print getPrint()
 }
 
-PrintManager --> Print
-PrintManager --> PrintTask
+PrintManager <-- Print
+PrintManager <-- PrintTask
 @enduml
