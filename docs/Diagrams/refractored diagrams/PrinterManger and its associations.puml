@@ -1,0 +1,28 @@
+@startuml
+class PrinterManager{
+    - Map<Printer , ArrayList<PrintTask>> printers
+--
+    + PrinterManager()
+    + selectPrintTask(Printer) : void
+    + registerPrinterFailure(int) : void
+    + addPrinter(int, int, String, String, int, int, int, int,) : void
+    + getPrinterCurrentTask(Printer) : PrintTask
+
+    + printError(String) : void
+    + registerCompletion(int) : void
+
+  + startInitialQueue() : void
+  + findPrinter(int) : Printer
+
+  + getPendingPrintTasks() : List<PrintTask>
+  + getPrinters() : List<Printer>
+  + {static}readPrintersFromFile(String): void
+
+}
+abstract class Printer{
++ containsSpool(List<Spool>, String) : boolean
+}
+class StandardFDM{}
+class MultiColor{}
+
+@enduml
