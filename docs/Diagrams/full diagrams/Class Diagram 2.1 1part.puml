@@ -3,12 +3,8 @@
 
 class Main {
     + main(String[]): void
-    - stringInput(): String
-    - numberInput(): int
-    - numberInput(int, int): int
-    - menuChoice(int): int
-    - menu(): void
     - run(String[]): void
+    - menu(): void
 }
 
 class Facade {
