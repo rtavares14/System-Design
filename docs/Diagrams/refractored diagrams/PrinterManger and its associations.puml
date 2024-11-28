@@ -22,6 +22,7 @@ abstract class Printer{
 - int maxX;
 - int maxY;
 - int maxZ;
+# ArrayList<Spool> spools;
 + Printer()
 + getID()
 + getName()
