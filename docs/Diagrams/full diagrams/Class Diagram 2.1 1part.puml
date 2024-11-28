@@ -40,7 +40,7 @@ class SpoolManager {
     + SpoolManager()
     + addSpool(Spool): void
     + getSpoolByID(int): Spool
-    - readSpoolsFromFile(String): void
+    + {static} readSpoolsFromFile(String): void
     + spools: List<Spool>
 }
 
@@ -60,17 +60,55 @@ class PrinterManager {
     - Map<Printer, ArrayList<PrintTask>> printers
 }
 
-
 abstract class Printer{
       + containsSpool(List<Spool>, String) : boolean
 }
 
-class Spool{}
-class Print{}
+class Print{
+- String name
+- int height
+- int width
+- int lenght
+- double filamentLenght
+- int printTime
+---
++ Print()
++ getName(): String
++ getLenght(): double
++ getHeight(): int
++ getWidth(): int
++ getFilamentLenght(): int
+}
+
+class PrintTask{
+- Print print
+- List<String> colors
+- FilamentType filamentType
++ List<String> getColors()
++ FilamentType getFilamentType()
++ Print getPrint()
+}
+
+class Spool{
+    + Spool()
+    - id: int
+    - filamentType: FilamentType
+    - color : String
+    - length : double
+    + getID(): int
+    + spoolMatch(): boolean
+    + reduceLength(): boolean
+    + toString(): String
+}
+
+enum FilamentType{
+  + FilamentType()
+  + valueOf(String): FilamentType
+  + values(): FilamentType[]
+}
+
 class StandardFDM{}
 class MultiColor{}
-class PrintTask{}
-enum FilamentType{}
 
 
 Main -down-> Facade
