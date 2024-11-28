@@ -61,8 +61,39 @@ class PrinterManager {
 }
 
 abstract class Printer{
-      + containsSpool(List<Spool>, String) : boolean
+- int id
+- String name
+- String manufacturer
+- int maxX;
+- int maxY;
+- int maxZ;
+# ArrayList<Spool> spools;
++ Printer()
++ getID()
++ getName()
++ getManufacturer()
++ {abstract} setCurrentSpools(): void
++ {abstract} getCurrentSpools(): Spool[]
++ printFits()
++ containsSpool(List<Spool>, String) : boolean
 }
+class StandardFDM{
++ StandardFDM()
++ setCurrentSpools(): void
++ getCurrentSpools(): Spool[]
++ calculatePrintTime(): int
+}
+class MultiColor{
++ MultiColor()
++ setCurrentSpools(): void
++ getCurrentSpools(): Spool[]
++ calculatePrintTime(): int
+}
+
+interface PrintTimeCalculatorStrategy{
+ + calculatePrintTime(): int
+}
+
 
 class Print{
 - String name
@@ -107,9 +138,6 @@ enum FilamentType{
   + values(): FilamentType[]
 }
 
-class StandardFDM{}
-class MultiColor{}
-
 
 Main -down-> Facade
 
@@ -127,7 +155,8 @@ Facade -down-> PrinterManager
 PrinterManager -down-> Printer
 Printer <|-- StandardFDM
 Printer <|-- MultiColor
-
+StandardFDM o-- PrintTimeCalculatorStrategy
+MultiColor o-- PrintTimeCalculatorStrategy
 
 
 
