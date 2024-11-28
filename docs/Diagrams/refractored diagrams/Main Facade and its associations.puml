@@ -57,6 +57,38 @@ class PrinterManager {
 
 }
 
+class Printer {
+  - int id
+  - String name
+  - String manufacturer
+  - int maxX
+  - int maxY
+  - int maxZ
+  --
+  <<Record>>
+}
+
+class Spool {
+  - String materialType
+  - int length
+  - double diameter
+  --
+  <<Record>>
+}
+
+class Print {
+  - String fileName
+  - int xSize
+  - int ySize
+  - int zSize
+  - Spool spool
+  --
+  <<Record>>
+}
+
+PrinterManager -up-> Printer
+SpoolManager -up-> Spool
+PrintManager -up-> Print
 
 
 Main -down-> Facade
