@@ -90,6 +90,38 @@ interface PrintTimeCalculatorStrategy{
  + calculatePrintTime(): int
 }
 
+class PrinterRecord {
+  - int id
+  - String name
+  - String manufacturer
+  - int maxX
+  - int maxY
+  - int maxZ
+  --
+  <<Record>>
+}
+
+class SpoolRecord {
+  - String materialType
+  - int length
+  - double diameter
+  --
+  <<Record>>
+}
+
+class PrintRecord {
+  - String fileName
+  - int xSize
+  - int ySize
+  - int zSize
+  - Spool spool
+  --
+  <<Record>>
+}
+
+PrinterManager -up-> PrinterRecord
+SpoolManager -up-> SpoolRecord
+PrintManager -up-> PrintRecord
 
 class Print{
 - String name

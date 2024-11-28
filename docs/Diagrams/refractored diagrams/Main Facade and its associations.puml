@@ -57,7 +57,7 @@ class PrinterManager {
 
 }
 
-class Printer {
+class PrinterRecord {
   - int id
   - String name
   - String manufacturer
@@ -68,7 +68,7 @@ class Printer {
   <<Record>>
 }
 
-class Spool {
+class SpoolRecord {
   - String materialType
   - int length
   - double diameter
@@ -76,7 +76,7 @@ class Spool {
   <<Record>>
 }
 
-class Print {
+class PrintRecord {
   - String fileName
   - int xSize
   - int ySize
@@ -86,9 +86,9 @@ class Print {
   <<Record>>
 }
 
-PrinterManager -up-> Printer
-SpoolManager -up-> Spool
-PrintManager -up-> Print
+PrinterManager -up-> PrinterRecord
+SpoolManager -up-> SpoolRecord
+PrintManager -up-> PrintRecord
 
 
 Main -down-> Facade
