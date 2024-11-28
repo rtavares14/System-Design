@@ -45,19 +45,19 @@ class SpoolManager {
 }
 
 class PrinterManager {
-    + PrinterManager()
-    + addPrinter(int, int, String, String, int, int, int, int): void
-    + findPrinter(int): Printer
-    + getPrinterCurrentTask(Printer): PrintTask
-    + getPendingPrintTasks: List<PrintTask>
-    + getPrinters: List<Printer
-    + selectPrintTask(Printer): void
-    + registerCompletion(int): void
-    + registerPrinterFailure(int): void
-    + startInitialQueue(): void
-    - printError(String): void
-    - readPrintersFromFile(String): void
-    - Map<Printer, ArrayList<PrintTask>> printers
+       - Map<Printer , ArrayList<PrintTask>> printers
+       + PrinterManager()
+       + selectPrintTask(Printer) : void
+       + registerPrinterFailure(int) : void
+       + addPrinter(int, int, String, String, int, int, int, int,) : void
+       + getPrinterCurrentTask(Printer) : PrintTask
+       + printError(String) : void
+       + registerCompletion(int) : void
+     + startInitialQueue() : void
+     + findPrinter(int) : Printer
+     + getPendingPrintTasks() : List<PrintTask>
+     + getPrinters() : List<Printer>
+     + {static}readPrintersFromFile(String): void
 }
 
 abstract class Printer{
