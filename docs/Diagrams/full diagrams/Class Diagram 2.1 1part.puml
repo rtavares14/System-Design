@@ -66,10 +66,10 @@ abstract class Printer{
 - int id
 - String name
 - String manufacturer
-- int maxX;
-- int maxY;
-- int maxZ;
-# ArrayList<Spool> spools;
+- int maxX
+- int maxY
+- int maxZ
+# ArrayList<Spool> spools
 + Printer()
 + getID()
 + getName()
@@ -79,20 +79,22 @@ abstract class Printer{
 + printFits()
 + containsSpool(List<Spool>, String) : boolean
 }
+
 class StandardFDM{
 + StandardFDM()
 + setCurrentSpools(): void
 + getCurrentSpools(): Spool[]
 + calculatePrintTime(): int
 }
-class MultiColor{
+
+class MultiColor {
 + MultiColor()
 + setCurrentSpools(): void
 + getCurrentSpools(): Spool[]
 + calculatePrintTime(): int
 }
 
-interface PrintTimeCalculatorStrategy{
+interface PrintTimeCalculatorStrategy {
  + calculatePrintTime(): int
 }
 
@@ -103,16 +105,14 @@ class PrinterRecord {
   - int maxX
   - int maxY
   - int maxZ
-  --
-  <<Record>>
+  -- <<Record>>
 }
 
 class SpoolRecord {
   - String materialType
   - int length
   - double diameter
-  --
-  <<Record>>
+  -- <<Record>>
 }
 
 class PrintRecord {
@@ -121,31 +121,26 @@ class PrintRecord {
   - int ySize
   - int zSize
   - Spool spool
-  --
-  <<Record>>
+  -- <<Record>>
 }
 
-PrinterManager -up-> PrinterRecord
-SpoolManager -up-> SpoolRecord
-PrintManager -up-> PrintRecord
 
-class Print{
+class Print {
 - String name
 - int height
 - int width
-- int lenght
-- double filamentLenght
+- int length
+- double filamentLength
 - int printTime
----
 + Print()
 + getName(): String
-+ getLenght(): double
++ getLength(): double
 + getHeight(): int
 + getWidth(): int
-+ getFilamentLenght(): int
++ getFilamentLength(): int
 }
 
-class PrintTask{
+class PrintTask {
 - Print print
 - List<String> colors
 - FilamentType filamentType
@@ -154,19 +149,19 @@ class PrintTask{
 + Print getPrint()
 }
 
-class Spool{
-    + Spool()
+class Spool {
     - id: int
     - filamentType: FilamentType
-    - color : String
-    - length : double
+    - color: String
+    - length: double
+    + Spool()
     + getID(): int
     + spoolMatch(): boolean
     + reduceLength(): boolean
     + toString(): String
 }
 
-enum FilamentType{
+enum FilamentType {
   + FilamentType()
   + valueOf(String): FilamentType
   + values(): FilamentType[]
@@ -175,34 +170,30 @@ enum FilamentType{
 class PrinterFactory {
     + createPrinter(id, String, manufacturerString, int, int, int, ArrayList<Spool>): Printer
 }
-interface PrinterObserver{
-+ update(Printer,String): void
+
+interface PrinterObserver {
++ update(Printer, String): void
 }
 
+Main --> Facade
+Facade --> SpoolManager
+Facade --> PrintManager
+Facade --> PrinterManager
+PrintManager --> Print
+PrintManager --> PrintRecord
+SpoolManager --> Spool
+SpoolManager --> SpoolRecord
+Spool --> FilamentType
+Spool --> Printer
 PrinterManager --> PrinterFactory
 PrinterFactory --> Printer
-PrinterObserver --> Facade
-PrinterObserver --> PrinterManager
-
-Main -down-> Facade
-
-Facade -down-> SpoolManager
-SpoolManager -down-> Spool
-Spool <-- FilamentType
-Spool --* Printer
-
-Facade -down-> PrintManager
-PrintManager -down-> Print
-Print -down-> PrintTask
-PrintTask *-- PrinterManager
-
-Facade -down-> PrinterManager
-PrinterManager -down-> Printer
+Printer --> PrintTask
 Printer <|-- StandardFDM
 Printer <|-- MultiColor
 StandardFDM <.. PrintTimeCalculatorStrategy
 MultiColor <.. PrintTimeCalculatorStrategy
-
-
+PrinterManager --> PrinterRecord
+PrinterManager --> PrinterObserver
+PrinterObserver --> Facade
 
 @enduml
