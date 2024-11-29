@@ -42,6 +42,9 @@ class SpoolManager {
 
 class PrinterManager {
        - Map<Printer , ArrayList<PrintTask>> printers
+       - PrinterFactory printerFactory
+       - PrinterObserver
+       + addObservers():void
        + PrinterManager()
        + selectPrintTask(Printer) : void
        + registerPrinterFailure(int) : void
@@ -53,6 +56,9 @@ class PrinterManager {
      + findPrinter(int) : Printer
      + getPendingPrintTasks() : List<PrintTask>
      + getPrinters() : List<Printer>
+ + registerObserver(observer: PrinterObserver): void
+    + notifyObservers(): void
+    + changeStatus(status: String): void
      + {static}readPrintersFromFile(String): void
 }
 
@@ -166,6 +172,17 @@ enum FilamentType{
   + values(): FilamentType[]
 }
 
+class PrinterFactory {
+    + createPrinter(id, String, manufacturerString, int, int, int, ArrayList<Spool>): Printer
+}
+interface PrinterObserver{
++ update(Printer,String): void
+}
+
+PrinterManager --> PrinterFactory
+PrinterFactory --> Printer
+PrinterObserver --> Facade
+PrinterObserver --> PrinterManager
 
 Main -down-> Facade
 
@@ -183,8 +200,8 @@ Facade -down-> PrinterManager
 PrinterManager -down-> Printer
 Printer <|-- StandardFDM
 Printer <|-- MultiColor
-StandardFDM o-- PrintTimeCalculatorStrategy
-MultiColor o-- PrintTimeCalculatorStrategy
+StandardFDM <.. PrintTimeCalculatorStrategy
+MultiColor <.. PrintTimeCalculatorStrategy
 
 
 
