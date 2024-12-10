@@ -12,7 +12,10 @@ public class SpoolManager {
     }
 
     public void addSpool(Spool spool){}
-    public void gerSpool(){}
+
     public static void readSpoolsFromFile(String file){}
 
+    public ArrayList<Spool> getSpools() {
+        return spools;
+    }
 }

@@ -2,13 +2,17 @@ package nl.saxion.managers;
 
 import nl.saxion.Models.FilamentType;
 import nl.saxion.Models.Print;
+import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
+import nl.saxion.exceptions.ColorNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 public class PrintManager {
     private ArrayList<Print> prints;
+    private ArrayList<PrintTask> printTasks;
     private SpoolManager spoolManager;
 
     public PrintManager() {
@@ -17,31 +21,26 @@ public class PrintManager {
     }
 
     public void addPrintTask(String printName, List<String> colors, FilamentType type) {
+
         Print print = findPrint(printName);
 
-        if (print == null) {
-            System.out.println("Could not find print with name " + printName);
-            return;
-        }
-
-        if (colors.isEmpty()) {
-            System.out.println("Need at least one color, but none given");
-            return;
-        }
-
         for (String color : colors) {
-            boolean found = false;
-            for (Spool spool : spools) {
-                if (spool.getColor().equals(color) && spool.getFilamentType() == type) {
-                    found = true;
-                    break;
-                }
+            ArrayList<Spool> spools = spoolManager.getSpools();
+            if (spools.stream().noneMatch(spool -> spool.getColor().equals(color) && spool.getFilamentType() == type)) {
+                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
             }
         }
+
+        printTasks.add(new PrintTask(print, colors, type));
     }
 
     public Print findPrint(String print) {
-        return null;
+        for (Print allPrints : prints) {
+            if (allPrints.getName().equals(print)) {
+                return allPrints;
+            }
+        }
+        throw new NoSuchElementException("Printer with such print does not exist");
     }
 
     public void addPrint(String name, int height, int width, int length, double filamentLength, int printTime) {
