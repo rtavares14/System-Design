@@ -13,6 +13,8 @@ public class SpoolManager {
 
     public void addSpool(Spool spool){}
 
+    public void getSpool(){}
+
     public static void readSpoolsFromFile(String file){}
 
     public ArrayList<Spool> getSpools() {

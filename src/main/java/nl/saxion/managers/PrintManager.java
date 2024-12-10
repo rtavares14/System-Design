@@ -26,7 +26,7 @@ public class PrintManager {
 
         for (String color : colors) {
             ArrayList<Spool> spools = spoolManager.getSpools();
-            if (spools.stream().noneMatch(spool -> spool.getColor().equals(color) && spool.getFilamentType() == type)) {
+            if (spools.stream().noneMatch(spool -> spool.spoolMatch(color, type))) {
                 throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
             }
         }
