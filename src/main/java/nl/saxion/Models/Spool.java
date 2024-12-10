@@ -1,22 +1,14 @@
 package nl.saxion.Models;
 
-import java.util.Objects;
-
 public class Spool {
-    private final int id;
     private final String color;
     private final FilamentType filamentType;
     private double length;
 
-    public Spool(int id, String color, FilamentType filamentType, double length) {
-        this.id = id;
+    public Spool(String color, FilamentType filamentType, double length) {
         this.color = color;
         this.filamentType = filamentType;
         this.length = length;
-    }
-
-    public int getId() {
-        return this.id;
     }
 
     public double getLength() {
@@ -48,7 +40,6 @@ public class Spool {
     @Override
     public String toString() {
         return "--------" + System.lineSeparator() +
-                "- id: " + id + System.lineSeparator() +
                 "- color: " + color + System.lineSeparator() +
                 "- filamentType: " + filamentType + System.lineSeparator() +
                 "- length: " + length + System.lineSeparator() +
