@@ -338,7 +338,7 @@ public class Main {
                         System.out.println("- Not a valid filamentType, bailing out");
                         return;
                 }
-                manager.addSpool(new Spool(id, color, type, length));
+                manager.addSpool(new Spool( color, type, length));
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();

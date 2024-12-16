@@ -230,14 +230,7 @@ public class PrinterManager {
         return spools;
     }
 
-    public Spool getSpoolByID(int id) {
-        for(Spool s: spools) {
-            if(s.getId() == id) {
-                return s;
-            }
-        }
-        return null;
-    }
+
 
 //    public void registerPrinterFailure(int printerId) {
 //        Map.Entry<Printer, PrintTask> foundEntry = null;
