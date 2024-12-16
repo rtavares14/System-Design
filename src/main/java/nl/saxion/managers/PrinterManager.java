@@ -94,7 +94,7 @@ public class PrinterManager {
                         if (chosenSpool != null) {
                             runningPrintTasks.put(printer, printTask);
                             freeSpools.add(printer.getCurrentSpools()[0]);
-                            System.out.println("- Spool change: Please place spool " + chosenSpool.getId() + " in printer " + printer.getName());
+                            System.out.println("- Spool change: Please place spool  in printer " + printer.getName());
                             freeSpools.remove(chosenSpool);
                             ((StandardFDM) printer).setCurrentSpool(chosenSpool);
                             freePrinters.remove(printer);
@@ -110,7 +110,7 @@ public class PrinterManager {
                         if (chosenSpool != null) {
                             runningPrintTasks.put(printer, printTask);
                             freeSpools.add(printer.getCurrentSpools()[0]);
-                            System.out.println("- Spool change: Please place spool " + chosenSpool.getId() + " in printer " + printer.getName());
+                            System.out.println("- Spool change: Please place spool  in printer " + printer.getName());
                             freeSpools.remove(chosenSpool);
                             ((StandardFDM) printer).setCurrentSpool(chosenSpool);
                             freePrinters.remove(printer);
@@ -134,7 +134,7 @@ public class PrinterManager {
                             printer.setCurrentSpools(chosenSpools);
                             int position = 1;
                             for (Spool spool : chosenSpools) {
-                                System.out.println("- Spool change: Please place spool " + spool.getId() + " in printer " + printer.getName() + " position " + position);
+                                System.out.println("- Spool change: Please place spool in printer " + printer.getName() + " position " + position);
                                 freeSpools.remove(spool);
                                 position++;
                             }
