@@ -1,0 +1,33 @@
+@startuml
+'https://plantuml.com/use-case-diagram
+
+
+class SpoolManager {
+    + SpoolManager()
+    + addSpool(Spool): void
+    + getSpoolByID(int): Spool
+    + {static} readSpoolsFromFile(String): void
+    + spools: List<Spool>
+}
+
+class Spool{
+    + Spool()
+    - id: int
+    - filamentType: FilamentType
+    - color : String
+    - length : double
+    + getID(): int
+    + spoolMatch(): boolean
+    + reduceLength(): boolean
+    + toString(): String
+}
+
+enum FilamentType{
+  + FilamentType()
+  + valueOf(String): FilamentType
+  + values(): FilamentType[]
+}
+
+SpoolManager -down-> Spool
+Spool <-- FilamentType
+@enduml

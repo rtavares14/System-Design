@@ -1,21 +1,19 @@
 package nl.saxion;
 
 import nl.saxion.Models.*;
+import nl.saxion.Models.printers.Printer;
+import nl.saxion.managers.PrinterManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import javax.print.DocFlavor;
 import java.io.FileReader;
-import java.io.FileWriter;
 import java.io.IOException;
-import java.net.URI;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class Main {
     Scanner scanner = new Scanner(System.in);
@@ -43,7 +41,7 @@ public class Main {
             choice = menuChoice(9);
             System.out.println("-----------------------------------");
             if (choice == 1) {
-                addNewPrintTask();
+               // addNewPrintTask();
             } else if (choice == 2) {
                 registerPrintCompletion();
             } else if (choice == 3) {
@@ -121,7 +119,7 @@ public class Main {
         System.out.print("- Printer that is done (ID): ");
         int printerId = numberInput(-1, printers.size());
         System.out.println("-----------------------------------");
-        manager.registerCompletion(printerId);
+//        manager.registerCompletion(printerId);
     }
 
     private void registerPrinterFailure() {
@@ -136,73 +134,73 @@ public class Main {
         System.out.print("- Printer ID that failed: ");
         int printerId = numberInput(1, printers.size());
 
-        manager.registerPrinterFailure(printerId);
+//        manager.registerPrinterFailure(printerId);
         System.out.println("-----------------------------------");
     }
-
-    private void addNewPrintTask() {
-        List<String> colors = new ArrayList<>();
-        var prints = manager.getPrints();
-        System.out.println("---------- New Print Task ----------");
-        System.out.println("---------- Available prints ----------");
-        int counter = 1;
-        for (Print p : prints) {
-            System.out.println("- " + counter + ": " + p.getName());
-            counter++;
-        }
-
-        System.out.print("- Print number: ");
-        int printNumber = numberInput(1, prints.size());
-        System.out.println("--------------------------------------");
-        Print print = manager.findPrint(printNumber - 1);
-        String printName = print.getName();
-        System.out.println("---------- Filament Type ----------");
-        System.out.println("- 1: PLA");
-        System.out.println("- 2: PETG");
-        System.out.println("- 3: ABS");
-        System.out.print("- Filament type number: ");
-        int ftype = numberInput(1, 3);
-        System.out.println("--------------------------------------");
-        FilamentType type;
-        switch (ftype) {
-            case 1:
-                type = FilamentType.PLA;
-                break;
-            case 2:
-                type = FilamentType.PETG;
-                break;
-            case 3:
-                type = FilamentType.ABS;
-                break;
-            default:
-                System.out.println("- Not a valid filamentType, bailing out");
-                return;
-        }
-        var spools = manager.getSpools();
-        System.out.println("---------- Colors ----------");
-        ArrayList<String> availableColors = new ArrayList<>();
-        counter = 1;
-        for (Spool spool : spools) {
-            String colorString = spool.getColor();
-            if(type == spool.getFilamentType() && !availableColors.contains(colorString)) {
-                System.out.println("- " + counter + ": " + colorString + " (" + spool.getFilamentType() + ")");
-                availableColors.add(colorString);
-                counter++;
-            }
-        }
-        System.out.print("- Color number: ");
-        int colorChoice = numberInput(1, availableColors.size());
-        colors.add(availableColors.get(colorChoice-1));
-        for(int i = 1; i < print.getFilamentLength().size(); i++) {
-            System.out.print("- Color number: ");
-            colorChoice = numberInput(1, availableColors.size());
-            colors.add(availableColors.get(colorChoice-1));
-        }
-        System.out.println("--------------------------------------");
-
-        manager.addPrintTask(printName, colors, type);
-        System.out.println("----------------------------");
-    }
+//
+//    private void addNewPrintTask() {
+//        List<String> colors = new ArrayList<>();
+//        var prints = manager.getPrints();
+//        System.out.println("---------- New Print Task ----------");
+//        System.out.println("---------- Available prints ----------");
+//        int counter = 1;
+//        for (Print p : prints) {
+//            System.out.println("- " + counter + ": " + p.getName());
+//            counter++;
+//        }
+//
+//        System.out.print("- Print number: ");
+//        int printNumber = numberInput(1, prints.size());
+//        System.out.println("--------------------------------------");
+//        Print print = manager.findPrint(printNumber - 1);
+//        String printName = print.getName();
+//        System.out.println("---------- Filament Type ----------");
+//        System.out.println("- 1: PLA");
+//        System.out.println("- 2: PETG");
+//        System.out.println("- 3: ABS");
+//        System.out.print("- Filament type number: ");
+//        int ftype = numberInput(1, 3);
+//        System.out.println("--------------------------------------");
+//        FilamentType type;
+//        switch (ftype) {
+//            case 1:
+//                type = FilamentType.PLA;
+//                break;
+//            case 2:
+//                type = FilamentType.PETG;
+//                break;
+//            case 3:
+//                type = FilamentType.ABS;
+//                break;
+//            default:
+//                System.out.println("- Not a valid filamentType, bailing out");
+//                return;
+//        }
+//        var spools = manager.getSpools();
+//        System.out.println("---------- Colors ----------");
+//        ArrayList<String> availableColors = new ArrayList<>();
+//        counter = 1;
+//        for (Spool spool : spools) {
+//            String colorString = spool.getColor();
+//            if(type == spool.getFilamentType() && !availableColors.contains(colorString)) {
+//                System.out.println("- " + counter + ": " + colorString + " (" + spool.getFilamentType() + ")");
+//                availableColors.add(colorString);
+//                counter++;
+//            }
+//        }
+//        System.out.print("- Color number: ");
+//        int colorChoice = numberInput(1, availableColors.size());
+//        colors.add(availableColors.get(colorChoice-1));
+//        for(int i = 1; i < print.getFilamentLength().size(); i++) {
+//            System.out.print("- Color number: ");
+//            colorChoice = numberInput(1, availableColors.size());
+//            colors.add(availableColors.get(colorChoice-1));
+//        }
+//        System.out.println("--------------------------------------");
+//
+//        manager.addPrintTask(printName, colors, type);
+//        System.out.println("----------------------------");
+//    }
 
     private void showPrints() {
         var prints = manager.getPrints();
@@ -271,7 +269,7 @@ public class Main {
                 for(int i = 0; i < fLength.size(); i++) {
                     filamentLength.add(((Double) fLength.get(i)));
                 }
-                manager.addPrint(name, height, width, length, filamentLength, printTime);
+//                manager.addPrint(name, height, width, length, filamentLength, printTime);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();

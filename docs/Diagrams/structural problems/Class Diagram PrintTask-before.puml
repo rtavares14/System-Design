@@ -1,0 +1,16 @@
+@startuml
+
+class PrintTask{
+    -PrintTask(Print, List<String>, FilamentType)
+    ---
+    +colots  List<String>
+    +filamentType FilamentType
+    +print Print
+    ---
+    -toString(): String
+    +filamentType FilamentType
+    +print Print
+    +colors List<String>
+    }
+
+@enduml

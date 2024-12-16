@@ -1,0 +1,42 @@
+@startuml
+class PrintTask{}
+class Main{}
+class PrinterManager{}
+class Print {}
+class Printer {}
+class StandardFDM {}
+enum FilamentType {}
+
+'Relationships
+PrintTask "*"<--"1" Main
+PrintTask "*"<--"1" PrinterManager
+
+Print "1"--> "1"Printer
+Print "1" <.. "1"PrintTask
+Print "*" <-- "1" Main
+Print "*" <-- "1" PrinterManager
+Print "*" <-- "1" StandardFDM
+
+Spool "*" <-- "1" PrinterManager
+Spool "3" <-- "1" MultiColor
+Spool "1" <.. "1" StandardFDM
+Spool "*" <-- "1" Main
+Spool "*" <-- "1" Printer
+
+Printer "*"<--"1" Main
+Printer "1"<|--"1" StandardFDM
+
+StandardFDM "1"<|--"1" HousedPrinter
+StandardFDM "1"<|--"1" MultiColor
+
+FilamentType <.. Main
+FilamentType <.. PrintTask
+FilamentType <.. Spool
+FilamentType <-- PrinterManager
+
+HousedPrinter <-- PrinterManager
+MultiColor <-- PrinterManager
+Printer <-- PrinterManager
+StandardFDM <-- PrinterManager
+PrinterManager <-- Main
+@enduml

@@ -1,0 +1,107 @@
+@startuml
+class Main {
+    - PrinterService printerService
+    - SpoolService spoolService
+    - PrintTaskService printTaskService
+    - String printStrategy
+    + void run(String[] args)
+    + void menu()
+    + void startPrintQueue()
+    + void exit()
+    + void changePrintStrategy()
+    + void registerPrintCompletion()
+    + void registerPrinterFailure()
+    + void addNewPrintTask()
+    + void showPrints()
+    + void showSpools()
+    + void showPrinters()
+    + void showPendingPrintTasks()
+    + int menuChoice(int max)
+    + String stringInput()
+    + int numberInput()
+    + int numberInput(int min, int max)
+}
+
+class PrinterService {
+    - List<Printer> printers
+    - List<Printer> freePrinters
+    + void addPrinter(int id, int printerType, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors)
+    + List<Printer> getPrinters()
+    + void selectPrintTask(Printer printer)
+    + void startInitialQueue()
+    + void registerPrinterFailure(int printerId)
+    + void registerCompletion(int printerId)
+}
+
+class SpoolService {
+    - List<Spool> spools
+    - List<Spool> freeSpools
+    + void addSpool(Spool spool)
+    + List<Spool> getSpools()
+    + Spool getSpoolByID(int id)
+}
+
+class PrintTaskService {
+    - List<PrintTask> pendingPrintTasks
+    - Map<Printer, PrintTask> runningPrintTasks
+    + void addPrintTask(String printName, List<String> colors, FilamentType type)
+    + List<PrintTask> getPendingPrintTasks()
+    + PrintTask getPrinterCurrentTask(Printer printer)
+}
+
+class Print {
+    - String name
+    - PrintDimensions dimensions
+    - FilamentUsage filamentUsage
+    - int printTime
+    + Print(String name, PrintDimensions dimensions, FilamentUsage filamentUsage, int printTime)
+    + String getName()
+    + PrintDimensions getDimensions()
+    + FilamentUsage getFilamentUsage()
+    + int getPrintTime()
+    + String toString()
+}
+
+class PrintDimensions {
+    - int height
+    - int width
+    - int length
+    + PrintDimensions(int height, int width, int length)
+    + int getHeight()
+    + int getWidth()
+    + int getLength()
+}
+
+class FilamentUsage {
+    - List<Double> filamentLengths
+    + FilamentUsage(List<Double> filamentLengths)
+    + List<Double> getFilamentLengths()
+}
+
+class Spool {
+    - int id
+    - String color
+    - FilamentType filamentType
+    - double length
+    + Spool(int id, String color, FilamentType filamentType, double length)
+    + int getId()
+    + double getLength()
+    + boolean spoolMatch(String color, FilamentType type)
+    + boolean reduceLength(double byLength)
+    + String getColor()
+    + FilamentType getFilamentType()
+    + String toString()
+}
+
+Main --> PrinterService
+Main --> SpoolService
+Main --> PrintTaskService
+PrinterService --> Printer
+SpoolService --> Spool
+PrintTaskService --> PrintTask
+PrintTask --> Print
+PrintTask --> Spool
+PrintTask --> FilamentType
+Print --> PrintDimensions
+Print --> FilamentUsage
+@enduml

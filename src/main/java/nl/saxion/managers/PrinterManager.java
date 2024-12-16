@@ -1,7 +1,10 @@
-package nl.saxion;
+package nl.saxion.managers;
 
 import nl.saxion.Models.*;
-import org.json.simple.JSONArray;
+import nl.saxion.Models.printers.HousedPrinter;
+import nl.saxion.Models.printers.MultiColor;
+import nl.saxion.Models.printers.Printer;
+import nl.saxion.Models.printers.StandardFDM;
 
 import java.util.*;
 
@@ -154,10 +157,6 @@ public class PrinterManager {
         }
     }
 
-    public void addPrint(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {
-        Print p = new Print(name, height, width, length, filamentLength, printTime);
-        prints.add(p);
-    }
 
     public List<Print> getPrints() {
         return prints;
@@ -240,60 +239,60 @@ public class PrinterManager {
         return null;
     }
 
-    public void registerPrinterFailure(int printerId) {
-        Map.Entry<Printer, PrintTask> foundEntry = null;
-        for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
-            if (entry.getKey().getId() == printerId) {
-                foundEntry = entry;
-                break;
-            }
-        }
-        if (foundEntry == null) {
-            printError("cannot find a running task on printer with ID " + printerId);
-            return;
-        }
-        PrintTask task = foundEntry.getValue();
-        pendingPrintTasks.add(task); // add the task back to the queue.
-        runningPrintTasks.remove(foundEntry.getKey());
+//    public void registerPrinterFailure(int printerId) {
+//        Map.Entry<Printer, PrintTask> foundEntry = null;
+//        for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
+//            if (entry.getKey().getId() == printerId) {
+//                foundEntry = entry;
+//                break;
+//            }
+//        }
+//        if (foundEntry == null) {
+//            printError("cannot find a running task on printer with ID " + printerId);
+//            return;
+//        }
+//        PrintTask task = foundEntry.getValue();
+//        pendingPrintTasks.add(task); // add the task back to the queue.
+//        runningPrintTasks.remove(foundEntry.getKey());
+//
+//        System.out.println("Task " + task + " removed from printer "
+//                + foundEntry.getKey().getName());
+//
+//        Printer printer = foundEntry.getKey();
+//        Spool[] spools = printer.getCurrentSpools();
+//        for(int i=0; i<spools.length && i < task.getColors().size();i++) {
+//            spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));
+//        }
+//        selectPrintTask(printer);
+//    }
 
-        System.out.println("Task " + task + " removed from printer "
-                + foundEntry.getKey().getName());
-
-        Printer printer = foundEntry.getKey();
-        Spool[] spools = printer.getCurrentSpools();
-        for(int i=0; i<spools.length && i < task.getColors().size();i++) {
-            spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));
-        }
-        selectPrintTask(printer);
-    }
-
-    public void registerCompletion(int printerId) {
-        Map.Entry<Printer, PrintTask> foundEntry = null;
-        for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
-            if (entry.getKey().getId() == printerId) {
-                foundEntry = entry;
-                break;
-            }
-        }
-        if (foundEntry == null) {
-            printError("cannot find a running task on printer with ID " + printerId);
-            return;
-        }
-        PrintTask task = foundEntry.getValue();
-        runningPrintTasks.remove(foundEntry.getKey());
-
-        System.out.println("Task " + task + " removed from printer "
-                + foundEntry.getKey().getName());
-
-        Printer printer = foundEntry.getKey();
-        Spool[] spools = printer.getCurrentSpools();
-        for(int i=0; i<spools.length && i < task.getColors().size();i++) {
-            spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));
-        }
-        selectPrintTask(printer);
-
-
-    }
+//    public void registerCompletion(int printerId) {
+//        Map.Entry<Printer, PrintTask> foundEntry = null;
+//        for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
+//            if (entry.getKey().getId() == printerId) {
+//                foundEntry = entry;
+//                break;
+//            }
+//        }
+//        if (foundEntry == null) {
+//            printError("cannot find a running task on printer with ID " + printerId);
+//            return;
+//        }
+//        PrintTask task = foundEntry.getValue();
+//        runningPrintTasks.remove(foundEntry.getKey());
+//
+//        System.out.println("Task " + task + " removed from printer "
+//                + foundEntry.getKey().getName());
+//
+//        Printer printer = foundEntry.getKey();
+//        Spool[] spools = printer.getCurrentSpools();
+//        for(int i=0; i<spools.length && i < task.getColors().size();i++) {
+//            spools[i].reduceLength(task.getPrint().getFilamentLength().get(i));
+//        }
+//        selectPrintTask(printer);
+//
+//
+//    }
 
     private void printError(String s) {
         System.out.println("---------- Error Message ----------");

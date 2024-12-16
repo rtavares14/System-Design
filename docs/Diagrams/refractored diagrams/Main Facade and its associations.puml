@@ -1,0 +1,99 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+class Main {
+    + main(String[]): void
+    + run(String[]): void
+    + menu(): void
+}
+
+class Facade {
+    - SpoolManager
+    - PrintManager
+    - PrinterManager
+    + showPrinters(): void
+    + showSpools(): void
+    + showPrints(): void
+    + showPendingPrintTasks(): void
+    + startPrintQueue(): void
+    + addNewPrintTask(): void
+    + registerPrinterFailure(): void
+    + registerPrintCompletion(): void
+    + changePrintStrategy(): void
+    + exit(): void
+}
+
+class PrintManager {
+    + PrintManager()
+    + addPrintTask(String, List<String>, FilamentType): void
+    + findPrint(String): Print
+    + addPrint(String, int, int, int, ArrayList<Double>, int): void
+    + {static} readPrintsFromFile(String): void
+    - prints: List<Print>
+}
+
+class SpoolManager {
+    + SpoolManager()
+    + addSpool(Spool): void
+    + getSpoolByID(int): Spool
+    + {static} readSpoolsFromFile(String): void
+    - spools: List<Spool>
+}
+
+class PrinterManager {
+        - Map<Printer , ArrayList<PrintTask>> printers
+        + PrinterManager()
+        + selectPrintTask(Printer) : void
+        + registerPrinterFailure(int) : void
+        + addPrinter(int, int, String, String, int, int, int, int,) : void
+        + getPrinterCurrentTask(Printer) : PrintTask
+        + printError(String) : void
+        + registerCompletion(int) : void
+      + startInitialQueue() : void
+      + findPrinter(int) : Printer
+      + getPendingPrintTasks() : List<PrintTask>
+      + getPrinters() : List<Printer>
+      + {static} readPrintersFromFile(String): void
+
+}
+
+class PrinterRecord {
+  - int id
+  - String name
+  - String manufacturer
+  - int maxX
+  - int maxY
+  - int maxZ
+  --
+  <<Record>>
+}
+
+class SpoolRecord {
+  - String materialType
+  - int length
+  - double diameter
+  --
+  <<Record>>
+}
+
+class PrintRecord {
+  - String fileName
+  - int xSize
+  - int ySize
+  - int zSize
+  - Spool spool
+  --
+  <<Record>>
+}
+
+PrinterManager -up-> PrinterRecord
+SpoolManager -up-> SpoolRecord
+PrintManager -up-> PrintRecord
+
+
+Main -down-> Facade
+Facade -down-> SpoolManager
+Facade -down-> PrintManager
+Facade -down-> PrinterManager
+
+@enduml

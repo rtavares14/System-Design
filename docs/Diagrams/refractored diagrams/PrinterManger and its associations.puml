@@ -1,0 +1,58 @@
+@startuml
+class PrinterManager{
+    - Map<Printer , ArrayList<PrintTask>> printers
+--
+    + PrinterManager()
+    + selectPrintTask(Printer) : void
+    + registerPrinterFailure(int) : void
+    + addPrinter(int, int, String, String, int, int, int, int,) : void
+    + getPrinterCurrentTask(Printer) : PrintTask
+    + printError(String) : void
+    + registerCompletion(int) : void
+  + startInitialQueue() : void
+  + findPrinter(int) : Printer
+  + getPendingPrintTasks() : List<PrintTask>
+  + getPrinters() : List<Printer>
+  + {static}readPrintersFromFile(String): void
+}
+abstract class Printer{
+- int id
+- String name
+- String manufacturer
+- int maxX;
+- int maxY;
+- int maxZ;
+# ArrayList<Spool> spools;
++ Printer()
++ getID()
++ getName()
++ getManufacturer()
++ {abstract} setCurrentSpools(): void
++ {abstract} getCurrentSpools(): Spool[]
++ printFits()
++ containsSpool(List<Spool>, String) : boolean
+}
+class StandardFDM{
++ StandardFDM()
++ setCurrentSpools(): void
++ getCurrentSpools(): Spool[]
++ calculatePrintTime(): int
+}
+class MultiColor{
++ MultiColor()
++ setCurrentSpools(): void
++ getCurrentSpools(): Spool[]
++ calculatePrintTime(): int
+}
+
+interface PrintTimeCalculatorStrategy{
+ + calculatePrintTime(): int
+}
+
+PrinterManager --> Printer
+Printer <|-- StandardFDM
+Printer <|-- MultiColor
+StandardFDM o-- PrintTimeCalculatorStrategy
+MultiColor o-- PrintTimeCalculatorStrategy
+
+@enduml
