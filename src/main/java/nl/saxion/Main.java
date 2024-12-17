@@ -2,7 +2,9 @@ package nl.saxion;
 
 import nl.saxion.Models.*;
 import nl.saxion.Models.printers.Printer;
+import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
+import nl.saxion.managers.SpoolManager;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -17,7 +19,9 @@ import java.util.*;
 
 public class Main {
     Scanner scanner = new Scanner(System.in);
-    private PrinterManager manager = new PrinterManager();
+    private PrinterManager printerManager = new PrinterManager();
+    private PrintManager printManager = new PrintManager();
+    private SpoolManager spoolManager = new SpoolManager();
 
     private String printStrategy = "Less Spool Changes";
 
@@ -27,13 +31,13 @@ public class Main {
 
     public void run(String[] args) {
         if(args.length > 0) {
-            readPrintsFromFile(args[0]);
-            readSpoolsFromFile(args[1]);
-            readPrintersFromFile(args[2]);
+            printManager.readPrintsFromFile(args[0]);
+            spoolManager.readSpoolsFromFile(args[1]);
+            printerManager.readPrintersFromFile(args[2]);
         } else {
-            readPrintsFromFile("");
-            readSpoolsFromFile("");
-            readPrintersFromFile("");
+            printManager.readPrintsFromFile("");
+            spoolManager.readSpoolsFromFile("");
+            printerManager.readPrintersFromFile("");
         }
         int choice = 1;
         while (choice > 0 && choice < 10) {
@@ -80,7 +84,7 @@ public class Main {
 
     private void startPrintQueue() {
         System.out.println("---------- Starting Print Queue ----------");
-        manager.startInitialQueue();
+        printerManager.startInitialQueue();
         System.out.println("-----------------------------------");
     }
 
@@ -108,10 +112,10 @@ public class Main {
 
     // TODO: This should be based on which printer is finished printing.
     private void registerPrintCompletion() {
-        List<Printer> printers = manager.getPrinters();
+        List<Printer> printers = printerManager.getPrinters();
         System.out.println("---------- Currently Running Printers ----------");
         for(Printer p: printers) {
-            PrintTask printerCurrentTask= manager.getPrinterCurrentTask(p);
+            PrintTask printerCurrentTask= printerManager.getPrinterCurrentTask(p);
             if(printerCurrentTask != null) {
                 System.out.println("- " + p.getId() + ": " +p.getName() + " - " + printerCurrentTask);
             }
@@ -123,10 +127,10 @@ public class Main {
     }
 
     private void registerPrinterFailure() {
-        List<Printer> printers = manager.getPrinters();
+        List<Printer> printers = printerManager.getPrinters();
         System.out.println("---------- Currently Running Printers ----------");
         for(Printer p: printers) {
-            PrintTask printerCurrentTask= manager.getPrinterCurrentTask(p);
+            PrintTask printerCurrentTask= printerManager.getPrinterCurrentTask(p);
             if(printerCurrentTask != null) {
                 System.out.println("- " + p.getId() + ": " +p.getName() + " > " + printerCurrentTask);
             }
@@ -203,7 +207,7 @@ public class Main {
 //    }
 
     private void showPrints() {
-        var prints = manager.getPrints();
+        var prints = printManager.getPrints();
         System.out.println("---------- Available prints ----------");
         for (Print p : prints) {
             System.out.println(p);
@@ -212,7 +216,7 @@ public class Main {
     }
 
     private void showSpools() {
-        var spools = manager.getSpools();
+        var spools = spoolManager.getSpools();
         System.out.println("---------- Spools ----------");
         for (Spool spool : spools) {
             System.out.println(spool);
@@ -221,11 +225,11 @@ public class Main {
     }
 
     private void showPrinters() {
-        var printers = manager.getPrinters();
+        var printers = printerManager.getPrinters();
         System.out.println("--------- Available printers ---------");
         for (Printer p : printers) {
             String output = p.toString();
-            PrintTask currentTask = manager.getPrinterCurrentTask(p);
+            PrintTask currentTask = printerManager.getPrinterCurrentTask(p);
             if(currentTask != null) {
                 output = output.replace("--------", "- Current Print Task: " + currentTask + System.lineSeparator() +
                         "--------");
@@ -236,113 +240,12 @@ public class Main {
     }
 
     private void showPendingPrintTasks() {
-        List<PrintTask> printTasks = manager.getPendingPrintTasks();
+        List<PrintTask> printTasks = printerManager.getPendingPrintTasks();
         System.out.println("--------- Pending Print Tasks ---------");
         for (PrintTask p : printTasks) {
             System.out.println(p);
         }
         System.out.println("--------------------------------------");
-    }
-
-    private void readPrintsFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
-            filename = "prints.json";
-        }
-        URL printResource = getClass().getResource("/" + filename);
-        if (printResource == null) {
-            System.err.println("Warning: Could not find prints.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray prints = (JSONArray) jsonParser.parse(reader);
-            for (Object p : prints) {
-                JSONObject print = (JSONObject) p;
-                String name = (String) print.get("name");
-                int height = ((Long) print.get("height")).intValue();
-                int width = ((Long) print.get("width")).intValue();
-                int length = ((Long) print.get("length")).intValue();
-                //int filamentLength = ((Long) print.get("filamentLength")).intValue();
-                JSONArray fLength = (JSONArray) print.get("filamentLength");
-                int printTime = ((Long) print.get("printTime")).intValue();
-                ArrayList<Double> filamentLength = new ArrayList();
-                for(int i = 0; i < fLength.size(); i++) {
-                    filamentLength.add(((Double) fLength.get(i)));
-                }
-//                manager.addPrint(name, height, width, length, filamentLength, printTime);
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void readPrintersFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
-            filename = "printers.json";
-        }
-        URL printersResource = getClass().getResource("/" + filename);
-        if (printersResource == null) {
-            System.err.println("Warning: Could not find printers.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printersResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray printers = (JSONArray) jsonParser.parse(reader);
-            for (Object p : printers) {
-                JSONObject printer = (JSONObject) p;
-                int id = ((Long) printer.get("id")).intValue();
-                int type = ((Long) printer.get("type")).intValue();
-                String name = (String) printer.get("name");
-                String manufacturer = (String) printer.get("manufacturer");
-                int maxX = ((Long) printer.get("maxX")).intValue();
-                int maxY = ((Long) printer.get("maxY")).intValue();
-                int maxZ = ((Long) printer.get("maxZ")).intValue();
-                int maxColors = ((Long) printer.get("maxColors")).intValue();
-                manager.addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void readSpoolsFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
-            filename = "spools.json";
-        }
-        URL spoolsResource = getClass().getResource("/" + filename);
-        if (spoolsResource == null) {
-            System.err.println("Warning: Could not find spools.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(spoolsResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray spools = (JSONArray) jsonParser.parse(reader);
-            for (Object p : spools) {
-                JSONObject spool = (JSONObject) p;
-                int id = ((Long) spool.get("id")).intValue();
-                String color = (String) spool.get("color");
-                String filamentType = (String) spool.get("filamentType");
-                double length = (Double) spool.get("length");
-                FilamentType type;
-                switch (filamentType) {
-                    case "PLA":
-                        type = FilamentType.PLA;
-                        break;
-                    case "PETG":
-                        type = FilamentType.PETG;
-                        break;
-                    case "ABS":
-                        type = FilamentType.ABS;
-                        break;
-                    default:
-                        System.out.println("- Not a valid filamentType, bailing out");
-                        return;
-                }
-                manager.addSpool(new Spool( color, type, length));
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
     }
 
     public int menuChoice(int max) {
