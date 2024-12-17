@@ -9,6 +9,7 @@ public abstract class Printer {
     private int id;
     private String name;
     private String manufacturer;
+    private ArrayList<Spool> spools;
 
     public Printer(int id, String printerName, String manufacturer) {
         this.id = id;

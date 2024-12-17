@@ -53,5 +53,9 @@ public class PrintManager {
     public ArrayList<Print> getPrints() {
         return prints;
     }
+
+    public ArrayList<PrintTask> getPrintTasks() {
+        return printTasks;
+    }
 }
 
