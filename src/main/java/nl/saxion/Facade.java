@@ -7,6 +7,8 @@ import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 
+import java.util.ArrayList;
+
 public class Facade {
     private SpoolManager spoolManager;
     private PrinterManager printerManager;
@@ -24,23 +26,27 @@ public class Facade {
     public void startPrintQueue(){
 
     }
-    public void addNewPrintTask(int choice){
-        Print selectedPrint = null;
-        PrintTask printTask = null;
+    public void addNewPrintTask(int printChoice, int colorChoice){
+        Print selectedPrint;
+        Spool spoolPrint ;
+        PrintTask printTask;
 
         System.out.println("Choose a print number:");
         for(Print print: printManager.getPrints()){
             System.out.println(print);
         }
+        selectedPrint = printManager.getPrints().get(printChoice+1);
 
-        System.out.println("Choose a color:");
+        System.out.println("Choose a color and a filament type:");
         for(Spool spool:spoolManager.getSpools()){
-            System.out.println(spool.getColor());
+            System.out.println("Color:" + spool.getColor());
+            System.out.println("Filament type:" + spool.getFilamentType());
         }
 
+        spoolPrint = spoolManager.getSpools().get(colorChoice);
 
 
-        printManager.addPrintTask();
+        printManager.addPrintTask(selectedPrint,new ArrayList<>(),spoolPrint.getFilamentType());
     }
     public void registerPrinterFailure(){}
     public void registerPrintCompletion(){}

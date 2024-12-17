@@ -34,6 +34,18 @@ public class PrintManager {
         printTasks.add(new PrintTask(print, colors, type));
     }
 
+    public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
+
+        for (String color : colors) {
+            ArrayList<Spool> spools = spoolManager.getSpools();
+            if (spools.stream().noneMatch(spool -> spool.spoolMatch(color, type))) {
+                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
+            }
+        }
+
+        printTasks.add(new PrintTask(printName, colors, type));
+    }
+
     public Print findPrint(String print) {
         for (Print allPrints : prints) {
             if (allPrints.getName().equals(print)) {
