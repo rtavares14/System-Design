@@ -1,7 +1,8 @@
-package nl.saxion.Models.printers;
+package nl.saxion.Models.printer.printerTypes;
 
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
+import nl.saxion.Models.printer.Printer;
 
 import java.util.ArrayList;
 
@@ -11,13 +12,14 @@ public class StandardFDM extends Printer {
     private final int maxY;
     private final int maxZ;
     private Spool currentSpool;
+    private boolean isHoused;
 
     public StandardFDM(int id, String printerName, String manufacturer, int maxX, int maxY, int maxZ) {
         super(id, printerName, manufacturer);
         this.maxX = maxX;
         this.maxY = maxY;
         this.maxZ = maxZ;
-
+        this.isHoused = false;
     }
 
     public void setCurrentSpools(ArrayList<Spool> spools) {
@@ -40,6 +42,14 @@ public class StandardFDM extends Printer {
         return spools;
     }
 
+    public boolean isHoused() {
+        return isHoused;
+    }
+
+    public void setHoused(boolean housed) {
+        isHoused = housed;
+    }
+
     @Override
     public boolean printFits(Print print) {
         return print.getHeight() <= maxZ && print.getWidth() <= maxX && print.getLength() <= maxY;
@@ -55,9 +65,10 @@ public class StandardFDM extends Printer {
         String result = super.toString();
         String append = "- maxX: " + maxX + System.lineSeparator() +
                 "- maxY: " + maxY + System.lineSeparator() +
-                "- maxZ: " + maxZ + System.lineSeparator();
+                "- maxZ: " + maxZ + System.lineSeparator() +
+                "- Housed: " + isHoused + System.lineSeparator();
         if (currentSpool != null) {
-            append += "- Spool(s): " + currentSpool.getId()+ System.lineSeparator();
+            append += "- Spool(s): " + currentSpool.getId() + System.lineSeparator();
         }
         append += "--------";
         result = result.replace("--------", append);

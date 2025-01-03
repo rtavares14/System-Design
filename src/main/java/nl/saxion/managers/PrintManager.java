@@ -1,6 +1,6 @@
 package nl.saxion.managers;
 
-import nl.saxion.Models.FilamentType;
+import nl.saxion.Models.printer.printerTypes.FilamentType;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;

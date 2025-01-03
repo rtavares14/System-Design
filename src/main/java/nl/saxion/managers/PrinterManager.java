@@ -1,10 +1,12 @@
 package nl.saxion.managers;
 
 import nl.saxion.Models.*;
-import nl.saxion.Models.printers.HousedPrinter;
-import nl.saxion.Models.printers.MultiColor;
-import nl.saxion.Models.printers.Printer;
-import nl.saxion.Models.printers.StandardFDM;
+import nl.saxion.Models.printer.PrinterFactory;
+import nl.saxion.Models.printer.printerTypes.FilamentType;
+import nl.saxion.Models.printer.printerTypes.HousedPrinter;
+import nl.saxion.Models.printer.printerTypes.MultiColor;
+import nl.saxion.Models.printer.Printer;
+import nl.saxion.Models.printer.printerTypes.StandardFDM;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -18,8 +20,8 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PrinterManager {
-    private final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
-    private final ArrayList<Printer> printersList = new ArrayList<>();
+    public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
+    public final ArrayList<Printer> printersList = new ArrayList<>();
     private final List<PrintTask> pendingPrintTasks = new ArrayList<>();
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
     private final List<Printer> freePrinters = new ArrayList<>();
@@ -168,22 +170,6 @@ public class PrinterManager {
         selectPrintTask(printer);
     }
 
-    public void addPrinter(int id, int printerType, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
-        if (printerType == 1) {
-            StandardFDM printer = new StandardFDM(id, printerName, manufacturer, maxX, maxY, maxZ);
-            printersList.add(printer);
-            printersMap.put(printer, new ArrayList<>());
-        } else if (printerType == 2) {
-            HousedPrinter printer = new HousedPrinter(id, printerName, manufacturer, maxX, maxY, maxZ);
-            printersList.add(printer);
-            printersMap.put(printer, new ArrayList<>());
-        } else if (printerType == 3) {
-            MultiColor printer = new MultiColor(id, printerName, manufacturer, maxX, maxY, maxZ, maxColors);
-            printersList.add(printer);
-            printersMap.put(printer, new ArrayList<>());
-        }
-    }
-
     public PrintTask getPrinterCurrentTask(Printer printer) {
         if (!printersMap.containsKey(printer)) {
             return null;
@@ -269,7 +255,7 @@ public class PrinterManager {
                 int maxY = ((Long) printer.get("maxY")).intValue();
                 int maxZ = ((Long) printer.get("maxZ")).intValue();
                 int maxColors = ((Long) printer.get("maxColors")).intValue();
-                addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
+                PrinterFactory.addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();

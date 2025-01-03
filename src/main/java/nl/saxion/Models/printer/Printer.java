@@ -1,4 +1,4 @@
-package nl.saxion.Models.printers;
+package nl.saxion.Models.printer;
 
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
@@ -39,5 +39,9 @@ public abstract class Printer {
 
     public String getName(){
         return name;
+    }
+
+    public String getStatus() {
+        return "Printing";
     }
 }
