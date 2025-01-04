@@ -1,6 +1,6 @@
 package nl.saxion.managers;
 
-import nl.saxion.Models.printer.printerTypes.FilamentType;
+import nl.saxion.utils.FilamentType;
 import nl.saxion.Models.Spool;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;

@@ -1,6 +1,6 @@
 package nl.saxion.Models;
 
-import nl.saxion.Models.printer.printerTypes.FilamentType;
+import nl.saxion.utils.FilamentType;
 
 public class Spool {
     private final String color;

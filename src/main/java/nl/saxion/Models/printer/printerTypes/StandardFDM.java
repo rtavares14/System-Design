@@ -4,6 +4,7 @@ import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.interfaces.PrintTimeCalculator;
 import nl.saxion.Models.printer.Printer;
+import nl.saxion.utils.FilamentType;
 
 import java.util.ArrayList;
 
