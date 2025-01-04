@@ -3,7 +3,6 @@ package nl.saxion.managers;
 import nl.saxion.Models.*;
 import nl.saxion.Models.printer.PrinterFactory;
 import nl.saxion.Models.printer.printerTypes.FilamentType;
-import nl.saxion.Models.printer.printerTypes.HousedPrinter;
 import nl.saxion.Models.printer.printerTypes.MultiColor;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.printerTypes.StandardFDM;

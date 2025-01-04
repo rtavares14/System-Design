@@ -2,44 +2,39 @@ package nl.saxion.Models.printer.printerTypes;
 
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
+import nl.saxion.Models.interfaces.PrintTimeCalculator;
 import nl.saxion.Models.printer.Printer;
 
 import java.util.ArrayList;
 
 /* Standard cartesian FDM printer */
-public class StandardFDM extends Printer {
-    private final int maxX;
-    private final int maxY;
-    private final int maxZ;
+public class StandardFDM extends Printer implements PrintTimeCalculator {
     private Spool currentSpool;
     private boolean isHoused;
 
     public StandardFDM(int id, String printerName, String manufacturer, int maxX, int maxY, int maxZ) {
-        super(id, printerName, manufacturer);
-        this.maxX = maxX;
-        this.maxY = maxY;
-        this.maxZ = maxZ;
+        super(id, printerName, manufacturer, maxX, maxY, maxZ);
         this.isHoused = false;
-    }
-
-    public void setCurrentSpools(ArrayList<Spool> spools) {
-        this.currentSpool = spools.get(0);
-    }
-
-    public void setCurrentSpool(Spool spool) {
-        this.currentSpool = spool;
     }
 
     public Spool getCurrentSpool() {
         return currentSpool;
     }
 
+    public void setCurrentSpool(Spool spool) {
+        this.currentSpool = spool;
+    }
+
     public Spool[] getCurrentSpools() {
         Spool[] spools = new Spool[1];
-        if(currentSpool != null) {
+        if (currentSpool != null) {
             spools[0] = currentSpool;
         }
         return spools;
+    }
+
+    public void setCurrentSpools(ArrayList<Spool> spools) {
+        this.currentSpool = spools.get(0);
     }
 
     public boolean isHoused() {
@@ -50,22 +45,23 @@ public class StandardFDM extends Printer {
         isHoused = housed;
     }
 
-    @Override
-    public boolean printFits(Print print) {
-        return print.getHeight() <= maxZ && print.getWidth() <= maxX && print.getLength() <= maxY;
-    }
-
-    @Override
-    public int CalculatePrintTime(String filename) {
-        return 0;
+    /**
+     * Check if a print supports ABS material.
+     *
+     * @param print the print to check
+     * @return true if ABS is supported
+     */
+    private boolean supportsABS(Print print) {
+        // Assume a specific property of `Print` (like material type) determines ABS compatibility
+        return print.getFilamentType().equalsIgnoreCase(FilamentType.ABS);
     }
 
     @Override
     public String toString() {
         String result = super.toString();
-        String append = "- maxX: " + maxX + System.lineSeparator() +
-                "- maxY: " + maxY + System.lineSeparator() +
-                "- maxZ: " + maxZ + System.lineSeparator() +
+        String append = "- maxX: " + super.getMaxX() + System.lineSeparator() +
+                "- maxY: " + super.getMaxY() + System.lineSeparator() +
+                "- maxZ: " + super.getMaxZ() + System.lineSeparator() +
                 "- Housed: " + isHoused + System.lineSeparator();
         if (currentSpool != null) {
             append += "- Spool(s): " + currentSpool.getId() + System.lineSeparator();
