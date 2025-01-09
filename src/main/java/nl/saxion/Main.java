@@ -18,53 +18,17 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Main {
+    Facade facade = new Facade();
     Scanner scanner = new Scanner(System.in);
-    private PrinterManager printerManager = new PrinterManager();
-    private PrintManager printManager = new PrintManager();
-    private SpoolManager spoolManager = new SpoolManager();
-
-    private String printStrategy = "Less Spool Changes";
 
     public static void main(String[] args) {
-        new Main().run(args);
+        new Main().run();
     }
 
-    public void run(String[] args) {
-        if(args.length > 0) {
-            printManager.readPrintsFromFile(args[0]);
-            spoolManager.readSpoolsFromFile(args[1]);
-            printerManager.readPrintersFromFile(args[2]);
-        } else {
-            printManager.readPrintsFromFile("");
-            spoolManager.readSpoolsFromFile("");
-            printerManager.readPrintersFromFile("");
-        }
-        int choice = 1;
-        while (choice > 0 && choice < 10) {
-            menu();
-            choice = menuChoice(9);
-            System.out.println("-----------------------------------");
-            if (choice == 1) {
-               // addNewPrintTask();
-            } else if (choice == 2) {
-                registerPrintCompletion();
-            } else if (choice == 3) {
-                registerPrinterFailure();
-            } else if (choice == 4) {
-                changePrintStrategy();
-            } else if (choice == 5) {
-                startPrintQueue();
-            } else if (choice == 6) {
-                showPrints();
-            } else if (choice == 7) {
-                showPrinters();
-            } else if (choice == 8) {
-                showSpools();
-            } else if (choice == 9) {
-                showPendingPrintTasks();
-            }
-        }
-        exit();
+    public void run() {
+        menu();
+        int choice = scanner.nextInt();
+        chooseMenuOption(choice);
     }
 
     public void menu() {
@@ -79,208 +43,51 @@ public class Main {
         System.out.println("- 8) Show spools");
         System.out.println("- 9) Show pending print tasks");
         System.out.println("- 0) Exit");
-
     }
 
-    private void startPrintQueue() {
-        System.out.println("---------- Starting Print Queue ----------");
-        printerManager.startInitialQueue();
-        System.out.println("-----------------------------------");
-    }
+    public void chooseMenuOption(int choice) {
+        while (true) {
+            switch (choice) {
+                case 1: {
+                    int printChoice;
+                    int colorChoice;
 
-    private void exit() {
+                    facade.listPrints();
+                    printChoice = scanner.nextInt();
 
-    }
+                    facade.listSpools();
+                    colorChoice = scanner.nextInt();
 
-    // This method only changes the name but does not actually work.
-    // It exists to demonstrate the output.
-    // in the future strategy might be added.
-    private void changePrintStrategy() {
-        System.out.println("---------- Change Strategy -------------");
-        System.out.println("- Current strategy: " + printStrategy);
-        System.out.println("- 1: Less Spool Changes");
-        System.out.println("- 2: Efficient Spool Usage");
-        System.out.println("- Choose strategy: ");
-        int strategyChoice = numberInput(1, 2);
-        if(strategyChoice == 1) {
-            printStrategy = "- Less Spool Changes";
-        } else if( strategyChoice == 2) {
-            printStrategy = "- Efficient Spool Usage";
-        }
-        System.out.println("-----------------------------------");
-    }
-
-    // TODO: This should be based on which printer is finished printing.
-    private void registerPrintCompletion() {
-        List<Printer> printers = printerManager.getPrinters();
-        System.out.println("---------- Currently Running Printers ----------");
-        for(Printer p: printers) {
-            PrintTask printerCurrentTask= printerManager.getPrinterCurrentTask(p);
-            if(printerCurrentTask != null) {
-                System.out.println("- " + p.getId() + ": " +p.getName() + " - " + printerCurrentTask);
+                    facade.addNewPrintTask(printChoice, colorChoice);
+                    break;
+                }
+                case 2:
+                    facade.registerPrintCompletion();
+                    break;
+                case 3:
+                    facade.registerPrinterFailure();
+                    break;
+                case 4:
+                    break;
+                case 5:
+                    facade.startPrintQueue();
+                    break;
+                case 6:
+                    facade.showSpools();
+                    break;
+                case 7:
+                    facade.showPrinters();
+                    break;
+                case 8:
+                    facade.showPrints();
+                    break;
+                case 9:
+                    facade.showPendingPrintTask();
+                    break;
+                case 0:
+                    return;
             }
         }
-        System.out.print("- Printer that is done (ID): ");
-        int printerId = numberInput(-1, printers.size());
-        System.out.println("-----------------------------------");
-//        manager.registerCompletion(printerId);
     }
 
-    private void registerPrinterFailure() {
-        List<Printer> printers = printerManager.getPrinters();
-        System.out.println("---------- Currently Running Printers ----------");
-        for(Printer p: printers) {
-            PrintTask printerCurrentTask= printerManager.getPrinterCurrentTask(p);
-            if(printerCurrentTask != null) {
-                System.out.println("- " + p.getId() + ": " +p.getName() + " > " + printerCurrentTask);
-            }
-        }
-        System.out.print("- Printer ID that failed: ");
-        int printerId = numberInput(1, printers.size());
-
-//        manager.registerPrinterFailure(printerId);
-        System.out.println("-----------------------------------");
-    }
-//
-//    private void addNewPrintTask() {
-//        List<String> colors = new ArrayList<>();
-//        var prints = manager.getPrints();
-//        System.out.println("---------- New Print Task ----------");
-//        System.out.println("---------- Available prints ----------");
-//        int counter = 1;
-//        for (Print p : prints) {
-//            System.out.println("- " + counter + ": " + p.getName());
-//            counter++;
-//        }
-//
-//        System.out.print("- Print number: ");
-//        int printNumber = numberInput(1, prints.size());
-//        System.out.println("--------------------------------------");
-//        Print print = manager.findPrint(printNumber - 1);
-//        String printName = print.getName();
-//        System.out.println("---------- Filament Type ----------");
-//        System.out.println("- 1: PLA");
-//        System.out.println("- 2: PETG");
-//        System.out.println("- 3: ABS");
-//        System.out.print("- Filament type number: ");
-//        int ftype = numberInput(1, 3);
-//        System.out.println("--------------------------------------");
-//        FilamentType type;
-//        switch (ftype) {
-//            case 1:
-//                type = FilamentType.PLA;
-//                break;
-//            case 2:
-//                type = FilamentType.PETG;
-//                break;
-//            case 3:
-//                type = FilamentType.ABS;
-//                break;
-//            default:
-//                System.out.println("- Not a valid filamentType, bailing out");
-//                return;
-//        }
-//        var spools = manager.getSpools();
-//        System.out.println("---------- Colors ----------");
-//        ArrayList<String> availableColors = new ArrayList<>();
-//        counter = 1;
-//        for (Spool spool : spools) {
-//            String colorString = spool.getColor();
-//            if(type == spool.getFilamentType() && !availableColors.contains(colorString)) {
-//                System.out.println("- " + counter + ": " + colorString + " (" + spool.getFilamentType() + ")");
-//                availableColors.add(colorString);
-//                counter++;
-//            }
-//        }
-//        System.out.print("- Color number: ");
-//        int colorChoice = numberInput(1, availableColors.size());
-//        colors.add(availableColors.get(colorChoice-1));
-//        for(int i = 1; i < print.getFilamentLength().size(); i++) {
-//            System.out.print("- Color number: ");
-//            colorChoice = numberInput(1, availableColors.size());
-//            colors.add(availableColors.get(colorChoice-1));
-//        }
-//        System.out.println("--------------------------------------");
-//
-//        manager.addPrintTask(printName, colors, type);
-//        System.out.println("----------------------------");
-//    }
-
-    private void showPrints() {
-        var prints = printManager.getPrints();
-        System.out.println("---------- Available prints ----------");
-        for (Print p : prints) {
-            System.out.println(p);
-        }
-        System.out.println("--------------------------------------");
-    }
-
-    private void showSpools() {
-        var spools = spoolManager.getSpools();
-        System.out.println("---------- Spools ----------");
-        for (Spool spool : spools) {
-            System.out.println(spool);
-        }
-        System.out.println("----------------------------");
-    }
-
-    private void showPrinters() {
-        var printers = printerManager.getPrinters();
-        System.out.println("--------- Available printers ---------");
-        for (Printer p : printers) {
-            String output = p.toString();
-            PrintTask currentTask = printerManager.getPrinterCurrentTask(p);
-            if(currentTask != null) {
-                output = output.replace("--------", "- Current Print Task: " + currentTask + System.lineSeparator() +
-                        "--------");
-            }
-            System.out.println(output);
-        }
-        System.out.println("--------------------------------------");
-    }
-
-    private void showPendingPrintTasks() {
-        List<PrintTask> printTasks = printerManager.getPendingPrintTasks();
-        System.out.println("--------- Pending Print Tasks ---------");
-        for (PrintTask p : printTasks) {
-            System.out.println(p);
-        }
-        System.out.println("--------------------------------------");
-    }
-
-    public int menuChoice(int max) {
-        int choice = -1;
-        while (choice < 0 || choice > max) {
-            System.out.print("- Choose an option: ");
-            try {
-                choice = scanner.nextInt();
-            } catch (InputMismatchException e) {
-                //try again after consuming the current line
-                System.out.println("- Error: Invalid input");
-                scanner.nextLine();
-            }
-        }
-        return choice;
-    }
-
-    public String stringInput() {
-        String input = null;
-        while(input == null || input.length() == 0){
-            input = scanner.nextLine();
-        }
-        return input;
-    }
-
-    public int numberInput() {
-        int input = scanner.nextInt();
-        return input;
-    }
-
-    public int numberInput(int min, int max) {
-        int input = numberInput();
-        while (input < min || input > max) {
-            input = numberInput();
-        }
-        return input;
-    }
 }

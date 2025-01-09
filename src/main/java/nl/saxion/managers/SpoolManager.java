@@ -22,7 +22,7 @@ public class SpoolManager {
     }
 
     public void addSpool(String color, FilamentType filamentType, double length){
-        spools.add(new Spool(color,filamentType,length));
+        spools.add(new Spool(spools.size()+1,color,filamentType,length));
     }
 
     public void getSpool(){}

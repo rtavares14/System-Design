@@ -1,15 +1,17 @@
 package nl.saxion.Models;
 
 
+import java.util.ArrayList;
+
 public class Print {
     private String name;
     private int height;
     private int width;
     private int length;
-    private double filamentLength;
+    private ArrayList<Double> filamentLength;
     private int printTime;
 
-    public Print(String name, int height, int width, int length, double filamentLength, int printTime) {
+    public Print(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {
         this.name = name;
         this.height = height;
         this.width = width;
@@ -34,7 +36,7 @@ public class Print {
         return width;
     }
 
-    public double getFilamentLength() {
+    public ArrayList<Double> getFilamentLength() {
         return filamentLength;
     }
 
