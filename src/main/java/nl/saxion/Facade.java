@@ -9,7 +9,6 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 
 import java.util.ArrayList;
-import java.util.List;
 
 public class Facade {
     private SpoolManager spoolManager;
@@ -17,30 +16,45 @@ public class Facade {
     private PrintManager printManager;
 
     public Facade() {
-
         this.spoolManager = new SpoolManager();
         this.printerManager = new PrinterManager();
         this.printManager = new PrintManager();
+        this.printerManager.readPrintersFromFile(""); //printers from file
+        this.printManager.readPrintsFromFile(""); //prints from file
+        this.spoolManager.readSpoolsFromFile(""); //prints from file
     }
 
-    public List<Printer> showPrinters(){
-        for(Printer printer: printerManager.getPrinters()){
+    public void showPrinters() {
+        if (printerManager.getPrinters().isEmpty()) {
+            System.out.println("No printers available");
+            return;
+        }
+
+        for (Printer printer : printerManager.getPrinters()) {
             System.out.println(printer);
         }
-        return printerManager.getPrinters();
     }
 
     public void showSpools(){
+        if (spoolManager.getSpools().isEmpty()) {
+            System.out.println("No spools available");
+            return;
+        }
+
         for(Spool spool:spoolManager.getSpools()){
             System.out.println(spool);
         }
     }
 
-    public List<Print> showPrints(){
-        for(Print print:printManager.getPrints()){
+    public void showPrints() {
+        if (printManager.getPrints().isEmpty()) {
+            System.out.println("No prints available");
+            return;
+        }
+
+        for (Print print : printManager.getPrints()) {
             System.out.println(print);
         }
-        return printManager.getPrints();
     }
 
     public void showPendingPrintTask(){

@@ -50,7 +50,6 @@ public class Spool {
         return "--------" + System.lineSeparator() +
                 "- color: " + color + System.lineSeparator() +
                 "- filamentType: " + filamentType + System.lineSeparator() +
-                "- length: " + length + System.lineSeparator() +
-                "--------";
+                "- length: " + length + System.lineSeparator();
     }
 }

@@ -25,7 +25,7 @@ import java.util.Map;
 public class PrinterManager {
     public PrinterFactory printerFactory = new PrinterFactory(this);
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
-    public final ArrayList<Printer> printersList = new ArrayList<>();
+    public final List<Printer> printersList = new ArrayList<>();
     private final List<PrintTask> pendingPrintTasks = new ArrayList<>();
     private final List<Printer> freePrinters = new ArrayList<>();
     private final List<Spool> freeSpools = new ArrayList<>();
@@ -233,10 +233,6 @@ public class PrinterManager {
         return pendingPrintTasks;
     }
 
-    public List<Printer> getPrinters() {
-        return printersList;
-    }
-
     public void readPrintersFromFile(String filename) {
         JSONParser jsonParser = new JSONParser();
         if (filename.isEmpty()) {
@@ -250,7 +246,6 @@ public class PrinterManager {
         try (FileReader reader = new FileReader(URLDecoder.decode(printersResource.getPath(), StandardCharsets.UTF_8))) {
             JSONArray printers = (JSONArray) jsonParser.parse(reader);
             for (Object p : printers) {
-                boolean isHoused;
                 JSONObject printer = (JSONObject) p;
                 int id = ((Long) printer.get("id")).intValue();
                 int type = ((Long) printer.get("type")).intValue();
@@ -260,13 +255,16 @@ public class PrinterManager {
                 int maxY = ((Long) printer.get("maxY")).intValue();
                 int maxZ = ((Long) printer.get("maxZ")).intValue();
                 int maxColors = ((Long) printer.get("maxColors")).intValue();
-
-                isHoused = type == 2;
+                boolean isHoused = type == 2;
 
                 printerFactory.addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors, isHoused);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
+    }
+
+    public List<Printer> getPrinters() {
+        return printersList;
     }
 }

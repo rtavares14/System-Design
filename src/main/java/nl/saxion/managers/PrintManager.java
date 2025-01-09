@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class PrintManager {
-    private ArrayList<Print> prints = new ArrayList<>();
+    private List<Print> prints = new ArrayList<>();
     private ArrayList<PrintTask> printTasks;
     private SpoolManager spoolManager;
 
@@ -71,37 +71,37 @@ public class PrintManager {
 
     public void readPrintsFromFile(String filename) {
         JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
+        if (filename.isEmpty()) {
             filename = "prints.json";
         }
-        URL printResource = getClass().getResource("/" + filename);
-        if (printResource == null) {
+        URL printsResource = getClass().getResource("/" + filename);
+        if (printsResource == null) {
             System.err.println("Warning: Could not find prints.json file");
             return;
         }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray prints = (JSONArray) jsonParser.parse(reader);
-            for (Object p : prints) {
+        try (FileReader reader = new FileReader(URLDecoder.decode(printsResource.getPath(), StandardCharsets.UTF_8))) {
+            JSONArray printsArray = (JSONArray) jsonParser.parse(reader);
+            for (Object p : printsArray) {
                 JSONObject print = (JSONObject) p;
                 String name = (String) print.get("name");
                 int height = ((Long) print.get("height")).intValue();
                 int width = ((Long) print.get("width")).intValue();
                 int length = ((Long) print.get("length")).intValue();
-                JSONArray fLength = (JSONArray) print.get("filamentLength");
-                int printTime = ((Long) print.get("printTime")).intValue();
-                ArrayList<Double> filamentLength = new ArrayList();
-                for(int i = 0; i < fLength.size(); i++) {
-                    filamentLength.add(((Double) fLength.get(i)));
+                JSONArray filamentLengthArray = (JSONArray) print.get("filamentLength");
+                ArrayList<Double> filamentLength = new ArrayList<>();
+                for (Object lengthObj : filamentLengthArray) {
+                    filamentLength.add((Double) lengthObj);
                 }
-                addPrint(name, height, width, length, filamentLength, printTime);
+                int printTime = ((Long) print.get("printTime")).intValue();
+
+                prints.add(new Print(name, height, width, length, filamentLength, printTime));
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
         }
-
     }
 
-    public ArrayList<Print> getPrints() {
+    public List<Print> getPrints() {
         return prints;
     }
 

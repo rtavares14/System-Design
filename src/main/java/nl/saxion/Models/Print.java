@@ -48,8 +48,6 @@ public class Print {
                 "- Width: " + width + System.lineSeparator() +
                 "- Length: " + length + System.lineSeparator() +
                 "- FilamentLength: " + filamentLength + System.lineSeparator() +
-                "- Print Time: " + printTime + System.lineSeparator() +
-                "--------";
+                "- Print Time: " + printTime + System.lineSeparator();
     }
-
 }

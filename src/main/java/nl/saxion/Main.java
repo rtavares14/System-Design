@@ -1,12 +1,6 @@
 package nl.saxion;
 
-import nl.saxion.Models.*;
-import nl.saxion.Models.printer.Printer;
-import nl.saxion.managers.PrintManager;
-import nl.saxion.managers.PrinterManager;
-import nl.saxion.managers.SpoolManager;
-
-import java.util.*;
+import java.util.Scanner;
 
 public class Main {
     Facade facade = new Facade();
@@ -17,9 +11,12 @@ public class Main {
     }
 
     public void run() {
-        menu();
-        int choice = scanner.nextInt();
-        chooseMenuOption(choice);
+        int choice;
+        do {
+            menu();
+            choice = scanner.nextInt();
+            chooseMenuOption(choice);
+        } while (choice != 0);
     }
 
     public void menu() {
@@ -37,48 +34,48 @@ public class Main {
     }
 
     public void chooseMenuOption(int choice) {
-        while (true) {
-            switch (choice) {
-                case 1: {
-                    int printChoice;
-                    int colorChoice;
+        switch (choice) {
+            case 1:
+                int printChoice;
+                int colorChoice;
 
-                    facade.listPrints();
-                    printChoice = scanner.nextInt();
+                facade.listPrints();
+                printChoice = scanner.nextInt();
 
-                    facade.listSpools();
-                    colorChoice = scanner.nextInt();
+                facade.listSpools();
+                colorChoice = scanner.nextInt();
 
-                    facade.addNewPrintTask(printChoice, colorChoice);
-                    break;
-                }
-                case 2:
-                    facade.registerPrintCompletion();
-                    break;
-                case 3:
-                    facade.registerPrinterFailure();
-                    break;
-                case 4:
-                    break;
-                case 5:
-                    facade.startPrintQueue();
-                    break;
-                case 6:
-                    facade.showSpools();
-                    break;
-                case 7:
-                    facade.showPrinters();
-                    break;
-                case 8:
-                    facade.showPrints();
-                    break;
-                case 9:
-                    facade.showPendingPrintTask();
-                    break;
-                case 0:
-                    return;
-            }
+                facade.addNewPrintTask(printChoice, colorChoice);
+                break;
+            case 2:
+                facade.registerPrintCompletion();
+                break;
+            case 3:
+                facade.registerPrinterFailure();
+                break;
+            case 4:
+                facade.changePrintStrategy();
+                break;
+            case 5:
+                facade.startPrintQueue();
+                break;
+            case 6:
+                facade.showPrints();
+                break;
+            case 7:
+                facade.showPrinters();
+                break;
+            case 8:
+                facade.showSpools();
+                break;
+            case 9:
+                facade.showPendingPrintTask();
+                break;
+            case 0:
+                System.out.println("Exiting...");
+                break;
+            default:
+                System.out.println("Invalid choice. Please try again.");
         }
     }
-
 }

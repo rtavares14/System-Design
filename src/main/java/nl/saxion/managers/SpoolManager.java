@@ -29,7 +29,7 @@ public class SpoolManager {
 
     public void readSpoolsFromFile(String filename) {
         JSONParser jsonParser = new JSONParser();
-        if(filename.length() == 0) {
+        if (filename.isEmpty()) {
             filename = "spools.json";
         }
         URL spoolsResource = getClass().getResource("/" + filename);
@@ -38,10 +38,9 @@ public class SpoolManager {
             return;
         }
         try (FileReader reader = new FileReader(URLDecoder.decode(spoolsResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray spools = (JSONArray) jsonParser.parse(reader);
-            for (Object p : spools) {
+            JSONArray spoolsArray = (JSONArray) jsonParser.parse(reader);
+            for (Object p : spoolsArray) {
                 JSONObject spool = (JSONObject) p;
-                int id = ((Long) spool.get("id")).intValue();
                 String color = (String) spool.get("color");
                 String filamentType = (String) spool.get("filamentType");
                 double length = (Double) spool.get("length");
@@ -60,7 +59,7 @@ public class SpoolManager {
                         System.out.println("- Not a valid filamentType, bailing out");
                         return;
                 }
-                addSpool( color, type, length);
+                addSpool(color, type, length);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();
