@@ -20,7 +20,7 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class PrintManager {
-    private ArrayList<Print> prints;
+    private ArrayList<Print> prints = new ArrayList<>();
     private ArrayList<PrintTask> printTasks;
     private SpoolManager spoolManager;
 
