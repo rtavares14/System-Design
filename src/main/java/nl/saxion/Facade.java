@@ -16,6 +16,12 @@ public class Facade {
     private PrinterManager printerManager;
     private PrintManager printManager;
 
+    public Facade() {
+        this.spoolManager = new SpoolManager();
+        this.printerManager = new PrinterManager();
+        this.printManager = new PrintManager();
+    }
+
     public List<Printer> showPrinters(){
         for(Printer printer: printerManager.getPrinters()){
             System.out.println(printer);
