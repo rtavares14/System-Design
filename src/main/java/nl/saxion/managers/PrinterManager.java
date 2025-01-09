@@ -169,7 +169,7 @@ public class PrinterManager {
         Printer printer = foundEntry.getKey();
         Spool[] spools = printer.getCurrentSpools();
         for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
-            spools[i].reduceLength(task.getPrint().getFilamentLength());
+            spools[i].reduceLength(task.getPrint().getFilamentLength().get(0));
         }
         selectPrintTask(printer);
     }
@@ -207,7 +207,7 @@ public class PrinterManager {
         Printer printer = foundEntry.getKey();
         Spool[] spools = printer.getCurrentSpools();
         for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
-            spools[i].reduceLength(task.getPrint().getFilamentLength());
+            spools[i].reduceLength(task.getPrint().getFilamentLength().get(0));
         }
         selectPrintTask(printer);
 

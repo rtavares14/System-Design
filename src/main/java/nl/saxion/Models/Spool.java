@@ -8,11 +8,11 @@ public class Spool {
     private final FilamentType filamentType;
     private double length;
 
-    public Spool(int id, String color, FilamentType filamentType, double length) {
-        this.id = id;
+    public Spool(int id,String color, FilamentType filamentType, double length) {
         this.color = color;
         this.filamentType = filamentType;
         this.length = length;
+        this.id = id;
     }
 
     public double getLength() {
@@ -41,6 +41,10 @@ public class Spool {
         return filamentType;
     }
 
+    public int getId() {
+        return id;
+    }
+
     @Override
     public String toString() {
         return "--------" + System.lineSeparator() +
@@ -48,9 +52,5 @@ public class Spool {
                 "- filamentType: " + filamentType + System.lineSeparator() +
                 "- length: " + length + System.lineSeparator() +
                 "--------";
-    }
-
-    public int getId() {
-        return id;
     }
 }

@@ -1,25 +1,23 @@
 package nl.saxion.Models;
 
 
-import nl.saxion.utils.FilamentType;
+import java.util.ArrayList;
 
 public class Print {
     private String name;
     private int height;
     private int width;
     private int length;
-    private double filamentLength;
+    private ArrayList<Double> filamentLength;
     private int printTime;
-    private FilamentType filamentType;
 
-    public Print(String name, int height, int width, int length, double filamentLength, int printTime, FilamentType filamentType) {
+    public Print(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {
         this.name = name;
         this.height = height;
         this.width = width;
         this.length = length;
         this.filamentLength = filamentLength;
         this.printTime = printTime;
-        this.filamentType = filamentType;
     }
 
     public String getName() {
@@ -38,12 +36,8 @@ public class Print {
         return width;
     }
 
-    public double getFilamentLength() {
+    public ArrayList<Double> getFilamentLength() {
         return filamentLength;
-    }
-
-    public FilamentType getFilamentType() {
-        return filamentType;
     }
 
     @Override
