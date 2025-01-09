@@ -17,6 +17,7 @@ public class Facade {
     private PrintManager printManager;
 
     public Facade() {
+
         this.spoolManager = new SpoolManager();
         this.printerManager = new PrinterManager();
         this.printManager = new PrintManager();
