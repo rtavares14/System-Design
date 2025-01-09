@@ -1,20 +1,11 @@
 package nl.saxion;
 
 import nl.saxion.Models.*;
-import nl.saxion.Models.printers.Printer;
+import nl.saxion.Models.printer.Printer;
 import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class Main {
