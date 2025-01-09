@@ -1,11 +1,12 @@
 package nl.saxion.managers;
 
-import nl.saxion.Models.*;
-import nl.saxion.Models.printer.PrinterFactory;
-import nl.saxion.utils.FilamentType;
-import nl.saxion.Models.printer.printerTypes.MultiColor;
+import nl.saxion.Models.PrintTask;
+import nl.saxion.Models.Spool;
 import nl.saxion.Models.printer.Printer;
+import nl.saxion.Models.printer.PrinterFactory;
+import nl.saxion.Models.printer.printerTypes.MultiColor;
 import nl.saxion.Models.printer.printerTypes.StandardFDM;
+import nl.saxion.utils.FilamentType;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -16,15 +17,19 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class PrinterManager {
+    public PrinterFactory printerFactory = new PrinterFactory(this);
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
     public final ArrayList<Printer> printersList = new ArrayList<>();
     private final List<PrintTask> pendingPrintTasks = new ArrayList<>();
-    private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
     private final List<Printer> freePrinters = new ArrayList<>();
     private final List<Spool> freeSpools = new ArrayList<>();
+    private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
 
     public void selectPrintTask(Printer printer) {
         Spool[] spools = printer.getCurrentSpools();
@@ -41,7 +46,7 @@ public class PrinterManager {
                             break;
                         }
                         // The housed printer is the only one that can print ABS, but it can also print the others.
-                    } else if (printer instanceof HousedPrinter && printTask.getColors().size() == 1) {
+                    } else if (printer instanceof StandardFDM && ((StandardFDM) printer).isHoused() && printTask.getColors().size() == 1) {
                         if (spools[0].spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
                             runningPrintTasks.put(printer, printTask);
                             freePrinters.remove(printer);
@@ -89,7 +94,7 @@ public class PrinterManager {
                             freePrinters.remove(printer);
                             chosenTask = printTask;
                         }
-                    } else if (printer instanceof HousedPrinter && printTask.getColors().size() == 1) {
+                    } else if (printer instanceof StandardFDM && ((StandardFDM) printer).isHoused() && printTask.getColors().size() == 1) {
                         Spool chosenSpool = null;
                         for (Spool spool : freeSpools) {
                             if (spool.spoolMatch(printTask.getColors().get(0), printTask.getFilamentType())) {
@@ -110,7 +115,7 @@ public class PrinterManager {
                         for (int i = 0; i < printTask.getColors().size(); i++) {
                             for (Spool spool : freeSpools) {
                                 if (spool.spoolMatch(printTask.getColors().get(i), printTask.getFilamentType())
-                                        //&& !containsSpool(chosenSpools, printTask.getColors().get(i))
+                                    //&& !containsSpool(chosenSpools, printTask.getColors().get(i))
                                 ) {
                                     chosenSpools.add(spool);
                                 }
@@ -234,7 +239,7 @@ public class PrinterManager {
 
     public void readPrintersFromFile(String filename) {
         JSONParser jsonParser = new JSONParser();
-        if (filename.length() == 0) {
+        if (filename.isEmpty()) {
             filename = "printers.json";
         }
         URL printersResource = getClass().getResource("/" + filename);
@@ -245,6 +250,7 @@ public class PrinterManager {
         try (FileReader reader = new FileReader(URLDecoder.decode(printersResource.getPath(), StandardCharsets.UTF_8))) {
             JSONArray printers = (JSONArray) jsonParser.parse(reader);
             for (Object p : printers) {
+                boolean isHoused;
                 JSONObject printer = (JSONObject) p;
                 int id = ((Long) printer.get("id")).intValue();
                 int type = ((Long) printer.get("type")).intValue();
@@ -254,7 +260,10 @@ public class PrinterManager {
                 int maxY = ((Long) printer.get("maxY")).intValue();
                 int maxZ = ((Long) printer.get("maxZ")).intValue();
                 int maxColors = ((Long) printer.get("maxColors")).intValue();
-                PrinterFactory.addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors);
+
+                isHoused = type == 2;
+
+                printerFactory.addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors, isHoused);
             }
         } catch (IOException | ParseException e) {
             e.printStackTrace();

@@ -15,14 +15,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class SpoolManager {
-    private ArrayList<Spool> spools;
+    private final ArrayList<Spool> spools;
 
     public SpoolManager() {
         this.spools = new ArrayList<>();
     }
 
     public void addSpool(String color, FilamentType filamentType, double length){
-        spools.add(new Spool(color,filamentType,length));
+        spools.add(new Spool(spools.size()+1,color,filamentType,length));
     }
 
     public void getSpool(){}

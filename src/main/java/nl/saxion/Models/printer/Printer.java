@@ -103,9 +103,9 @@ public abstract class Printer {
     public abstract void setCurrentSpools(ArrayList<Spool> spools);
 
     public boolean printFits(Print print) {
-        return print.getX() <= maxX &&
-                print.getY() <= maxY &&
-                print.getZ() <= maxZ;
+        return print.getLength() <= maxX &&
+                print.getHeight() <= maxY &&
+                print.getWidth() <= maxZ;
     }
 
     @Override

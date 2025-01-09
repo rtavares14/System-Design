@@ -43,8 +43,8 @@ public class PrintManager {
         throw new NoSuchElementException("Printer with such print does not exist");
     }
 
-    public void addPrint(String name, int height, int width, int length, double filamentLength, int printTime) {
-        prints.add(new Print(name, height, width, length, filamentLength, printTime));
+    public void addPrint(String name, int height, int width, int length, double filamentLength, int printTime, FilamentType filamentType) {
+        prints.add(new Print(name, height, width, length, filamentLength, printTime, filamentType));
     }
 
     public static void readPrintsFromFile(String file) {
