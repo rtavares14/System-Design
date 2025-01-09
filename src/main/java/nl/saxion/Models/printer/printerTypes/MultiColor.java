@@ -48,22 +48,16 @@ public class MultiColor extends Printer implements PrintTimeCalculator {
     @Override
     public String toString() {
         String result = super.toString();
-        String[] resultArray = result.split("- ");
-        String spools = resultArray[resultArray.length - 1];
-        if (spool2 != null) {
-            spools = spools.replace(System.lineSeparator(), ", " + spool2.getId() + System.lineSeparator());
+        String append = "";
+        if (currentSpool != null) {
+            append += "- Spool(s): " + currentSpool.getId();
+            if (spool2 != null) append += ", " + spool2.getId();
+            if (spool3 != null) append += ", " + spool3.getId();
+            if (spool4 != null) append += ", " + spool4.getId();
+            append += System.lineSeparator();
         }
-        if (spool3 != null) {
-            spools = spools.replace(System.lineSeparator(), ", " + spool3.getId() + System.lineSeparator());
-        }
-        if (spool4 != null) {
-            spools = spools.replace(System.lineSeparator(), ", " + spool4.getId() + System.lineSeparator());
-        }
-        spools = spools.replace("--------", "- maxColors: " + maxColors + System.lineSeparator() +
-                "--------");
-        resultArray[resultArray.length - 1] = spools;
-        result = String.join("- ", resultArray);
-
+        append += "--------";
+        result = result.replace("--------", append);
         return result;
     }
 

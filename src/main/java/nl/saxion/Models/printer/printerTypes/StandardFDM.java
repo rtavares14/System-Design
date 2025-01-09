@@ -60,10 +60,7 @@ public class StandardFDM extends Printer implements PrintTimeCalculator {
     @Override
     public String toString() {
         String result = super.toString();
-        String append = "- maxX: " + super.getMaxX() + System.lineSeparator() +
-                "- maxY: " + super.getMaxY() + System.lineSeparator() +
-                "- maxZ: " + super.getMaxZ() + System.lineSeparator() +
-                "- Housed: " + isHoused + System.lineSeparator();
+        String append = "";
         if (currentSpool != null) {
             append += "- Spool(s): " + currentSpool.getId() + System.lineSeparator();
         }
