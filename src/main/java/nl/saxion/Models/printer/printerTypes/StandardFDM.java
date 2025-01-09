@@ -49,13 +49,13 @@ public class StandardFDM extends Printer implements PrintTimeCalculator {
     /**
      * Check if a print supports ABS material.
      *
-     * @param print the print to check
+//     * @param print the print to check
      * @return true if ABS is supported
      */
-    private boolean supportsABS(Print print) {
-        // Assume a specific property of `Print` (like material type) determines ABS compatibility
-        return print.getFilamentType().equals(FilamentType.ABS);
-    }
+//    private boolean supportsABS(Print print) {
+//        // Assume a specific property of `Print` (like material type) determines ABS compatibility
+//        return print.getFilamentType().equals(FilamentType.ABS);
+//    }
 
     @Override
     public String toString() {

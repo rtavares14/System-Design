@@ -3,7 +3,7 @@ package nl.saxion;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
-import nl.saxion.Models.printers.Printer;
+import nl.saxion.Models.printer.Printer;
 import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;

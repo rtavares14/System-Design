@@ -1,5 +1,7 @@
 package nl.saxion.Models;
 
+import nl.saxion.utils.FilamentType;
+
 public class Spool {
     private final int id;
     private final String color;
