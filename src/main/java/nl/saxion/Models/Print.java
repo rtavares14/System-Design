@@ -1,6 +1,8 @@
 package nl.saxion.Models;
 
 
+import nl.saxion.utils.FilamentType;
+
 public class Print {
     private String name;
     private int height;
@@ -8,14 +10,16 @@ public class Print {
     private int length;
     private double filamentLength;
     private int printTime;
+    private FilamentType filamentType;
 
-    public Print(String name, int height, int width, int length, double filamentLength, int printTime) {
+    public Print(String name, int height, int width, int length, double filamentLength, int printTime, FilamentType filamentType) {
         this.name = name;
         this.height = height;
         this.width = width;
         this.length = length;
         this.filamentLength = filamentLength;
         this.printTime = printTime;
+        this.filamentType = filamentType;
     }
 
     public String getName() {
@@ -36,6 +40,10 @@ public class Print {
 
     public double getFilamentLength() {
         return filamentLength;
+    }
+
+    public FilamentType getFilamentType() {
+        return filamentType;
     }
 
     @Override

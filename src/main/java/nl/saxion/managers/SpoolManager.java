@@ -1,6 +1,6 @@
 package nl.saxion.managers;
 
-import nl.saxion.Models.FilamentType;
+import nl.saxion.utils.FilamentType;
 import nl.saxion.Models.Spool;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -15,14 +15,14 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 
 public class SpoolManager {
-    private ArrayList<Spool> spools;
+    private final ArrayList<Spool> spools;
 
     public SpoolManager() {
         this.spools = new ArrayList<>();
     }
 
     public void addSpool(String color, FilamentType filamentType, double length){
-        spools.add(new Spool(color,filamentType,length));
+        spools.add(new Spool(spools.size()+1,color,filamentType,length));
     }
 
     public void getSpool(){}

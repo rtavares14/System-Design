@@ -1,5 +1,7 @@
 package nl.saxion.Models;
 
+import nl.saxion.utils.FilamentType;
+
 import java.util.List;
 
 public class PrintTask {

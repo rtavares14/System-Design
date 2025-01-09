@@ -1,11 +1,15 @@
 package nl.saxion.Models;
 
+import nl.saxion.utils.FilamentType;
+
 public class Spool {
+    private final int id;
     private final String color;
     private final FilamentType filamentType;
     private double length;
 
-    public Spool(String color, FilamentType filamentType, double length) {
+    public Spool(int id, String color, FilamentType filamentType, double length) {
+        this.id = id;
         this.color = color;
         this.filamentType = filamentType;
         this.length = length;
@@ -44,5 +48,9 @@ public class Spool {
                 "- filamentType: " + filamentType + System.lineSeparator() +
                 "- length: " + length + System.lineSeparator() +
                 "--------";
+    }
+
+    public int getId() {
+        return id;
     }
 }
