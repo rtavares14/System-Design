@@ -13,6 +13,11 @@ import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+
+import static nl.saxion.utils.FilamentType.*;
 
 public class SpoolManager {
     private final ArrayList<Spool> spools;
@@ -23,6 +28,18 @@ public class SpoolManager {
 
     public void addSpool(String color, FilamentType filamentType, double length){
         spools.add(new Spool(spools.size()+1,color,filamentType,length));
+    }
+
+    public List<String> getAvailableColors(FilamentType filamentType) {
+        List<Spool> spools = getSpools();
+        Set<String> availableColors = new HashSet<>();
+        for (Spool spool : spools) {
+            String colorString = spool.getColor();
+            if (filamentType == spool.getFilamentType()) {
+                availableColors.add(colorString);
+            }
+        }
+        return availableColors.stream().toList();
     }
 
     public void getSpool(){}
@@ -47,13 +64,13 @@ public class SpoolManager {
                 FilamentType type;
                 switch (filamentType) {
                     case "PLA":
-                        type = FilamentType.PLA;
+                        type = PLA;
                         break;
                     case "PETG":
-                        type = FilamentType.PETG;
+                        type = PETG;
                         break;
                     case "ABS":
-                        type = FilamentType.ABS;
+                        type = ABS;
                         break;
                     default:
                         System.out.println("- Not a valid filamentType, bailing out");
@@ -66,7 +83,7 @@ public class SpoolManager {
         }
     }
 
-    public ArrayList<Spool> getSpools() {
+    public List<Spool> getSpools() {
         return spools;
     }
 }

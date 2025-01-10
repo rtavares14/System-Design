@@ -28,8 +28,9 @@ public class PrinterFactory {
      * @param isHoused     whether the printer is housed (only applicable to StandardFDM)
      */
     public void addPrinter(int id, int printerType, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors, boolean isHoused) {
-        if (printerType == 1) {
-            // Create a StandardFDM printer
+        if (printerType == 1 || printerType == 3) {
+            // Create a StandardFDM printer (or a housed printer)
+            isHoused = printerType == 3;
             StandardFDM printer = new StandardFDM(id, printerName, manufacturer, maxX, maxY, maxZ);
             printer.setHoused(isHoused); // Set the housed property dynamically
             printerManager.printersList.add(printer);
