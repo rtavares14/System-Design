@@ -23,6 +23,7 @@ public class Facade {
         this.spoolManager = new SpoolManager();
         this.printerManager = new PrinterManager();
         this.printManager = new PrintManager(spoolManager);
+
         this.printerManager.readPrintersFromFile(""); //printers from file
         this.printManager.readPrintsFromFile(""); //prints from file
         this.spoolManager.readSpoolsFromFile(""); //prints from file

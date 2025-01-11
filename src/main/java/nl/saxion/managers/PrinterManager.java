@@ -40,15 +40,17 @@ public class PrinterManager {
 
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
 
-    public PrinterManager( ) {
-
+    public PrinterManager(PrinterFactory printerFactory) {
+        this.printerFactory = new PrinterFactory(this);
     }
 
     public void selectPrintTask() {
         for (PrintTask printTask : pendingPrintTasks) {
             for (Printer printer : getPrinters()) {
                 if (taskSuitsPrinter(printer, printTask)) {
-
+                    ArrayList<PrintTask> newArray = printersMap.get(printer);
+                    newArray.add(printTask);
+                    printersMap.replace(printer,newArray);
                 }
 
             }

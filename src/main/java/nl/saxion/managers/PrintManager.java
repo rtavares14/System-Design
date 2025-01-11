@@ -22,7 +22,7 @@ import java.util.NoSuchElementException;
 public class PrintManager {
     private List<Print> prints = new ArrayList<>();
     private static List<PrintTask> printTasks = new ArrayList<>();
-    private final SpoolManager spoolManager; // Reference shared instance
+    private final SpoolManager spoolManager;
 
     public PrintManager(SpoolManager spoolManager) {
         this.spoolManager = spoolManager;
