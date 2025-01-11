@@ -70,21 +70,6 @@ public abstract class Printer {
         return manufacturer;
     }
 
-    public int getMaxX() {
-        return maxX;
-    }
-
-    public int getMaxY() {
-        return maxY;
-    }
-
-    public int getMaxZ() {
-        return maxZ;
-    }
-
-    public List<Spool> getSpools() {
-        return spools;
-    }
 
     public void addSpool(Spool spool) {
         spools.add(spool);
@@ -98,7 +83,10 @@ public abstract class Printer {
         spools.clear();
     }
 
-    public abstract Spool[] getCurrentSpools();
+    public Spool getCurrentSpool(){
+        return spools.get(0);
+    }
+    public abstract Spool[] getSpools();
 
     public abstract void setCurrentSpools(ArrayList<Spool> spools);
 

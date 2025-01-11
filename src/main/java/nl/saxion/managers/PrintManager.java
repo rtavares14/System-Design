@@ -21,8 +21,7 @@ import java.util.NoSuchElementException;
 
 public class PrintManager {
     private List<Print> prints = new ArrayList<>();
-    private ArrayList<PrintTask> printTasks = new ArrayList<>();
-    private List<PrintTask> pendingPrints = new ArrayList<>();
+    private static List<PrintTask> printTasks = new ArrayList<>();
     private final SpoolManager spoolManager; // Reference shared instance
 
     public PrintManager(SpoolManager spoolManager) {
@@ -50,7 +49,7 @@ public class PrintManager {
         }
 
         PrintTask task = new PrintTask(print, colors, type);
-        pendingPrints.add(task);
+        printTasks.add(task);
         System.out.print("Task added to the queue");
     }
 
@@ -72,7 +71,7 @@ public class PrintManager {
         if (filename.isEmpty()) {
             filename = "prints.json";
         }
-        URL printsResource = getClass().getResource("/" + filename);
+        URL printsResource = PrintManager.class.getResource("/" + filename);
         if (printsResource == null) {
             System.err.println("Warning: Could not find prints.json file");
             return;
@@ -103,8 +102,8 @@ public class PrintManager {
         return prints;
     }
 
-    public List<PrintTask> getPrintTasks() {
-        return pendingPrints;
+    public static List<PrintTask> getPrintTasks() {
+        return printTasks;
     }
 }
 

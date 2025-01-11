@@ -20,7 +20,7 @@ public class MultiColor extends Printer implements PrintTimeCalculator {
     }
 
     @Override
-    public Spool[] getCurrentSpools() {
+    public Spool[] getSpools() {
         Spool[] spools = new Spool[4];
         spools[0] = getCurrentSpool();
         spools[1] = spool2;

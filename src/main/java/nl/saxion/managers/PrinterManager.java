@@ -20,22 +20,51 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PrinterManager {
+
     public PrinterFactory printerFactory = new PrinterFactory(this);
+
     //keeps track of the printers and its tasks
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
 
     public final List<Printer> printersList = new ArrayList<>();
+
     // printers not in use
     private final List<Printer> freePrinters = new ArrayList<>();
+
+    // spools not in use
     private final List<Spool> freeSpools = new ArrayList<>();
 
-    private final PriorityQueue<PrintTask> pendingPrintTasks = new PriorityQueue<>();
+
+    private final List<PrintTask> pendingPrintTasks = PrintManager.getPrintTasks();
 
 
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
 
+    public PrinterManager( ) {
+
+    }
+
+    public void selectPrintTask() {
+        for (PrintTask printTask : pendingPrintTasks) {
+            for (Printer printer : getPrinters()) {
+                if (taskSuitsPrinter(printer, printTask)) {
+
+                }
+
+            }
+        }
+    }
+
+    public boolean taskSuitsPrinter(Printer printer, PrintTask printTask) {
+        if (printer.getSpools().length < printTask.getColors().size()) {
+            return false;
+        }
+
+        return printer.printFits(printTask.getPrint()) && printTask.getColors().get(0).equals(printer.getCurrentSpool().getColor());
+    }
+
     public void selectPrintTask(Printer printer) {
-        Spool[] spools = printer.getCurrentSpools();
+        Spool[] spools = printer.getSpools();
         PrintTask chosenTask = null;
         // First we look if there's a task that matches the current spool on the printer.
         if (spools[0] != null) {
@@ -56,7 +85,7 @@ public class PrinterManager {
                             chosenTask = printTask;
                             break;
                         }
-                        // For multicolor the order of spools does matter, so they have to match.
+// For multicolor the order of spools does matter, so they have to match.
                     } else if (printer instanceof MultiColor && printTask.getFilamentType() != FilamentType.ABS && printTask.getColors().size() <= ((MultiColor) printer).getMaxColors()) {
                         boolean printWorks = true;
                         for (int i = 0; i < spools.length && i < printTask.getColors().size(); i++) {
@@ -90,7 +119,7 @@ public class PrinterManager {
                         }
                         if (chosenSpool != null) {
                             runningPrintTasks.put(printer, printTask);
-                            freeSpools.add(printer.getCurrentSpools()[0]);
+                            freeSpools.add(printer.getSpools()[0]);
                             System.out.println("- Spool change: Please place spool in printer " + printer.getName());
                             freeSpools.remove(chosenSpool);
                             ((StandardFDM) printer).setCurrentSpool(chosenSpool);
@@ -106,7 +135,7 @@ public class PrinterManager {
                         }
                         if (chosenSpool != null) {
                             runningPrintTasks.put(printer, printTask);
-                            freeSpools.add(printer.getCurrentSpools()[0]);
+                            freeSpools.add(printer.getSpools()[0]);
                             System.out.println("- Spool change: Please place spool in printer " + printer.getName());
                             freeSpools.remove(chosenSpool);
                             ((StandardFDM) printer).setCurrentSpool(chosenSpool);
@@ -127,7 +156,7 @@ public class PrinterManager {
                         // We assume that if they are the same length that there is a match.
                         if (chosenSpools.size() == printTask.getColors().size()) {
                             runningPrintTasks.put(printer, printTask);
-                            for (Spool spool : printer.getCurrentSpools()) {
+                            for (Spool spool : printer.getSpools()) {
                                 freeSpools.add(spool);
                             }
                             printer.setCurrentSpools(chosenSpools);
@@ -170,7 +199,7 @@ public class PrinterManager {
                 + foundEntry.getKey().getName());
 
         Printer printer = foundEntry.getKey();
-        Spool[] spools = printer.getCurrentSpools();
+        Spool[] spools = printer.getSpools();
         for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
             spools[i].reduceLength(task.getPrint().getFilamentLength().get(0));
         }
@@ -208,7 +237,7 @@ public class PrinterManager {
         System.out.println("Task " + task + " removed from printer " + foundEntry.getKey().getName());
 
         Printer printer = foundEntry.getKey();
-        Spool[] spools = printer.getCurrentSpools();
+        Spool[] spools = printer.getSpools();
         for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
             spools[i].reduceLength(task.getPrint().getFilamentLength().get(0));
         }
@@ -232,9 +261,9 @@ public class PrinterManager {
         return null;
     }
 
-    public List<PrintTask> getPendingPrintTasks() {
-        return pendingPrintTasks;
-    }
+//    public List<PrintTask> getPendingPrintTasks() {
+//        return pendingPrintTasks;
+//    }
 
     public void readPrintersFromFile(String filename) {
         JSONParser jsonParser = new JSONParser();
