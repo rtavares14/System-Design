@@ -21,39 +21,37 @@ import java.util.NoSuchElementException;
 
 public class PrintManager {
     private List<Print> prints = new ArrayList<>();
-    private ArrayList<PrintTask> printTasks;
-    private SpoolManager spoolManager;
+    private ArrayList<PrintTask> printTasks = new ArrayList<>();
+    private List<PrintTask> pendingPrints = new ArrayList<>();
+    private final SpoolManager spoolManager; // Reference shared instance
 
-    public PrintManager() {
-        readPrintsFromFile("");
-        this.prints = new ArrayList<>();
-        this.spoolManager = new SpoolManager();
-    }
-
-    public void addPrintTask(String printName, List<String> colors, FilamentType type) {
-
-        Print print = findPrint(printName);
-
-        for (String color : colors) {
-            ArrayList<Spool> spools = spoolManager.getSpools();
-            if (spools.stream().noneMatch(spool -> spool.spoolMatch(color, type))) {
-                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
-            }
-        }
-
-        printTasks.add(new PrintTask(print, colors, type));
+    public PrintManager(SpoolManager spoolManager) {
+        this.spoolManager = spoolManager;
     }
 
     public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
+        Print print = findPrint(printName.getName());
+        if (print == null || colors.isEmpty()) {
+            System.err.println("All fields must be filled in");
+            return;
+        }
 
         for (String color : colors) {
-            ArrayList<Spool> spools = spoolManager.getSpools();
-            if (spools.stream().noneMatch(spool -> spool.spoolMatch(color, type))) {
+            boolean found = false;
+            for (Spool spool : spoolManager.getSpools()) {
+                if (spool.getColor().equals(color) && spool.getFilamentType() == type) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
                 throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
             }
         }
 
-        printTasks.add(new PrintTask(printName, colors, type));
+        PrintTask task = new PrintTask(print, colors, type);
+        pendingPrints.add(task);
+        System.out.print("Task added to the queue");
     }
 
     public Print findPrint(String print) {
@@ -105,8 +103,8 @@ public class PrintManager {
         return prints;
     }
 
-    public ArrayList<PrintTask> getPrintTasks() {
-        return printTasks;
+    public List<PrintTask> getPrintTasks() {
+        return pendingPrints;
     }
 }
 

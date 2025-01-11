@@ -110,12 +110,12 @@ public abstract class Printer {
 
     @Override
     public String toString() {
-        return "--------" + System.lineSeparator() +
+        return "-----------------------------------" + System.lineSeparator() +
                 "- ID: " + id + System.lineSeparator() +
                 "- Name: " + name + System.lineSeparator() +
                 "- Model: " + manufacturer + System.lineSeparator() +
                 "- Manufacturer: " + manufacturer + System.lineSeparator() +
                 "- Max Dimensions: (" + maxX + " x " + maxY + " x " + maxZ + ")" + System.lineSeparator() +
-                "- Status: " + status + System.lineSeparator();
+                "- Status: " + status;
     }
 }

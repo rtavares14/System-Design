@@ -30,52 +30,27 @@ public class Main {
         System.out.println("- 7) Show printers");
         System.out.println("- 8) Show spools");
         System.out.println("- 9) Show pending print tasks");
+        System.out.println("- 10) Show Dashboard Stats");
         System.out.println("- 0) Exit");
+        System.out.println("-----------------------------------");
+        System.out.print("Enter your choice: ");
     }
 
     public void chooseMenuOption(int choice) {
         switch (choice) {
-            case 1:
-                int printChoice;
-                int colorChoice;
-
-                facade.listPrints();
-                printChoice = scanner.nextInt();
-
-                facade.listSpools();
-                colorChoice = scanner.nextInt();
-
-                facade.addNewPrintTask(printChoice, colorChoice);
-                break;
-            case 2:
-                facade.registerPrintCompletion();
-                break;
-            case 3:
-                facade.registerPrinterFailure();
-                break;
-            case 4:
-                facade.changePrintStrategy();
-                break;
-            case 5:
-                facade.startPrintQueue();
-                break;
-            case 6:
-                facade.showPrints();
-                break;
-            case 7:
-                facade.showPrinters();
-                break;
-            case 8:
-                facade.showSpools();
-                break;
-            case 9:
-                facade.showPendingPrintTask();
-                break;
-            case 0:
-                System.out.println("Exiting...");
-                break;
-            default:
-                System.out.println("Invalid choice. Please try again.");
+            case 1 -> facade.addNewPrintTask();
+            case 2 -> facade.registerPrintCompletion();
+            case 3 -> facade.registerPrinterFailure();
+            case 4 -> facade.changePrintStrategy();
+            case 5 -> facade.startPrintQueue();
+            case 6 -> facade.showPrints();
+            case 7 -> facade.showPrinters();
+            case 8 -> facade.showSpools();
+            case 9 -> facade.showPendingPrintTask();
+            case 10 -> System.out.println("Show Dashboard Stats");
+                    //facade.showDashboardStats();
+            case 0 -> System.out.println("Exiting...");
+            default -> System.out.println("Invalid choice. Please try again.");
         }
     }
 }
