@@ -17,18 +17,21 @@ import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PrinterManager {
     public PrinterFactory printerFactory = new PrinterFactory(this);
+    //keeps track of the printers and its tasks
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
+
     public final List<Printer> printersList = new ArrayList<>();
-    private final List<PrintTask> pendingPrintTasks = new ArrayList<>();
+    // printers not in use
     private final List<Printer> freePrinters = new ArrayList<>();
     private final List<Spool> freeSpools = new ArrayList<>();
+
+    private final PriorityQueue<PrintTask> pendingPrintTasks = new PriorityQueue<>();
+
+
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
 
     public void selectPrintTask(Printer printer) {
