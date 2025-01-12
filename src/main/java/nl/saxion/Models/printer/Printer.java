@@ -2,7 +2,7 @@ package nl.saxion.Models.printer;
 
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
-import nl.saxion.Models.interfaces.PrinterObserver;
+import nl.saxion.Models.observer.PrinterObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -10,21 +10,25 @@ import java.util.List;
 public abstract class Printer {
     private final int id;
     private final String name;
+    private final String model;
     private final String manufacturer;
     private final int maxX;
     private final int maxY;
     private final int maxZ;
+    private boolean housed;
     private final List<Spool> spools;
     private String status;
     private final List<PrinterObserver> observers; // List of observers
 
-    public Printer(int id, String printerName, String manufacturer, int maxX, int maxY, int maxZ) {
+    public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed) {
         this.id = id;
         this.name = printerName;
+        this.model = model;
         this.manufacturer = manufacturer;
         this.maxX = maxX;
         this.maxY = maxY;
         this.maxZ = maxZ;
+        this.housed = housed;
         this.spools = new ArrayList<>();
         this.status = "Idle"; // Default status
         this.observers = new ArrayList<>(); // Initialize observers list
@@ -96,14 +100,19 @@ public abstract class Printer {
                 print.getWidth() <= maxZ;
     }
 
+    public boolean isHoused() {
+        return housed;
+    }
+
     @Override
     public String toString() {
         return "-----------------------------------" + System.lineSeparator() +
                 "- ID: " + id + System.lineSeparator() +
                 "- Name: " + name + System.lineSeparator() +
-                "- Model: " + manufacturer + System.lineSeparator() +
+                "- Model: " + model + System.lineSeparator() +
                 "- Manufacturer: " + manufacturer + System.lineSeparator() +
                 "- Max Dimensions: (" + maxX + " x " + maxY + " x " + maxZ + ")" + System.lineSeparator() +
+                "- Housed: " + housed + System.lineSeparator() +
                 "- Status: " + status;
     }
 }

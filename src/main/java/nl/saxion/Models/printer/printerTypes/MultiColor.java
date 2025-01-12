@@ -14,8 +14,8 @@ public class MultiColor extends Printer implements PrintTimeCalculator {
     private Spool spool3;
     private Spool spool4;
 
-    public MultiColor(int id, String printerName, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
-        super(id, printerName, manufacturer, maxX, maxY, maxZ);
+    public MultiColor(int id, String printerName,String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused, int maxColors) {
+        super(id, printerName, model, manufacturer, maxX, maxY,  maxZ, isHoused);
         this.maxColors = maxColors;
     }
 
