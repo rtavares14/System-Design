@@ -3,8 +3,10 @@ package nl.saxion.adapter;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.printer.Printer;
+import nl.saxion.Models.printer.PrinterFactory;
 import nl.saxion.Models.printer.printerTypes.MultiColor;
 import nl.saxion.Models.printer.printerTypes.StandardFDM;
+import nl.saxion.managers.PrinterManager;
 import nl.saxion.utils.FilamentType;
 
 import java.io.BufferedReader;
@@ -46,6 +48,7 @@ public class CSVAdapterReader implements AdapterReader {
                         Double.parseDouble(values[3]) // length
                 );
                 spools.add(spool);
+
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -72,17 +75,9 @@ public class CSVAdapterReader implements AdapterReader {
                 int maxY = Integer.parseInt(values[6]);
                 int maxZ = Integer.parseInt(values[7]);
                 int maxColors = Integer.parseInt(values[8]);
-                boolean isHoused = (type == 3 || type == 4);
 
-                if (type == 1 || type == 3) {
-                    // StandardFDM Printer
-                    Printer printer = new StandardFDM(id, name, model, manufacturer, maxX, maxY, maxZ, isHoused);
-                    printers.add(printer);
-                } else if (type == 2 || type == 4) {
-                    // MultiColor Printer
-                    Printer printer = new MultiColor(id, name, model, manufacturer, maxX, maxY, maxZ, isHoused, maxColors);
-                    printers.add(printer);
-                }
+                // call the factory to create the printer
+                PrinterFactory.addPrinter(id,type,name,model,manufacturer,maxX,maxY,maxZ,maxColors);
             }
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();

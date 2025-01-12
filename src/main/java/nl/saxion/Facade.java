@@ -3,6 +3,7 @@ package nl.saxion;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
+import nl.saxion.Models.observer.Dashboard;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
@@ -17,12 +18,14 @@ public class Facade {
     private final SpoolManager spoolManager;
     private final PrinterManager printerManager;
     private final PrintManager printManager;
+    private final Dashboard dashboard;
     private final Scanner scanner = new Scanner(System.in);
 
     public Facade() {
         this.spoolManager = new SpoolManager();
         this.printerManager = new PrinterManager();
         this.printManager = new PrintManager(spoolManager);
+        this.dashboard = new Dashboard();
     }
 
     /**
@@ -208,5 +211,9 @@ public class Facade {
     }
 
     private void exit() {
+    }
+
+    public void showDashboardStats() {
+        dashboard.showDashboard();
     }
 }
