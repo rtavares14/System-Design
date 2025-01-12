@@ -2,7 +2,7 @@ package nl.saxion.Models.printer;
 
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
-import nl.saxion.Models.observer.PrinterObserver;
+import nl.saxion.Models.observer.PrintTaskObserver;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -18,7 +18,7 @@ public abstract class Printer {
     private boolean housed;
     private final List<Spool> spools;
     private String status;
-    private final List<PrinterObserver> observers; // List of observers
+    private final List<PrintTaskObserver> observers; // List of observers
 
     public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed) {
         this.id = id;
@@ -32,30 +32,6 @@ public abstract class Printer {
         this.spools = new ArrayList<>();
         this.status = "Idle"; // Default status
         this.observers = new ArrayList<>(); // Initialize observers list
-    }
-
-    // Observer methods
-    // Add an observer
-    public void addObserver(PrinterObserver observer) {
-        observers.add(observer);
-    }
-
-    // Remove an observer
-    public void removeObserver(PrinterObserver observer) {
-        observers.remove(observer);
-    }
-
-    // Notify all observers of a status change
-    private void notifyObservers() {
-        for (PrinterObserver observer : observers) {
-            observer.update(this);
-        }
-    }
-
-    // Set status and notify observers
-    public void setStatus(String status) {
-        this.status = status;
-        notifyObservers(); // Notify observers whenever the status is updated
     }
 
     public String getStatus() {
@@ -113,6 +89,7 @@ public abstract class Printer {
                 "- Manufacturer: " + manufacturer + System.lineSeparator() +
                 "- Max Dimensions: (" + maxX + " x " + maxY + " x " + maxZ + ")" + System.lineSeparator() +
                 "- Housed: " + housed + System.lineSeparator() +
-                "- Status: " + status;
+                "- Type: " + this.getClass().getSimpleName() + System.lineSeparator() +
+                 "- Status: " + status ;
     }
 }

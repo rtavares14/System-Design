@@ -59,8 +59,7 @@ public class Main {
             case 7 -> facade.showPrinters();
             case 8 -> facade.showSpools();
             case 9 -> facade.showPendingPrintTask();
-            case 10 -> System.out.println("Show Dashboard Stats");
-                    //facade.showDashboardStats();
+            case 10 -> facade.showDashboardStats();
             case 0 -> System.out.println("Exiting...");
             default -> System.out.println("Invalid choice. Please try again.");
         }
