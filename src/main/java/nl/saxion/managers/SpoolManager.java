@@ -1,14 +1,11 @@
 package nl.saxion.managers;
 
-import nl.saxion.utils.FilamentType;
 import nl.saxion.Models.Spool;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import nl.saxion.adapter.CSVAdapterReader;
+import nl.saxion.adapter.JSONAdapterReader;
+import nl.saxion.adapter.AdapterReader;
+import nl.saxion.utils.FilamentType;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -17,19 +14,67 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import static nl.saxion.utils.FilamentType.*;
-
 public class SpoolManager {
-    private final ArrayList<Spool> spools;
+    private final List<Spool> spools;
 
     public SpoolManager() {
         this.spools = new ArrayList<>();
     }
 
-    public void addSpool(String color, FilamentType filamentType, double length){
-        spools.add(new Spool(spools.size()+1,color,filamentType,length));
+    /**
+     * Getter for the JSON file handler.
+     */
+    private AdapterReader getJsonFileHandler() {
+        return JSONAdapterReader.getReader();
     }
 
+    /**
+     * Getter for the CSV file handler.
+     */
+    private AdapterReader getCsvFileHandler() {
+        return CSVAdapterReader.getReader();
+    }
+
+    /**
+     * Getter for the list of spools.
+     */
+    public List<Spool> getSpools() {
+        return spools;
+    }
+
+    /**
+     * Method to read spools from a file.
+     * The file can be either a JSON or CSV file.
+     * The method will determine the file type and use the appropriate handler.
+     * The spools will be added to the spools.
+     *
+     * @param filename The name of the file to read the spools from.
+     */
+    public void readSpoolsFromFile(String filename) {
+        URL spoolResource = getClass().getResource("/" + filename);
+        assert spoolResource != null;
+        String path = URLDecoder.decode(spoolResource.getPath(), StandardCharsets.UTF_8);
+        AdapterReader fileHandler;
+
+        if (getJsonFileHandler().supportsFileType(path)) {
+            fileHandler = getJsonFileHandler();
+        } else if (getCsvFileHandler().supportsFileType(path)) {
+            fileHandler = getCsvFileHandler();
+        } else {
+            System.out.println("Unsupported file type for filename: " + path);
+            return;
+        }
+
+        List<Spool> spoolsFromFile = fileHandler.readSpools(path);
+        spools.addAll(spoolsFromFile);
+    }
+
+    /**
+     * Method that will return a list of available colors for a given filament type.
+     *
+     * @param filamentType The filament type to get the available colors for.
+     * @return A list of available colors for the given filament type.
+     */
     public List<String> getAvailableColors(FilamentType filamentType) {
         List<Spool> spools = getSpools();
         Set<String> availableColors = new HashSet<>();
@@ -43,47 +88,4 @@ public class SpoolManager {
     }
 
     public void getSpool(){}
-
-    public void readSpoolsFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if (filename.isEmpty()) {
-            filename = "spools.json";
-        }
-        URL spoolsResource = getClass().getResource("/" + filename);
-        if (spoolsResource == null) {
-            System.err.println("Warning: Could not find spools.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(spoolsResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray spoolsArray = (JSONArray) jsonParser.parse(reader);
-            for (Object p : spoolsArray) {
-                JSONObject spool = (JSONObject) p;
-                String color = (String) spool.get("color");
-                String filamentType = (String) spool.get("filamentType");
-                double length = (Double) spool.get("length");
-                FilamentType type;
-                switch (filamentType) {
-                    case "PLA":
-                        type = PLA;
-                        break;
-                    case "PETG":
-                        type = PETG;
-                        break;
-                    case "ABS":
-                        type = ABS;
-                        break;
-                    default:
-                        System.out.println("- Not a valid filamentType, bailing out");
-                        return;
-                }
-                addSpool(color, type, length);
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Spool> getSpools() {
-        return spools;
-    }
 }

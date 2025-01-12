@@ -10,7 +10,12 @@ public class Main {
         new Main().run();
     }
 
+    /**
+     * Run the program and display menu
+     */
     public void run() {
+        facade.readData();
+
         int choice;
         do {
             menu();
@@ -19,6 +24,9 @@ public class Main {
         } while (choice != 0);
     }
 
+    /**
+     * Display menu options to the user to choose from
+     */
     public void menu() {
         System.out.println("------------- Menu ----------------");
         System.out.println("- 1) Add new Print Task");
@@ -36,6 +44,10 @@ public class Main {
         System.out.print("Enter your choice: ");
     }
 
+    /**
+     * Choose menu option based on user input
+     * @param choice the choice
+     */
     public void chooseMenuOption(int choice) {
         switch (choice) {
             case 1 -> facade.addNewPrintTask();

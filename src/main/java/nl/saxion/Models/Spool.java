@@ -47,9 +47,9 @@ public class Spool {
 
     @Override
     public String toString() {
-        return "--------" + System.lineSeparator() +
-                "- color: " + color + System.lineSeparator() +
-                "- filamentType: " + filamentType + System.lineSeparator() +
-                "- length: " + length;
+        return "-----------------------------------" + System.lineSeparator() +
+                "- Color: " + color + System.lineSeparator() +
+                "- FilamentType: " + filamentType + System.lineSeparator() +
+                "- Length: " + length;
     }
 }

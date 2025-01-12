@@ -1,0 +1,9 @@
+﻿id,type,name,model,manufacturer,maxX,maxY,maxZ,maxColors
+1,1,Enterprise,Ender 3,Creality,220,220,250,1
+2,1,Serenity,Ender 3v2,Creality,220,220,250,1
+3,1,Red Dwarf,Ender 5 Plus,Creality,350,350,350,1
+4,3,Heart of Gold,i3 MKS3S+,Prusa,210,210,210,4
+5,1,Tardis,Mini+,Prusa,180,180,180,1
+6,2,Rocinante,Ultimaker 2+,Ultimaker,223,220,205,1
+7,2,Bebop,Voxel,Monoprice,150,150,150,1
+8,4,Space Ball One,Ultimaker S5,Ultimaker,330,240,300,6
