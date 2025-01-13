@@ -3,6 +3,7 @@ package nl.saxion;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
+import nl.saxion.Models.observer.Dashboard;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
@@ -14,74 +15,33 @@ import java.util.List;
 import java.util.Scanner;
 
 public class Facade {
-    private SpoolManager spoolManager;
-    private PrinterManager printerManager;
-    private PrintManager printManager;
-    private Scanner scanner = new Scanner(System.in);
+    private final SpoolManager spoolManager;
+    private final PrinterManager printerManager;
+    private final PrintManager printManager;
+    private final Dashboard dashboard;
+    private final Scanner scanner = new Scanner(System.in);
 
     public Facade() {
         this.spoolManager = new SpoolManager();
         this.printerManager = new PrinterManager();
         this.printManager = new PrintManager(spoolManager);
-        this.printerManager.readPrintersFromFile(""); //printers from file
-        this.printManager.readPrintsFromFile(""); //prints from file
-        this.spoolManager.readSpoolsFromFile(""); //prints from file
+        this.dashboard = new Dashboard();
     }
 
-    public void showPrinters() {
-        System.out.println("------------- Printers -------------");
-        if (printerManager.getPrinters().isEmpty()) {
-            System.out.println("No printers available");
-            return;
-        }
-
-        for (Printer printer : printerManager.getPrinters()) {
-            System.out.println(printer);
-        }
-        System.out.println("-----------------------------------");
+    /**
+     * This method is used to read the data from the files
+     */
+    public void readData() {
+        printerManager.readPrintersFromFile("printers.csv");
+        printManager.readPrintsFromFile("prints.csv");
+        spoolManager.readSpoolsFromFile("spools.csv");
     }
 
-    public void showSpools() {
-        System.out.println("------------- Spools -------------");
-        if (spoolManager.getSpools().isEmpty()) {
-            System.out.println("No spools available");
-            return;
-        }
-
-        for (Spool spool : spoolManager.getSpools()) {
-            System.out.println(spool);
-        }
-        System.out.println("-----------------------------------");
-    }
-
-    public void showPrints() {
-        System.out.println("------------- Prints -------------");
-        if (printManager.getPrints().isEmpty()) {
-            System.out.println("No prints available");
-            return;
-        }
-
-        for (Print print : printManager.getPrints()) {
-            System.out.println(print);
-        }
-        System.out.println("-----------------------------------");
-    }
-
-    public void showPendingPrintTask() {
-        if (printManager.getPrintTasks().isEmpty()) {
-            System.out.println("No pending print tasks");
-            return;
-        }
-
-        for (PrintTask printTask : printManager.getPrintTasks()) {
-            System.out.println(printTask);
-        }
-    }
-
-    public void startPrintQueue() {
-
-    }
-
+    /**
+     * OPTION : 1
+     * This method is used to add a new task to the print queue
+     * It will ask the user to select a print, filament type and colors
+     */
     public void addNewPrintTask() {
         int choice;
 
@@ -102,6 +62,12 @@ public class Facade {
         System.out.println("-----------------------------------");
     }
 
+    /**
+     * This method is used to select the colors for the print
+     * @param type FilamentType chosen by the user
+     * @param print Print chosen by the user
+     * @return List<String> colors selected by the user
+     */
     private List<String> selectColors(FilamentType type, Print print) {
         List<String> colors = new ArrayList<>();
         List<String> availableColors = showAvailableColors(type);
@@ -114,6 +80,11 @@ public class Facade {
         return colors;
     }
 
+    /**
+     * This method is used to show the available colors for the filament type
+     * @param filamentType FilamentType chosen by the user
+     * @return List<String> available colors for the filament type
+     */
     public List<String> showAvailableColors(FilamentType filamentType) {
         List<String> availableColors = spoolManager.getAvailableColors(filamentType);
         System.out.println("---------- Colors ----------");
@@ -124,6 +95,10 @@ public class Facade {
         return availableColors;
     }
 
+    /**
+     * This method is used to start the print queue
+     * By displaying the prints name and how many spools are needed
+     */
     public void listPrintsName() {
         int i = 1;
         System.out.println("-----------------");
@@ -134,6 +109,9 @@ public class Facade {
         System.out.print("Choice:");
     }
 
+    /**
+     * This method is used to display the list of filament types
+     */
     public void listOfTypes() {
         int i = 1;
         System.out.println("-----------------");
@@ -145,12 +123,82 @@ public class Facade {
         System.out.print("Choice:");
     }
 
+    /**
+     * OPTION : 6
+     * This method is used to show the prints
+     */
+    public void showPrints() {
+        System.out.println("------------- Prints -------------");
+        if (printManager.getPrints().isEmpty()) {
+            System.out.println("No prints available");
+            return;
+        }
+
+        for (Print print : printManager.getPrints()) {
+            System.out.println(print);
+        }
+        System.out.println("-----------------------------------");
+    }
+
+    /**
+     * OPTION : 7
+     * This method is used to show the printers
+     */
+    public void showPrinters() {
+        System.out.println("------------- Printers -------------");
+        if (printerManager.getPrinters().isEmpty()) {
+            System.out.println("No printers available");
+            return;
+        }
+
+        for (Printer printer : printerManager.getPrinters()) {
+            System.out.println(printer);
+        }
+        System.out.println("-----------------------------------");
+    }
+
+    /**
+     * OPTION : 8
+     * This method is used to show the spools
+     */
+    public void showSpools() {
+        System.out.println("------------- Spools -------------");
+        if (spoolManager.getSpools().isEmpty()) {
+            System.out.println("No spools available");
+            return;
+        }
+
+        for (Spool spool : spoolManager.getSpools()) {
+            System.out.println(spool);
+        }
+        System.out.println("-----------------------------------");
+    }
+
+    /**
+     * OPTION : 9
+     * This method is used to show the pending print tasks
+     */
+    public void showPendingPrintTask() {
+        if (printManager.getPrintTasks().isEmpty()) {
+            System.out.println("No pending print tasks");
+            return;
+        }
+
+        for (PrintTask printTask : printManager.getPrintTasks()) {
+            System.out.println(printTask);
+        }
+    }
+
     public void listSpools() {
         System.out.println("Choose a color and a filament type:");
         for (Spool spool : spoolManager.getSpools()) {
             System.out.println("Color:" + spool.getColor());
             System.out.println("Filament type:" + spool.getFilamentType());
         }
+    }
+
+    public void startPrintQueue() {
+
     }
 
     public void registerPrinterFailure() {
@@ -163,5 +211,9 @@ public class Facade {
     }
 
     private void exit() {
+    }
+
+    public void showDashboardStats() {
+        dashboard.showDashboard();
     }
 }

@@ -1,17 +1,14 @@
 package nl.saxion.managers;
 
-import nl.saxion.utils.FilamentType;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
+import nl.saxion.adapter.CSVAdapterReader;
+import nl.saxion.adapter.JSONAdapterReader;
+import nl.saxion.adapter.AdapterReader;
 import nl.saxion.exceptions.ColorNotFoundException;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
+import nl.saxion.utils.FilamentType;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -20,14 +17,70 @@ import java.util.List;
 import java.util.NoSuchElementException;
 
 public class PrintManager {
+    private final SpoolManager spoolManager; // Reference shared instance
     private List<Print> prints = new ArrayList<>();
     private ArrayList<PrintTask> printTasks = new ArrayList<>();
     private List<PrintTask> pendingPrints = new ArrayList<>();
-    private final SpoolManager spoolManager; // Reference shared instance
 
     public PrintManager(SpoolManager spoolManager) {
         this.spoolManager = spoolManager;
     }
+
+    /**
+     * Getter for the JSON file handler.
+     */
+    private AdapterReader getJsonFileHandler() {
+        return JSONAdapterReader.getReader();
+    }
+
+    /**
+     * Getter for the CSV file handler.
+     */
+    private AdapterReader getCsvFileHandler() {
+        return CSVAdapterReader.getReader();
+    }
+
+    /**
+     * Getter for the list of prints.
+     */
+    public List<Print> getPrints() {
+        return prints;
+    }
+
+    /**
+     * Getter for the list of pending prints.
+     */
+    public List<PrintTask> getPrintTasks() {
+        return pendingPrints;
+    }
+
+    /**
+     * Method to read prints from a file.
+     * The file can be either a JSON or CSV file.
+     * The method will determine the file type and use the appropriate handler.
+     * The prints will be added to the prints list.
+     *
+     * @param filename the name of the file to read from
+     */
+    public void readPrintsFromFile(String filename) {
+        URL printerResource = getClass().getResource("/" + filename);
+        assert printerResource != null;
+        String path = URLDecoder.decode(printerResource.getPath(), StandardCharsets.UTF_8);
+        AdapterReader fileHandler;
+
+        if (getJsonFileHandler().supportsFileType(path)) {
+            fileHandler = getJsonFileHandler();
+        } else if (getCsvFileHandler().supportsFileType(path)) {
+            fileHandler = getCsvFileHandler();
+        } else {
+            System.out.println("Unsupported file type for filename: " + path);
+            return;
+        }
+
+        List<Print> printsFromFile = fileHandler.readPrints(path);
+        prints.addAll(printsFromFile);
+    }
+
 
     public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
         Print print = findPrint(printName.getName());
@@ -61,50 +114,6 @@ public class PrintManager {
             }
         }
         throw new NoSuchElementException("Printer with such print does not exist");
-    }
-
-    public void addPrint(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime) {
-        prints.add(new Print(name, height, width, length, filamentLength, printTime));
-    }
-
-    public void readPrintsFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if (filename.isEmpty()) {
-            filename = "prints.json";
-        }
-        URL printsResource = getClass().getResource("/" + filename);
-        if (printsResource == null) {
-            System.err.println("Warning: Could not find prints.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printsResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray printsArray = (JSONArray) jsonParser.parse(reader);
-            for (Object p : printsArray) {
-                JSONObject print = (JSONObject) p;
-                String name = (String) print.get("name");
-                int height = ((Long) print.get("height")).intValue();
-                int width = ((Long) print.get("width")).intValue();
-                int length = ((Long) print.get("length")).intValue();
-                JSONArray filamentLengthArray = (JSONArray) print.get("filamentLength");
-                ArrayList<Double> filamentLength = new ArrayList<>();
-                for (Object lengthObj : filamentLengthArray) {
-                    filamentLength.add((Double) lengthObj);
-                }
-                int printTime = ((Long) print.get("printTime")).intValue();
-
-                prints.add(new Print(name, height, width, length, filamentLength, printTime));
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Print> getPrints() {
-        return prints;
-    }
-
-    public List<PrintTask> getPrintTasks() {
-        return pendingPrints;
     }
 }
 

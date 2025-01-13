@@ -6,14 +6,11 @@ import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
 import nl.saxion.Models.printer.printerTypes.MultiColor;
 import nl.saxion.Models.printer.printerTypes.StandardFDM;
+import nl.saxion.adapter.CSVAdapterReader;
+import nl.saxion.adapter.JSONAdapterReader;
+import nl.saxion.adapter.AdapterReader;
 import nl.saxion.utils.FilamentType;
-import org.json.simple.JSONArray;
-import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.FileReader;
-import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
@@ -30,6 +27,57 @@ public class PrinterManager {
     private final List<Printer> freePrinters = new ArrayList<>();
     private final List<Spool> freeSpools = new ArrayList<>();
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
+
+
+    /**
+     * Getter for the JSON file handler.
+     */
+    private AdapterReader getJsonFileHandler() {
+        return JSONAdapterReader.getReader();
+    }
+
+    /**
+     * Getter for the CSV file handler.
+     */
+    private AdapterReader getCsvFileHandler() {
+        return CSVAdapterReader.getReader();
+    }
+
+    /**
+     * Getter for the printers list.
+     */
+    public List<Printer> getPrinters() {
+        return printersList;
+    }
+
+    /**
+     * Method to read printers from a file.
+     * The file can be either a JSON or CSV file.
+     * The method will determine the file type and use the appropriate handler.
+     * The printers will be added to the printers list and the free printers list.
+     *
+     * @param filename The name of the file to read the printers from.
+     */
+    public void readPrintersFromFile(String filename) {
+        URL printerResource = getClass().getResource("/" + filename);
+        assert printerResource != null;
+        String path = URLDecoder.decode(printerResource.getPath(), StandardCharsets.UTF_8);
+        AdapterReader fileHandler;
+
+        if (getJsonFileHandler().supportsFileType(path)) {
+            fileHandler = getJsonFileHandler();
+        } else if (getCsvFileHandler().supportsFileType(path)) {
+            fileHandler = getCsvFileHandler();
+        } else {
+            System.out.println("Unsupported file type for filename: " + path);
+            return;
+        }
+
+
+        List<Printer> printersFromFile = fileHandler.readPrinters(path);
+        printersList.addAll(printersFromFile);
+        freePrinters.addAll(printersFromFile);
+    }
 
     public void selectPrintTask(Printer printer) {
         Spool[] spools = printer.getCurrentSpools();
@@ -231,40 +279,5 @@ public class PrinterManager {
 
     public List<PrintTask> getPendingPrintTasks() {
         return pendingPrintTasks;
-    }
-
-    public void readPrintersFromFile(String filename) {
-        JSONParser jsonParser = new JSONParser();
-        if (filename.isEmpty()) {
-            filename = "printers.json";
-        }
-        URL printersResource = getClass().getResource("/" + filename);
-        if (printersResource == null) {
-            System.err.println("Warning: Could not find printers.json file");
-            return;
-        }
-        try (FileReader reader = new FileReader(URLDecoder.decode(printersResource.getPath(), StandardCharsets.UTF_8))) {
-            JSONArray printers = (JSONArray) jsonParser.parse(reader);
-            for (Object p : printers) {
-                JSONObject printer = (JSONObject) p;
-                int id = ((Long) printer.get("id")).intValue();
-                int type = ((Long) printer.get("type")).intValue();
-                String name = (String) printer.get("name");
-                String manufacturer = (String) printer.get("manufacturer");
-                int maxX = ((Long) printer.get("maxX")).intValue();
-                int maxY = ((Long) printer.get("maxY")).intValue();
-                int maxZ = ((Long) printer.get("maxZ")).intValue();
-                int maxColors = ((Long) printer.get("maxColors")).intValue();
-                boolean isHoused = type == 2;
-
-                printerFactory.addPrinter(id, type, name, manufacturer, maxX, maxY, maxZ, maxColors, isHoused);
-            }
-        } catch (IOException | ParseException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public List<Printer> getPrinters() {
-        return printersList;
     }
 }
