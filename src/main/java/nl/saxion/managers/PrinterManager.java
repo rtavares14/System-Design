@@ -25,7 +25,7 @@ public class PrinterManager {
 
     //keeps track of the printers and its tasks
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
-
+    // all printers
     public final List<Printer> printersList = new ArrayList<>();
 
     // printers not in use
@@ -62,7 +62,7 @@ public class PrinterManager {
             return false;
         }
 
-        return printer.printFits(printTask.getPrint()) && printTask.getColors().get(0).equals(printer.getCurrentSpool().getColor());
+        return printer.printFits(printTask.getPrint()) && printTask.getColors().get(0).equals(printer.getCurrentSpool().getColor()) && printTask.getFilamentType().equals(printer.getCurrentSpool().getFilamentType());
     }
 
     public void selectPrintTask(Printer printer) {
