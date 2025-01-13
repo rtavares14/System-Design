@@ -54,9 +54,9 @@ public class PrinterManager {
                 if (printer.printFits(printTask.getPrint())) {
 
                     printer.setCurrentSpools(assignProperSpool(printTask));
-                    runningPrintTasks.put(printer,printTask);
+                    runningPrintTasks.put(printer, printTask);
 
-                    pendingPrintTasks.remove(printTask);
+
                     freePrinters.remove(printer);
 
                 }
@@ -71,16 +71,16 @@ public class PrinterManager {
             Spool minSpool = null;
 
             for (Spool resourceSpool : allSpools) {
-                if (resourceSpool.spoolMatch(color.getKey(), printTask.getFilamentType())&&resourceSpool.getLength() >= color.getValue()) {
-                        if (minSpool == null || minSpool.getLength() > resourceSpool.getLength()) {
-                            minSpool = resourceSpool;
-                        }
+                if (resourceSpool.spoolMatch(color.getKey(), printTask.getFilamentType()) && resourceSpool.getLength() >= color.getValue()) {
+                    if (minSpool == null || minSpool.getLength() > resourceSpool.getLength()) {
+                        minSpool = resourceSpool;
                     }
                 }
+            }
             printerSpools.add(minSpool);
 
             freeSpools.remove(minSpool);
-            }
+        }
 
         return printerSpools;
     }
@@ -89,6 +89,16 @@ public class PrinterManager {
         return printer.getCurrentSpool().getFilamentType().equals(printTask.getFilamentType()) &&
                 (printer.getMaxColors() >= printTask.getColors().size());
 
+    }
+
+    private void reduceLenghtOfSpools(PrintTask printTask,Printer printer) {
+        for(Spool spool:printer.getSpools()){
+            for(Map.Entry<String,Double> compareSpool:printTask.getColors().entrySet()){
+                if(spool.spoolMatch(compareSpool.getKey(),spool.getFilamentType())){
+                    spool.reduceLength(compareSpool.getValue());
+                }
+            }
+        }
     }
 
     public void registerPrinterFailure(int printerId) {
@@ -103,16 +113,17 @@ public class PrinterManager {
     }
 
     public void registerCompletion(int printerId) {
-        PrintTask task= null;
 
         for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
             if (entry.getKey().getId() == printerId) {
-                task = entry.getValue();
+                pendingPrintTasks.remove(entry.getValue());
+                runningPrintTasks.remove(entry.getKey());
+                reduceLenghtOfSpools(entry.getValue(),entry.getKey());
                 break;
             }
         }
 
-//        runningPrintTasks.replace()
+
 
     }
 
