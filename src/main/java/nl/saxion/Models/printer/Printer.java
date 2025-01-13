@@ -66,6 +66,10 @@ public abstract class Printer {
     public Spool getCurrentSpool(){
         return spools.get(0);
     }
+
+    public Spool[] getCurrentSpools(){
+        return spools.toArray(new Spool[0]);
+    }
     public abstract Spool[] getSpools();
 
     public abstract void setCurrentSpools(ArrayList<Spool> spools);
