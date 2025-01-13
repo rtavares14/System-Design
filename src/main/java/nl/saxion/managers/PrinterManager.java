@@ -21,11 +21,16 @@ import java.util.Map;
 
 public class PrinterManager {
     public PrinterFactory printerFactory = new PrinterFactory(this);
+
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
+
     public final List<Printer> printersList = new ArrayList<>();
+
     private final List<PrintTask> pendingPrintTasks = new ArrayList<>();
     private final List<Printer> freePrinters = new ArrayList<>();
+
     private final List<Spool> freeSpools = new ArrayList<>();
+
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
 
 
@@ -77,6 +82,21 @@ public class PrinterManager {
         List<Printer> printersFromFile = fileHandler.readPrinters(path);
         printersList.addAll(printersFromFile);
         freePrinters.addAll(printersFromFile);
+    }
+
+    public void selectPrintTask() {
+        for (PrintTask printTask : pendingPrintTasks) {
+            for (Printer printer : getPrinters()) {
+                if (taskSuitsPrinter(printer, printTask)) {
+                }
+            }
+        }
+    }
+    public boolean taskSuitsPrinter(Printer printer, PrintTask printTask) {
+        if (printer.getSpools().length < printTask.getColors().size()) {
+            return false;
+        }
+        return printer.printFits(printTask.getPrint()) && printTask.getColors().get(0).equals(printer.getCurrentSpool().getColor());
     }
 
     public void selectPrintTask(Printer printer) {
