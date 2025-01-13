@@ -22,7 +22,7 @@ public class StandardFDM extends Printer implements PrintTimeCalculator {
         this.currentSpool = spool;
     }
 
-    public Spool[] getCurrentSpools() {
+    public Spool[] getSpools() {
         Spool[] spools = new Spool[1];
         if (currentSpool != null) {
             spools[0] = currentSpool;

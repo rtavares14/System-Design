@@ -80,7 +80,7 @@ public class PrinterManager {
     }
 
     public void selectPrintTask(Printer printer) {
-        Spool[] spools = printer.getCurrentSpools();
+        Spool[] spools = printer.getSpools();
         PrintTask chosenTask = null;
         // First we look if there's a task that matches the current spool on the printer.
         if (spools[0] != null) {
@@ -135,7 +135,7 @@ public class PrinterManager {
                         }
                         if (chosenSpool != null) {
                             runningPrintTasks.put(printer, printTask);
-                            freeSpools.add(printer.getCurrentSpools()[0]);
+                            freeSpools.add(printer.getSpools()[0]);
                             System.out.println("- Spool change: Please place spool in printer " + printer.getName());
                             freeSpools.remove(chosenSpool);
                             ((StandardFDM) printer).setCurrentSpool(chosenSpool);
@@ -151,7 +151,7 @@ public class PrinterManager {
                         }
                         if (chosenSpool != null) {
                             runningPrintTasks.put(printer, printTask);
-                            freeSpools.add(printer.getCurrentSpools()[0]);
+                            freeSpools.add(printer.getSpools()[0]);
                             System.out.println("- Spool change: Please place spool in printer " + printer.getName());
                             freeSpools.remove(chosenSpool);
                             ((StandardFDM) printer).setCurrentSpool(chosenSpool);
@@ -172,7 +172,7 @@ public class PrinterManager {
                         // We assume that if they are the same length that there is a match.
                         if (chosenSpools.size() == printTask.getColors().size()) {
                             runningPrintTasks.put(printer, printTask);
-                            for (Spool spool : printer.getCurrentSpools()) {
+                            for (Spool spool : printer.getSpools()) {
                                 freeSpools.add(spool);
                             }
                             printer.setCurrentSpools(chosenSpools);
@@ -215,7 +215,7 @@ public class PrinterManager {
                 + foundEntry.getKey().getName());
 
         Printer printer = foundEntry.getKey();
-        Spool[] spools = printer.getCurrentSpools();
+        Spool[] spools = printer.getSpools();
         for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
             spools[i].reduceLength(task.getPrint().getFilamentLength().get(0));
         }
@@ -253,7 +253,7 @@ public class PrinterManager {
         System.out.println("Task " + task + " removed from printer " + foundEntry.getKey().getName());
 
         Printer printer = foundEntry.getKey();
-        Spool[] spools = printer.getCurrentSpools();
+        Spool[] spools = printer.getSpools();
         for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
             spools[i].reduceLength(task.getPrint().getFilamentLength().get(0));
         }
