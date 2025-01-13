@@ -19,8 +19,9 @@ public abstract class Printer {
     private final List<Spool> spools;
     private String status;
     private final List<PrintTaskObserver> observers; // List of observers
+    private final int maxColors;
 
-    public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed) {
+    public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed, int maxColors) {
         this.id = id;
         this.name = printerName;
         this.model = model;
@@ -29,6 +30,7 @@ public abstract class Printer {
         this.maxY = maxY;
         this.maxZ = maxZ;
         this.housed = housed;
+        this.maxColors = maxColors;
         this.spools = new ArrayList<>();
         this.status = "Idle"; // Default status
         this.observers = new ArrayList<>(); // Initialize observers list
@@ -78,9 +80,9 @@ public abstract class Printer {
         return spools.get(0);
     }
 
-    public abstract Spool[] getSpools();
+    public abstract List<Spool> getSpools();
 
-    public abstract void setCurrentSpools(ArrayList<Spool> spools);
+    public abstract void setCurrentSpools(List<Spool> spools);
 
     public boolean printFits(Print print) {
         return print.getLength() <= maxX &&
@@ -90,6 +92,10 @@ public abstract class Printer {
 
     public boolean isHoused() {
         return housed;
+    }
+
+    public int getMaxColors() {
+        return maxColors;
     }
 
     @Override

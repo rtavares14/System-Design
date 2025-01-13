@@ -6,56 +6,42 @@ import nl.saxion.Models.interfaces.PrintTimeCalculator;
 import nl.saxion.Models.printer.Printer;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class MultiColor extends Printer implements PrintTimeCalculator {
     private int maxColors;
-    private Spool currentSpool;
-    private Spool spool2;
-    private Spool spool3;
-    private Spool spool4;
+    private List<Spool> spools = new ArrayList<>();
 
-    public MultiColor(int id, String printerName,String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused, int maxColors) {
-        super(id, printerName, model, manufacturer, maxX, maxY,  maxZ, isHoused);
+    public MultiColor(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused, int maxColors) {
+        super(id, printerName, model, manufacturer, maxX, maxY, maxZ, isHoused,maxColors);
         this.maxColors = maxColors;
     }
 
     @Override
-    public Spool[] getSpools() {
-        Spool[] spools = new Spool[4];
-        spools[0] = getCurrentSpool();
-        spools[1] = spool2;
-        spools[2] = spool3;
-        spools[3] = spool4;
+    public List<Spool> getSpools() {
         return spools;
     }
 
-    public void setCurrentSpools(ArrayList<Spool> spools) {
-        setCurrentSpool(spools.get(0));
-        if (spools.size() > 1) spool2 = spools.get(1);
-        if (spools.size() > 2) spool3 = spools.get(2);
-        if (spools.size() > 3) spool4 = spools.get(3);
+    public void setCurrentSpools(List<Spool> spools) {
+        this.spools = spools;
     }
 
     // New methods: Get and Set for the current spool
     public Spool getCurrentSpool() {
-        return currentSpool;
+        return spools.get(0);
     }
 
     public void setCurrentSpool(Spool spool) {
-        this.currentSpool = spool;
+        this.spools.set(0,spool);
     }
 
     @Override
     public String toString() {
         String result = super.toString();
         String append = "";
-        if (currentSpool != null) {
-            append += "- Spool(s): " + currentSpool.getId();
-            if (spool2 != null) append += ", " + spool2.getId();
-            if (spool3 != null) append += ", " + spool3.getId();
-            if (spool4 != null) append += ", " + spool4.getId();
-            append += System.lineSeparator();
-        }
+       for(Spool spool:spools){
+
+       }
         append += "--------";
         result = result.replace("--------", append);
         return result;

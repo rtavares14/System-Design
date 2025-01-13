@@ -23,6 +23,10 @@ public class Spool {
         return color.equals(this.color) && type == this.getFilamentType();
     }
 
+    public boolean spoolMatch(Spool spool) {
+        return spool.color.equals(this.color) && spool.filamentType.equals(this.getFilamentType());
+    }
+
     /**
      * This method will try to reduce the length of the spool.
      *

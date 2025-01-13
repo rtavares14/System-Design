@@ -10,9 +10,7 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Facade {
     private final SpoolManager spoolManager;
@@ -23,7 +21,7 @@ public class Facade {
 
     public Facade() {
         this.spoolManager = new SpoolManager();
-        this.printerManager = new PrinterManager();
+        this.printerManager = new PrinterManager(spoolManager);
         this.printManager = new PrintManager(spoolManager);
         this.dashboard = new Dashboard();
     }
@@ -54,7 +52,7 @@ public class Facade {
         FilamentType filamentType = FilamentType.values()[choice - 1];
 
         //check available colors
-        List<String> colors = selectColors(filamentType, print);
+        Map<String,Double> colors = selectColors(filamentType, print);
 
         System.out.println(print.getName() + " " + filamentType + " " + colors);
         //creates the print task
@@ -68,13 +66,14 @@ public class Facade {
      * @param print Print chosen by the user
      * @return List<String> colors selected by the user
      */
-    private List<String> selectColors(FilamentType type, Print print) {
-        List<String> colors = new ArrayList<>();
+    private Map<String, Double> selectColors(FilamentType type, Print print) {
+        Map<String,Double> colors = new HashMap<>();
         List<String> availableColors = showAvailableColors(type);
+
         for (int i = 0; i < print.getFilamentLength().size(); i++) {
             System.out.print("- Color position: ");
             int colorChoice = scanner.nextInt();
-            colors.add(availableColors.get(colorChoice - 1));
+            colors.put(availableColors.get(colorChoice - 1),print.getLength());
         }
         System.out.println("--------------------------------------");
         return colors;
@@ -198,10 +197,11 @@ public class Facade {
     }
 
     public void startPrintQueue() {
-
+        printerManager.selectPrintTask();
     }
 
     public void registerPrinterFailure() {
+
     }
 
     public void registerPrintCompletion() {

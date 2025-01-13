@@ -30,7 +30,7 @@ public class PrinterFactory {
         boolean isHoused;
         if (printerType == 1 || printerType == 2) {
             // Create a StandardFDM printer (or a housed printer)
-            StandardFDM printer = new StandardFDM(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused = printerType == 2);
+            StandardFDM printer = new StandardFDM(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused = printerType == 2,maxColors);
             printerManager.printersList.add(printer);
             printerManager.printersMap.put(printer, new ArrayList<>());
         } else if (printerType == 3 || printerType == 4) {

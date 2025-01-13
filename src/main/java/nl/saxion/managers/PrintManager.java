@@ -14,6 +14,7 @@ import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.NoSuchElementException;
 
 public class PrintManager {
@@ -25,6 +26,42 @@ public class PrintManager {
     public PrintManager(SpoolManager spoolManager) {
         this.spoolManager = spoolManager;
     }
+
+    public void addPrintTask(Print printName, Map<String, Double> colors, FilamentType type) {
+        Print print = findPrint(printName.getName());
+        if (print == null || colors.isEmpty()) {
+            System.err.println("All fields must be filled in");
+            return;
+        }
+
+        for (String color : colors.keySet()) {
+            boolean found = false;
+            for (Spool spool : spoolManager.getSpools()) {
+                if (spool.getColor().equals(color) && spool.getFilamentType().equals(type)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
+            }
+        }
+
+        PrintTask task = new PrintTask(print, colors, type);
+        pendingPrints.add(task);
+
+        System.out.print("Task added to the queue");
+    }
+
+    public Print findPrint(String print) {
+        for (Print allPrints : prints) {
+            if (allPrints.getName().equals(print)) {
+                return allPrints;
+            }
+        }
+        throw new NoSuchElementException("Printer with such print does not exist");
+    }
+
 
     /**
      * Getter for the JSON file handler.
@@ -81,39 +118,5 @@ public class PrintManager {
         prints.addAll(printsFromFile);
     }
 
-
-    public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
-        Print print = findPrint(printName.getName());
-        if (print == null || colors.isEmpty()) {
-            System.err.println("All fields must be filled in");
-            return;
-        }
-
-        for (String color : colors) {
-            boolean found = false;
-            for (Spool spool : spoolManager.getSpools()) {
-                if (spool.getColor().equals(color) && spool.getFilamentType() == type) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
-            }
-        }
-
-        PrintTask task = new PrintTask(print, colors, type);
-        pendingPrints.add(task);
-        System.out.print("Task added to the queue");
-    }
-
-    public Print findPrint(String print) {
-        for (Print allPrints : prints) {
-            if (allPrints.getName().equals(print)) {
-                return allPrints;
-            }
-        }
-        throw new NoSuchElementException("Printer with such print does not exist");
-    }
 }
 
