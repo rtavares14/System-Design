@@ -10,9 +10,7 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Facade {
     private final SpoolManager spoolManager;
@@ -72,12 +70,12 @@ public class Facade {
         FilamentType filamentType = FilamentType.values()[choice - 1];
 
         //check available colors
-        Map<String, Double> colors = selectColors(filamentType, print);
-
+        List<String> colors = selectColors(filamentType, print);
         System.out.println(print.getName() + " " + filamentType + " " + colors);
         //creates the print task
         printManager.addPrintTask(print, colors, filamentType);
         System.out.println("-----------------------------------");
+
     }
 
     /**
@@ -87,15 +85,15 @@ public class Facade {
      * @param print Print chosen by the user
      * @return List<String> colors selected by the user
      */
-    private Map<String, Double> selectColors(FilamentType type, Print print) {
-        Map<String, Double> colors = new HashMap<>();
+    private List<String> selectColors(FilamentType type, Print print) {
+        List<String> colors = new ArrayList<>();
         List<String> availableColors = showAvailableColors(type);
 
         for (int i = 0; i < print.getFilamentLength().size(); i++) {
             System.out.print("- Color position: ");
-            int colorChoice = scanner.nextInt();
-            colors.put(availableColors.get(colorChoice - 1), print.getLength());
+
             int colorChoice;
+
             do {
                 System.out.print("Choose color for position: ");
                 colorChoice = scanner.nextInt();
@@ -209,12 +207,12 @@ public class Facade {
      * This method is used to show the pending print tasks
      */
     public void showPendingPrintTask() {
-        if (printManager.getPrintTasks().isEmpty()) {
+        if (printerManager.getPendingPrintTasks().isEmpty()) {
             System.out.println("No pending print tasks");
             return;
         }
 
-        for (PrintTask printTask : printManager.getPrintTasks()) {
+        for (PrintTask printTask : printerManager.getPendingPrintTasks()) {
             System.out.println(printTask);
         }
     }
@@ -228,7 +226,13 @@ public class Facade {
     }
 
     public void startPrintQueue() {
-
+        printerManager.selectPrintTask();
+        for (Map.Entry<Printer, PrintTask> showPrints : printerManager.runningPrintTasks.entrySet()) {
+            System.out.println("-------" + showPrints.getKey().getName() + "--------");
+            System.out.println("Spool used: " + showPrints.getKey().getSpools());
+            System.out.println("Print task to be done: " + showPrints.getValue().getPrint().getName());
+            System.out.println();
+        }
     }
 
     public void registerPrinterFailure() {

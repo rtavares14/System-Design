@@ -40,6 +40,10 @@ public class Print {
         return filamentLength;
     }
 
+    public Double getSpecificFilamentLenght(int index) {
+        return filamentLength.get(index);
+    }
+
     @Override
     public String toString() {
         return "-----------------------------------" + System.lineSeparator() +

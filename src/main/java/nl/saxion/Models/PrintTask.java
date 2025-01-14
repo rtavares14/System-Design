@@ -7,18 +7,18 @@ import java.util.Map;
 
 public class PrintTask {
     private Print print;
-    private Map<String,Double> colors;
+    private List<String> colors;
     private FilamentType filamentType;
 
 
-    public PrintTask(Print print, Map<String,Double> colors, FilamentType filamentType){
+    public PrintTask(Print print, List<String> colors, FilamentType filamentType){
         this.print = print;
         this.colors = colors;
         this.filamentType = filamentType;
 
     }
 
-    public Map<String,Double> getColors() {
+    public List<String> getColors() {
         return colors;
     }
 
