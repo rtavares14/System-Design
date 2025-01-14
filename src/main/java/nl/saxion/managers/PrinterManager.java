@@ -49,7 +49,7 @@ public class PrinterManager {
         for (int i = 0; i < pendingPrintTasks.size(); i++) {
             loopThroughPrinter(pendingPrintTasks.get(i));
         }
-        pendingPrintTasks = new ArrayList<>();
+//        pendingPrintTasks = new ArrayList<>();
     }
 
     /**
@@ -59,19 +59,28 @@ public class PrinterManager {
      */
     private void loopThroughPrinter(PrintTask printTask) {
         for (int i = 0; i < freePrinters.size(); i++) {
+            Printer printer = freePrinters.get(i);
+
             if (taskSuitsPrinter(freePrinters.get(i), printTask)) {
-                if (freePrinters.get(i).printFits(printTask.getPrint())) {
+                if (printer.printFits(printTask.getPrint())) {
 
-                    freePrinters.get(i).setCurrentSpools(assignProperSpool(printTask));
-                    runningPrintTasks.put(freePrinters.get(i), printTask);
+                    printer.setCurrentSpools(assignProperSpool(printTask));
+                    addTasksToPrinter(printer, printTask);
 
-
-                    freePrinters.remove(freePrinters.get(i));
+                    pendingPrintTasks.remove(printTask);
+                    freePrinters.remove(printer);
                     return;
 
                 }
             }
         }
+    }
+
+    private void addTasksToPrinter(Printer printer, PrintTask printTask) {
+        ArrayList<PrintTask> printTasks = printersMap.get(printer);
+        printTasks.add(printTask);
+        printersMap.replace(printer, printTasks);
+
     }
 
     private void removePendingTasks(ArrayList<PrintTask> printTasks) {
@@ -93,7 +102,7 @@ public class PrinterManager {
                 }
             }
 
-            increaseSpoolUsage(minSpool);
+//            increaseSpoolUsage(minSpool);
             printerSpools.add(minSpool);
             freeSpools.remove(minSpool);
         }
@@ -158,72 +167,73 @@ public class PrinterManager {
 
     public void increaseSpoolUsage(Spool spool) {
         spoolsInUse.putIfAbsent(spool, 0);
-
         Integer usage = spoolsInUse.get(spool);
         usage++;
         spoolsInUse.replace(spool, usage);
-}
+    }
 
-public Printer findPrinterById(int id) {
-    for (Printer printer : printersList) {
-        if (printer.getId() == id) {
-            return printer;
+
+    public Printer findPrinterById(int id) {
+        for (Printer printer : printersList) {
+            if (printer.getId() == id) {
+                return printer;
+            }
         }
-    }
-    return null;
-}
-
-public List<PrintTask> getPendingPrintTasks() {
-    return pendingPrintTasks;
-}
-
-/**
- * Getter for the JSON file handler.
- */
-private AdapterReader getJsonFileHandler() {
-    return JSONAdapterReader.getReader();
-}
-
-/**
- * Getter for the CSV file handler.
- */
-private AdapterReader getCsvFileHandler() {
-    return CSVAdapterReader.getReader();
-}
-
-/**
- * Getter for the printers list.
- */
-public List<Printer> getPrinters() {
-    return printersList;
-}
-
-/**
- * Method to read printers from a file.
- * The file can be either a JSON or CSV file.
- * The method will determine the file type and use the appropriate handler.
- * The printers will be added to the printers list and the free printers list.
- *
- * @param filename The name of the file to read the printers from.
- */
-public void readPrintersFromFile(String filename) {
-    URL printerResource = getClass().getResource("/" + filename);
-    assert printerResource != null;
-    String path = URLDecoder.decode(printerResource.getPath(), StandardCharsets.UTF_8);
-    AdapterReader fileHandler;
-
-    if (getJsonFileHandler().supportsFileType(path)) {
-        fileHandler = getJsonFileHandler();
-    } else if (getCsvFileHandler().supportsFileType(path)) {
-        fileHandler = getCsvFileHandler();
-    } else {
-        System.out.println("Unsupported file type for filename: " + path);
-        return;
+        return null;
     }
 
+    public List<PrintTask> getPendingPrintTasks() {
+        return pendingPrintTasks;
+    }
 
-    List<Printer> printersFromFile = fileHandler.readPrinters(path);
-    printersList.addAll(printersFromFile);
-    freePrinters.addAll(printersFromFile);
-}
+    /**
+     * Getter for the JSON file handler.
+     */
+    private AdapterReader getJsonFileHandler() {
+        return JSONAdapterReader.getReader();
+    }
+
+    /**
+     * Getter for the CSV file handler.
+     */
+    private AdapterReader getCsvFileHandler() {
+        return CSVAdapterReader.getReader();
+    }
+
+    /**
+     * Getter for the printers list.
+     */
+    public List<Printer> getPrinters() {
+        return printersList;
+    }
+
+    /**
+     * Method to read printers from a file.
+     * The file can be either a JSON or CSV file.
+     * The method will determine the file type and use the appropriate handler.
+     * The printers will be added to the printers list and the free printers list.
+     *
+     * @param filename The name of the file to read the printers from.
+     */
+    public void readPrintersFromFile(String filename) {
+        URL printerResource = getClass().getResource("/" + filename);
+        assert printerResource != null;
+        String path = URLDecoder.decode(printerResource.getPath(), StandardCharsets.UTF_8);
+        AdapterReader fileHandler;
+
+        if (getJsonFileHandler().supportsFileType(path)) {
+            fileHandler = getJsonFileHandler();
+        } else if (getCsvFileHandler().supportsFileType(path)) {
+            fileHandler = getCsvFileHandler();
+        } else {
+            System.out.println("Unsupported file type for filename: " + path);
+            return;
+        }
+
+
+        List<Printer> printersFromFile = fileHandler.readPrinters(path);
+        printersList.addAll(printersFromFile);
+        freePrinters.addAll(printersFromFile);
+
+    }
 }

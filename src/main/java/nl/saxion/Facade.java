@@ -22,7 +22,7 @@ public class Facade {
     public Facade() {
         this.spoolManager = new SpoolManager();
         this.printManager = new PrintManager(spoolManager);
-        this.printerManager = new PrinterManager(spoolManager,printManager);
+        this.printerManager = new PrinterManager(spoolManager, printManager);
         this.dashboard = new Dashboard();
     }
 
@@ -52,7 +52,7 @@ public class Facade {
         FilamentType filamentType = FilamentType.values()[choice - 1];
 
         //check available colors
-        Map<String,Double> colors = selectColors(filamentType, print);
+        Map<String, Double> colors = selectColors(filamentType, print);
 
         System.out.println(print.getName() + " " + filamentType + " " + colors);
         //creates the print task
@@ -62,18 +62,19 @@ public class Facade {
 
     /**
      * This method is used to select the colors for the print
-     * @param type FilamentType chosen by the user
+     *
+     * @param type  FilamentType chosen by the user
      * @param print Print chosen by the user
      * @return List<String> colors selected by the user
      */
     private Map<String, Double> selectColors(FilamentType type, Print print) {
-        Map<String,Double> colors = new HashMap<>();
+        Map<String, Double> colors = new HashMap<>();
         List<String> availableColors = showAvailableColors(type);
 
         for (int i = 0; i < print.getFilamentLength().size(); i++) {
             System.out.print("- Color position: ");
             int colorChoice = scanner.nextInt();
-            colors.put(availableColors.get(colorChoice - 1),print.getLength());
+            colors.put(availableColors.get(colorChoice - 1), print.getLength());
         }
         System.out.println("--------------------------------------");
         return colors;
@@ -81,6 +82,7 @@ public class Facade {
 
     /**
      * This method is used to show the available colors for the filament type
+     *
      * @param filamentType FilamentType chosen by the user
      * @return List<String> available colors for the filament type
      */
@@ -198,10 +200,10 @@ public class Facade {
 
     public void startPrintQueue() {
         printerManager.selectPrintTask();
-        for(Map.Entry<Printer,PrintTask> showPrints:printerManager.runningPrintTasks.entrySet()){
-            System.out.println("-------"+showPrints.getKey().getName()+"--------");
-            System.out.println("Spool used: "+showPrints.getKey().getSpools());
-            System.out.println(showPrints.getValue().getPrint().getName());
+        for (Map.Entry<Printer, PrintTask> showPrints : printerManager.runningPrintTasks.entrySet()) {
+            System.out.println("-------" + showPrints.getKey().getName() + "--------");
+            System.out.println("Spool used: " + showPrints.getKey().getSpools());
+            System.out.println("Print task to be done: " + showPrints.getValue().getPrint().getName());
             System.out.println();
         }
     }
