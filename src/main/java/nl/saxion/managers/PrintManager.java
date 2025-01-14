@@ -3,9 +3,9 @@ package nl.saxion.managers;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
+import nl.saxion.adapter.AdapterReader;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
-import nl.saxion.adapter.AdapterReader;
 import nl.saxion.exceptions.ColorNotFoundException;
 import nl.saxion.utils.FilamentType;
 
@@ -82,6 +82,13 @@ public class PrintManager {
     }
 
 
+    /**
+     * Method to add a new printTask to the list of prints.
+     *
+     * @param printName the name of the print
+     * @param colors    the colors of the print
+     * @param type      the type of filament
+     */
     public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
         Print print = findPrint(printName.getName());
         if (print == null || colors.isEmpty()) {
@@ -104,7 +111,7 @@ public class PrintManager {
 
         PrintTask task = new PrintTask(print, colors, type);
         pendingPrints.add(task);
-        System.out.print("Task added to the queue");
+        System.out.println("Task added to the queue");
     }
 
     public Print findPrint(String print) {

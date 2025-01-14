@@ -2,6 +2,7 @@ package nl.saxion.managers;
 
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
+import nl.saxion.Models.observer.PrintTaskObserver;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
 import nl.saxion.Models.printer.printerTypes.MultiColor;
@@ -27,6 +28,28 @@ public class PrinterManager {
     private final List<Printer> freePrinters = new ArrayList<>();
     private final List<Spool> freeSpools = new ArrayList<>();
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
+    private final List<PrintTaskObserver> observers = new ArrayList<>();
+
+
+    /**
+     * Method to add a printer to the printers list.
+     *
+     * @param observer The observer to add.
+     */
+    public void addObserver(PrintTaskObserver observer) {
+        observers.add(observer);
+    }
+
+    /**
+     * Method notify all observers of an event.
+     *
+     * @param event The observer to notify.
+     */
+    private void notifyObservers(String event) {
+        for (PrintTaskObserver observer : observers) {
+            observer.update(event);
+        }
+    }
 
 
     /**
@@ -275,6 +298,14 @@ public class PrinterManager {
             }
         }
         return null;
+    }
+
+    public void completeTask() {
+        notifyObservers("completed");
+    }
+
+    public void failTask() {
+        notifyObservers("failed");
     }
 
     public List<PrintTask> getPendingPrintTasks() {
