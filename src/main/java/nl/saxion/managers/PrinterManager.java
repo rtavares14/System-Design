@@ -41,6 +41,9 @@ public class PrinterManager {
         spoolsInUse = spoolManager.getAllSpools();
     }
 
+    /**
+     * loops through all the pending print tasks
+     */
     public void selectPrintTask() {
 
         for (int i =0;i<pendingPrintTasks.size();i++) {
@@ -49,12 +52,17 @@ public class PrinterManager {
         }
     }
 
+    /**
+     * loops through all the printers, so to find the appropriate one
+     * @param printTask
+     */
     private void loopThroughPrinter(PrintTask printTask) {
         for (int i = 0; i < freePrinters.size(); i++) {
             if (taskSuitsPrinter(freePrinters.get(i), printTask)) {
                 if (freePrinters.get(i).printFits(printTask.getPrint())) {
 
                     freePrinters.get(i).setCurrentSpools(assignProperSpool(printTask));
+                    System.out.println(freePrinters.get(i).getSpools());
                     runningPrintTasks.put(freePrinters.get(i), printTask);
 
 
@@ -69,6 +77,7 @@ public class PrinterManager {
     private List<Spool> assignProperSpool(PrintTask printTask) {
         List<Spool> printerSpools = new ArrayList<>();
 
+        // keeps track of the size of the needed filament and the color
         for (Map.Entry<String, Double> color : printTask.getColors().entrySet()) {
             Spool minSpool = null;
 
@@ -79,10 +88,12 @@ public class PrinterManager {
                     }
                 }
             }
+
             printerSpools.add(minSpool);
             freeSpools.remove(minSpool);
         }
 
+        System.out.println(printerSpools);
         return printerSpools;
     }
 
