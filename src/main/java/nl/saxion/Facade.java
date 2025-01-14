@@ -20,6 +20,7 @@ public class Facade {
     private final PrintManager printManager;
     private final Dashboard dashboard;
     private final Scanner scanner = new Scanner(System.in);
+    private boolean optimizedSpoolStrategy = false; // Default strategy (raf)
 
     public Facade() {
         this.spoolManager = new SpoolManager();
@@ -223,11 +224,20 @@ public class Facade {
         }
     }
 
-    public void startPrintQueue() {
+    public void initPrintQueue() {
+        if (optimizedSpoolStrategy) {
+            printerManager.startInitialQueue();
+        } else {
+            printerManager.startPrintQueue2();
+        }
+    }
 
+    public void startPrintQueue() {
+        System.out.println("Starting print queue with method 1");
     }
 
     public void startPrintQueue2() {
+        System.out.println("Starting print queue with method 2");
         printerManager.startPrintQueue2();
     }
 
@@ -240,6 +250,13 @@ public class Facade {
     }
 
     public void changePrintStrategy() {
+        if (!optimizedSpoolStrategy){
+            optimizedSpoolStrategy = true;
+            System.out.println("Changed to optimized spool strategy");
+        } else {
+            optimizedSpoolStrategy = false;
+            System.out.println("Changed to optimized time strategy");
+        }
     }
 
     private void exit() {

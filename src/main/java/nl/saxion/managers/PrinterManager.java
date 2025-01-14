@@ -333,7 +333,9 @@ public class PrinterManager {
         // Remove the printer from the free printers list
         freePrinters.remove(printer);
 
+        // Print the number of spools changed
         System.out.println("Assigned task: " + printTask + " to printer: " + printer.getName());
+        System.out.println("Number of spools changed: " + printer.getSpools().length);
     }
 
     public void startPrintQueue2() {
@@ -347,8 +349,8 @@ public class PrinterManager {
                     if (!bestSpools.isEmpty()) {
                         printer.setCurrentSpools((ArrayList<Spool>) bestSpools);
                         assignPrintTask(printer, printTask);
-                        iterator.remove(); // Safely remove the print task from the pending list
-                        notifyObservers("changedSpool", bestSpools.size()); // Notify observers about the number of spools changed
+                        iterator.remove(); //remove the print task from the pending list
+                        notifyObservers("changedSpool", bestSpools.size()); //observers about the number of spools changed
                         taskAssigned = true;
                         break;
                     }
