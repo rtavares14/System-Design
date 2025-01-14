@@ -225,6 +225,7 @@ public class Facade {
         }
     }
 
+    // todo maybe put the printLines in PrinterManager
     public void startPrintQueue() {
         printerManager.selectPrintTask();
         for (Map.Entry<Printer, PrintTask> showPrints : printerManager.runningPrintTasks.entrySet()) {
