@@ -1,11 +1,9 @@
 package nl.saxion.managers;
 
-import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
-import nl.saxion.Models.printer.printerTypes.MultiColor;
 import nl.saxion.Models.printer.printerTypes.StandardFDM;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
@@ -27,37 +25,41 @@ public class PrinterManager {
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
 
     public final List<Printer> printersList = new ArrayList<>();
-    private final List<Printer> freePrinters = new ArrayList<>();
+    private List<Printer> freePrinters = new ArrayList<>();
 
-    private final List<PrintTask> pendingPrintTasks = new ArrayList<>();
-    private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
+    private List<PrintTask> pendingPrintTasks = new ArrayList<>();
+    public Map<Printer, PrintTask> runningPrintTasks = new HashMap();
 
-
-    private final List<Spool> allSpools;
+    private Map<Spool, Integer> spoolsInUse = new HashMap<>();
     private List<Spool> freeSpools = new ArrayList<>();
 
 
-    public PrinterManager(SpoolManager spoolManager) {
-        allSpools = spoolManager.getSpools();
-        freeSpools = allSpools;
+    public PrinterManager(SpoolManager spoolManager, PrintManager printManager) {
+        freePrinters = printersList;
+        pendingPrintTasks = printManager.getPrintTasks();
+        freeSpools = spoolManager.getSpools();
+        spoolsInUse = spoolManager.getAllSpools();
     }
 
     public void selectPrintTask() {
-        for (PrintTask printTask : pendingPrintTasks) {
-            loopThroughPrinter(printTask);
+
+        for (int i =0;i<pendingPrintTasks.size();i++) {
+            loopThroughPrinter(pendingPrintTasks.get(i));
+            pendingPrintTasks.remove(pendingPrintTasks.get(i));
         }
     }
 
     private void loopThroughPrinter(PrintTask printTask) {
-        for (Printer printer : freePrinters) {
-            if (taskSuitsPrinter(printer, printTask)) {
-                if (printer.printFits(printTask.getPrint())) {
+        for (int i = 0; i < freePrinters.size(); i++) {
+            if (taskSuitsPrinter(freePrinters.get(i), printTask)) {
+                if (freePrinters.get(i).printFits(printTask.getPrint())) {
 
-                    printer.setCurrentSpools(assignProperSpool(printTask));
-                    runningPrintTasks.put(printer, printTask);
+                    freePrinters.get(i).setCurrentSpools(assignProperSpool(printTask));
+                    runningPrintTasks.put(freePrinters.get(i), printTask);
 
 
-                    freePrinters.remove(printer);
+                    freePrinters.remove(freePrinters.get(i));
+                    return;
 
                 }
             }
@@ -70,7 +72,7 @@ public class PrinterManager {
         for (Map.Entry<String, Double> color : printTask.getColors().entrySet()) {
             Spool minSpool = null;
 
-            for (Spool resourceSpool : allSpools) {
+            for (Spool resourceSpool : spoolsInUse.keySet()) {
                 if (resourceSpool.spoolMatch(color.getKey(), printTask.getFilamentType()) && resourceSpool.getLength() >= color.getValue()) {
                     if (minSpool == null || minSpool.getLength() > resourceSpool.getLength()) {
                         minSpool = resourceSpool;
@@ -78,7 +80,6 @@ public class PrinterManager {
                 }
             }
             printerSpools.add(minSpool);
-
             freeSpools.remove(minSpool);
         }
 
@@ -86,15 +87,27 @@ public class PrinterManager {
     }
 
     private boolean taskSuitsPrinter(Printer printer, PrintTask printTask) {
-        return printer.getCurrentSpool().getFilamentType().equals(printTask.getFilamentType()) &&
-                (printer.getMaxColors() >= printTask.getColors().size());
 
+        FilamentType filamentType = printTask.getFilamentType();
+
+        if ((printer.getMaxColors() == printTask.getColors().size())) {
+            switch (filamentType) {
+                case FilamentType.ABS -> {
+                    return printer.isHoused();
+                }
+                case FilamentType.PLA, FilamentType.PETG -> {
+                    return true;
+                }
+            }
+        }
+
+        return false;
     }
 
-    private void reduceLenghtOfSpools(PrintTask printTask,Printer printer) {
-        for(Spool spool:printer.getSpools()){
-            for(Map.Entry<String,Double> compareSpool:printTask.getColors().entrySet()){
-                if(spool.spoolMatch(compareSpool.getKey(),spool.getFilamentType())){
+    private void reduceLenghtOfSpools(PrintTask printTask, Printer printer) {
+        for (Spool spool : printer.getSpools()) {
+            for (Map.Entry<String, Double> compareSpool : printTask.getColors().entrySet()) {
+                if (spool.spoolMatch(compareSpool.getKey(), spool.getFilamentType())) {
                     spool.reduceLength(compareSpool.getValue());
                 }
             }
@@ -116,13 +129,13 @@ public class PrinterManager {
 
         for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
             if (entry.getKey().getId() == printerId) {
-                pendingPrintTasks.remove(entry.getValue());
+
                 runningPrintTasks.remove(entry.getKey());
-                reduceLenghtOfSpools(entry.getValue(),entry.getKey());
+                freeSpools.addAll(entry.getKey().getSpools());
+                reduceLenghtOfSpools(entry.getValue(), entry.getKey());
                 break;
             }
         }
-
 
 
     }

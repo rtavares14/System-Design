@@ -9,16 +9,24 @@ import nl.saxion.utils.FilamentType;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class SpoolManager {
     private final List<Spool> spools;
+    private Map<Spool,Integer> allSpools = new HashMap<>();
+
 
     public SpoolManager() {
         this.spools = new ArrayList<>();
+        for (Spool spool:spools){
+            allSpools.put(spool,0);
+        }
+    }
+
+    public void increaseSpoolUsage(Spool spool){
+        Integer usage = allSpools.get(spool);
+        usage++;
+        allSpools.replace(spool,usage);
     }
 
     /**
@@ -40,6 +48,10 @@ public class SpoolManager {
      */
     public List<Spool> getSpools() {
         return spools;
+    }
+
+    public Map<Spool, Integer> getAllSpools() {
+        return allSpools;
     }
 
     /**
@@ -87,5 +99,5 @@ public class SpoolManager {
         return availableColors.stream().toList();
     }
 
-    public void getSpool(){}
+
 }

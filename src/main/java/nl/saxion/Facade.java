@@ -21,8 +21,8 @@ public class Facade {
 
     public Facade() {
         this.spoolManager = new SpoolManager();
-        this.printerManager = new PrinterManager(spoolManager);
         this.printManager = new PrintManager(spoolManager);
+        this.printerManager = new PrinterManager(spoolManager,printManager);
         this.dashboard = new Dashboard();
     }
 
@@ -30,9 +30,9 @@ public class Facade {
      * This method is used to read the data from the files
      */
     public void readData() {
+        spoolManager.readSpoolsFromFile("spools.csv");
         printerManager.readPrintersFromFile("printers.csv");
         printManager.readPrintsFromFile("prints.csv");
-        spoolManager.readSpoolsFromFile("spools.csv");
     }
 
     /**
@@ -198,6 +198,12 @@ public class Facade {
 
     public void startPrintQueue() {
         printerManager.selectPrintTask();
+        for(Map.Entry<Printer,PrintTask> showPrints:printerManager.runningPrintTasks.entrySet()){
+            System.out.println("-------"+showPrints.getKey().getName()+"--------");
+            System.out.println("-------"+showPrints.getKey().getSpools()+"--------");
+            System.out.println(showPrints.getValue().getPrint().getName());
+            System.out.println();
+        }
     }
 
     public void registerPrinterFailure() {
@@ -205,6 +211,7 @@ public class Facade {
     }
 
     public void registerPrintCompletion() {
+
     }
 
     public void changePrintStrategy() {

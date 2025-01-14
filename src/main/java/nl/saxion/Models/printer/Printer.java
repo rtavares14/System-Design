@@ -77,7 +77,7 @@ public abstract class Printer {
     }
 
     public Spool getCurrentSpool(){
-        return spools.get(0);
+        return spools.getFirst();
     }
 
     public abstract List<Spool> getSpools();

@@ -3,21 +3,18 @@ package nl.saxion.Models.printer.printerTypes;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.interfaces.PrintTimeCalculator;
 import nl.saxion.Models.printer.Printer;
+import nl.saxion.exceptions.ColorNotFoundException;
 
 import java.util.ArrayList;
 import java.util.List;
 
 /* Standard cartesian FDM printer */
 public class StandardFDM extends Printer implements PrintTimeCalculator {
-    private List<Spool> allSpools = new ArrayList<>();
+    private List<Spool> allSpools;
 
 
     public StandardFDM(int id, String printerName,String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused,int maxColors) {
         super(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused,maxColors);
-    }
-
-    public Spool getCurrentSpool() {
-        return allSpools.get(0);
     }
 
     public void setCurrentSpool(Spool spool) {
@@ -47,9 +44,9 @@ public class StandardFDM extends Printer implements PrintTimeCalculator {
     public String toString() {
         String result = super.toString();
         String append = "";
-        for(Spool spool:allSpools) {
-            append += "- Spool(s): " + spool.getId() + System.lineSeparator();
-        }
+//        for(Spool spool:allSpools) {
+//            append += "- Spool(s): " + spool.getId() + System.lineSeparator();
+//        }
         append += "--------";
         result = result.replace("--------", append);
         return result;
