@@ -26,6 +26,7 @@ public class Facade {
         this.printerManager = new PrinterManager();
         this.printManager = new PrintManager(spoolManager);
         this.dashboard = new Dashboard();
+        printerManager.addObserver(dashboard);
     }
 
     /**
@@ -46,11 +47,27 @@ public class Facade {
         int choice;
 
         listPrintsName();
-        choice = scanner.nextInt();
+
+        do {
+            System.out.print("Choose a print: ");
+            choice = scanner.nextInt();
+            if (choice < 1 || choice > printManager.getPrints().size()) {
+                System.out.println("Invalid print choice. Please try again.");
+            }
+        } while (choice < 1 || choice > printManager.getPrints().size());
+
         Print print = printManager.getPrints().get(choice - 1);
 
         listOfTypes();
-        choice = scanner.nextInt();
+
+        do {
+            System.out.print("Choose a filament type: ");
+            choice = scanner.nextInt();
+            if (choice < 1 || choice > FilamentType.values().length) {
+                System.out.println("Invalid filament type choice. Please try again.");
+            }
+        } while (choice < 1 || choice > FilamentType.values().length);
+
         FilamentType filamentType = FilamentType.values()[choice - 1];
 
         //check available colors
@@ -64,6 +81,7 @@ public class Facade {
 
     /**
      * This method is used to select the colors for the print
+     *
      * @param type FilamentType chosen by the user
      * @param print Print chosen by the user
      * @return List<String> colors selected by the user
@@ -71,9 +89,17 @@ public class Facade {
     private List<String> selectColors(FilamentType type, Print print) {
         List<String> colors = new ArrayList<>();
         List<String> availableColors = showAvailableColors(type);
+
         for (int i = 0; i < print.getFilamentLength().size(); i++) {
-            System.out.print("- Color position: ");
-            int colorChoice = scanner.nextInt();
+            int colorChoice;
+            do {
+                System.out.print("Choose color for position: ");
+                colorChoice = scanner.nextInt();
+                if (colorChoice < 1 || colorChoice > availableColors.size()) {
+                    System.out.println("Invalid color choice. Please try again.");
+                }
+            } while (colorChoice < 1 || colorChoice > availableColors.size());
+
             colors.add(availableColors.get(colorChoice - 1));
         }
         System.out.println("--------------------------------------");
@@ -101,7 +127,7 @@ public class Facade {
      */
     public void listPrintsName() {
         int i = 1;
-        System.out.println("-----------------");
+        System.out.println("-----------------------------------");
         System.out.println("Choose a print:");
         for (Print print : printManager.getPrints()) {
             System.out.println(i++ + " - " + print.getName() + "(" + print.getFilamentLength().size() + ")");
@@ -114,7 +140,7 @@ public class Facade {
      */
     public void listOfTypes() {
         int i = 1;
-        System.out.println("-----------------");
+        System.out.println("-----------------------------------");
         System.out.println("Choose a filament type:");
 
         for (FilamentType type : FilamentType.values()) {
@@ -202,9 +228,11 @@ public class Facade {
     }
 
     public void registerPrinterFailure() {
+        printerManager.failTask();
     }
 
     public void registerPrintCompletion() {
+        printerManager.completeTask();
     }
 
     public void changePrintStrategy() {

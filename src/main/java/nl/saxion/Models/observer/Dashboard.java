@@ -1,12 +1,9 @@
 package nl.saxion.Models.observer;
 
-import nl.saxion.Models.printer.Printer;
-
 public class Dashboard implements PrintTaskObserver {
     private int completedTasks = 0;
     private int failedTasks = 0;
     private int changedSpools = 0;
-
 
     @Override
     public void update(String event) {
@@ -21,7 +18,6 @@ public class Dashboard implements PrintTaskObserver {
                 changedSpools++;
                 break;
         }
-
     }
 
     public void showDashboard() {
