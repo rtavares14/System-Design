@@ -23,11 +23,7 @@ public class SpoolManager {
         }
     }
 
-    public void increaseSpoolUsage(Spool spool){
-        Integer usage = allSpools.get(spool);
-        usage++;
-        allSpools.replace(spool,usage);
-    }
+
 
     /**
      * Getter for the JSON file handler.

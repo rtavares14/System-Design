@@ -178,12 +178,12 @@ public class Facade {
      * This method is used to show the pending print tasks
      */
     public void showPendingPrintTask() {
-        if (printManager.getPrintTasks().isEmpty()) {
+        if (printerManager.getPendingPrintTasks().isEmpty()) {
             System.out.println("No pending print tasks");
             return;
         }
 
-        for (PrintTask printTask : printManager.getPrintTasks()) {
+        for (PrintTask printTask : printerManager.getPendingPrintTasks()) {
             System.out.println(printTask);
         }
     }
@@ -200,7 +200,7 @@ public class Facade {
         printerManager.selectPrintTask();
         for(Map.Entry<Printer,PrintTask> showPrints:printerManager.runningPrintTasks.entrySet()){
             System.out.println("-------"+showPrints.getKey().getName()+"--------");
-            System.out.println("-------"+showPrints.getKey().getSpools()+"--------");
+            System.out.println("Spool used: "+showPrints.getKey().getSpools());
             System.out.println(showPrints.getValue().getPrint().getName());
             System.out.println();
         }
