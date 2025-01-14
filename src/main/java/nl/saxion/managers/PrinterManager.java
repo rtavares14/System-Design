@@ -32,17 +32,18 @@ public class PrinterManager {
     private List<PrintTask> pendingPrintTasks = new ArrayList<>();
     public Map<Printer, PrintTask> runningPrintTasks = new HashMap();
 
-    private Map<Spool, Integer> spoolsInUse = new HashMap<>();
+
     private List<Spool> freeSpools = new ArrayList<>();
 
     private final List<PrintTaskObserver> observers = new ArrayList<>();
 
 
+    // todo discuss: should we make static methods for the spools nad prints insteas of using instances???
     public PrinterManager(SpoolManager spoolManager, PrintManager printManager) {
         freePrinters = printersList;
         pendingPrintTasks = printManager.getPrintTasks();
         freeSpools = spoolManager.getSpools();
-        spoolsInUse = spoolManager.getAllSpools();
+
     }
 
     /**
@@ -100,8 +101,11 @@ public class PrinterManager {
 
     }
 
-    private void removePendingTasks(ArrayList<PrintTask> printTasks) {
-        pendingPrintTasks.removeAll(printTasks);
+    private void removeTasksFromPrinter(Printer printer, PrintTask printTask) {
+        ArrayList<PrintTask> printTasks = printersMap.get(printer);
+        printTasks.remove(printTask);
+        printersMap.replace(printer, printTasks);
+
     }
 
     private List<Spool> assignProperSpool(PrintTask printTask) {
@@ -112,9 +116,9 @@ public class PrinterManager {
             Spool minSpool = null;
 
             for (int j = 0; j < freeSpools.size(); j++) {
-                // checks if the color and the size match,
+                // checks if the color and the size match, and if there is enough filament
                 if (freeSpools.get(j).spoolMatch(printTask.getColors().get(i), printTask.getFilamentType()) &&
-                        printTask.getPrint().getSpecificFilamentLenght(i) >= freeSpools.get(j).getLength()) {
+                        printTask.getPrint().getSpecificFilamentLenght(i) <= freeSpools.get(j).getLength()) {
                     if (minSpool == null || minSpool.getLength() > freeSpools.get(j).getLength()) {
                         minSpool = freeSpools.get(j);
                     }
@@ -158,8 +162,35 @@ public class PrinterManager {
         }
     }
 
-    public void registerPrinterFailure(int printerId) {
+    public void registerCompletion(int printerId) {
+        failTask();
+    }
 
+    public void registerFailure(int printerId) {
+        Printer printer = findPrinterById(printerId);
+        PrintTask printTask = runningPrintTasks.remove(printer);
+
+        reduceLenghtOfSpools(printTask,printer);
+        removeTasksFromPrinter(printer,printTask);
+
+        completeTask();
+    }
+
+    public Printer findPrinterById(int id) {
+        for (Printer printer : printersList) {
+            if (printer.getId() == id) {
+                return printer;
+            }
+        }
+        return null;
+    }
+
+    public void completeTask() {
+        notifyObservers("completed");
+    }
+
+    public void failTask() {
+        notifyObservers("failed");
     }
 
     public PrintTask getPrinterCurrentTask(Printer printer) {
@@ -241,27 +272,5 @@ public class PrinterManager {
         freePrinters.addAll(printersFromFile);
     }
 
-    public void registerCompletion(int printerId) {
-    }
 
-    public Printer findPrinterById(int id) {
-        for (Printer printer : printersList) {
-            if (printer.getId() == id) {
-                return printer;
-            }
-        }
-        return null;
-    }
-
-    public void completeTask() {
-        notifyObservers("completed");
-    }
-
-    public void failTask() {
-        notifyObservers("failed");
-    }
-
-    public List<PrintTask> getPendingPrintTasks() {
-        return pendingPrintTasks;
-    }
 }
