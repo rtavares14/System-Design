@@ -4,6 +4,7 @@ import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
+import nl.saxion.Models.printer.printerTypes.MultiColor;
 import nl.saxion.Models.printer.printerTypes.StandardFDM;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
@@ -149,42 +150,33 @@ public class PrinterManager {
         }
         return printersMap.get(printer).get(0);
     }
+    private final List<PrintTask> pendingPrintTasks = new ArrayList<>();
+    private final List<Printer> freePrinters = new ArrayList<>();
+    private final List<Spool> freeSpools = new ArrayList<>();
+    private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
+    private final List<PrintTaskObserver> observers = new ArrayList<>();
 
-    public void registerCompletion(int printerId) {
 
-        for (Map.Entry<Printer, PrintTask> entry : runningPrintTasks.entrySet()) {
-            if (entry.getKey().getId() == printerId) {
+    /**
+     * Method to add a printer to the printers list.
+     *
+     * @param observer The observer to add.
+     */
+    public void addObserver(PrintTaskObserver observer) {
+        observers.add(observer);
+    }
 
-                runningPrintTasks.remove(entry.getKey());
-                freeSpools.addAll(entry.getKey().getSpools());
-                reduceLenghtOfSpools(entry.getValue(), entry.getKey());
-                break;
-            }
+    /**
+     * Method notify all observers of an event.
+     *
+     * @param event The observer to notify.
+     */
+    private void notifyObservers(String event) {
+        for (PrintTaskObserver observer : observers) {
+            observer.update(event);
         }
-
-
     }
 
-    public void increaseSpoolUsage(Spool spool) {
-        spoolsInUse.putIfAbsent(spool, 0);
-        Integer usage = spoolsInUse.get(spool);
-        usage++;
-        spoolsInUse.replace(spool, usage);
-    }
-
-
-    public Printer findPrinterById(int id) {
-        for (Printer printer : printersList) {
-            if (printer.getId() == id) {
-                return printer;
-            }
-        }
-        return null;
-    }
-
-    public List<PrintTask> getPendingPrintTasks() {
-        return pendingPrintTasks;
-    }
 
     /**
      * Getter for the JSON file handler.
@@ -235,5 +227,78 @@ public class PrinterManager {
         printersList.addAll(printersFromFile);
         freePrinters.addAll(printersFromFile);
 
+        Printer printer = foundEntry.getKey();
+        Spool[] spools = printer.getSpools();
+        for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
+            spools[i].reduceLength(task.getPrint().getFilamentLength().get(0));
+        }
+        selectPrintTask(printer);
+    }
+
+    public PrintTask getPrinterCurrentTask(Printer printer) {
+        if (!printersMap.containsKey(printer)) {
+            return null;
+        }
+        return printersMap.get(printer).get(0);
+    }
+
+    private void printError(String s) {
+        System.out.println("---------- Error Message ----------");
+        System.out.println("Error: " + s);
+        System.out.println("--------------------------------------");
+    }
+
+    public void registerCompletion(int printerId) {
+        Map.Entry<Printer, PrintTask> foundEntry = null;
+        for (Map.Entry<Printer, ArrayList<PrintTask>> entry : printersMap.entrySet()) {
+            if (entry.getKey().getId() == printerId) {
+                //foundEntry = entry;
+                break;
+            }
+        }
+        if (foundEntry == null) {
+            printError("cannot find a running task on printer with ID " + printerId);
+            return;
+        }
+        PrintTask task = foundEntry.getValue();
+        pendingPrintTasks.remove(task);
+
+        System.out.println("Task " + task + " removed from printer " + foundEntry.getKey().getName());
+
+        Printer printer = foundEntry.getKey();
+        Spool[] spools = printer.getSpools();
+        for (int i = 0; i < spools.length && i < task.getColors().size(); i++) {
+            spools[i].reduceLength(task.getPrint().getFilamentLength().get(0));
+        }
+        selectPrintTask(printer);
+
+
+    }
+
+    public void startInitialQueue() {
+        for (Printer printer : printersList) {
+            selectPrintTask(printer);
+        }
+    }
+
+    public Printer findPrinterById(int id) {
+        for (Printer printer : printersList) {
+            if (printer.getId() == id) {
+                return printer;
+            }
+        }
+        return null;
+    }
+
+    public void completeTask() {
+        notifyObservers("completed");
+    }
+
+    public void failTask() {
+        notifyObservers("failed");
+    }
+
+    public List<PrintTask> getPendingPrintTasks() {
+        return pendingPrintTasks;
     }
 }

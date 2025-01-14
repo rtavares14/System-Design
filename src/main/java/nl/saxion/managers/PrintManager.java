@@ -3,6 +3,7 @@ package nl.saxion.managers;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
+import nl.saxion.adapter.AdapterReader;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
 import nl.saxion.adapter.AdapterReader;
@@ -20,6 +21,7 @@ import java.util.NoSuchElementException;
 public class PrintManager {
     private final SpoolManager spoolManager; // Reference shared instance
     private List<Print> prints = new ArrayList<>();
+    private ArrayList<PrintTask> printTasks = new ArrayList<>();
     private List<PrintTask> pendingPrints = new ArrayList<>();
 
     public PrintManager(SpoolManager spoolManager) {
@@ -117,5 +119,46 @@ public class PrintManager {
         prints.addAll(printsFromFile);
     }
 
+
+    /**
+     * Method to add a new printTask to the list of prints.
+     *
+     * @param printName the name of the print
+     * @param colors    the colors of the print
+     * @param type      the type of filament
+     */
+    public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
+        Print print = findPrint(printName.getName());
+        if (print == null || colors.isEmpty()) {
+            System.err.println("All fields must be filled in");
+            return;
+        }
+
+        for (String color : colors) {
+            boolean found = false;
+            for (Spool spool : spoolManager.getSpools()) {
+                if (spool.getColor().equals(color) && spool.getFilamentType() == type) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
+            }
+        }
+
+        PrintTask task = new PrintTask(print, colors, type);
+        pendingPrints.add(task);
+        System.out.println("Task added to the queue");
+    }
+
+    public Print findPrint(String print) {
+        for (Print allPrints : prints) {
+            if (allPrints.getName().equals(print)) {
+                return allPrints;
+            }
+        }
+        throw new NoSuchElementException("Printer with such print does not exist");
+    }
 }
 

@@ -10,7 +10,9 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Scanner;
 
 public class Facade {
     private final SpoolManager spoolManager;
@@ -24,6 +26,7 @@ public class Facade {
         this.printManager = new PrintManager(spoolManager);
         this.printerManager = new PrinterManager(spoolManager, printManager);
         this.dashboard = new Dashboard();
+        printerManager.addObserver(dashboard);
     }
 
     /**
@@ -33,6 +36,7 @@ public class Facade {
         spoolManager.readSpoolsFromFile("spools.csv");
         printerManager.readPrintersFromFile("printers.csv");
         printManager.readPrintsFromFile("prints.csv");
+        spoolManager.readSpoolsFromFile("spools.csv");
     }
 
     /**
@@ -44,11 +48,27 @@ public class Facade {
         int choice;
 
         listPrintsName();
-        choice = scanner.nextInt();
+
+        do {
+            System.out.print("Choose a print: ");
+            choice = scanner.nextInt();
+            if (choice < 1 || choice > printManager.getPrints().size()) {
+                System.out.println("Invalid print choice. Please try again.");
+            }
+        } while (choice < 1 || choice > printManager.getPrints().size());
+
         Print print = printManager.getPrints().get(choice - 1);
 
         listOfTypes();
-        choice = scanner.nextInt();
+
+        do {
+            System.out.print("Choose a filament type: ");
+            choice = scanner.nextInt();
+            if (choice < 1 || choice > FilamentType.values().length) {
+                System.out.println("Invalid filament type choice. Please try again.");
+            }
+        } while (choice < 1 || choice > FilamentType.values().length);
+
         FilamentType filamentType = FilamentType.values()[choice - 1];
 
         //check available colors
@@ -63,7 +83,7 @@ public class Facade {
     /**
      * This method is used to select the colors for the print
      *
-     * @param type  FilamentType chosen by the user
+     * @param type FilamentType chosen by the user
      * @param print Print chosen by the user
      * @return List<String> colors selected by the user
      */
@@ -75,6 +95,16 @@ public class Facade {
             System.out.print("- Color position: ");
             int colorChoice = scanner.nextInt();
             colors.put(availableColors.get(colorChoice - 1), print.getLength());
+            int colorChoice;
+            do {
+                System.out.print("Choose color for position: ");
+                colorChoice = scanner.nextInt();
+                if (colorChoice < 1 || colorChoice > availableColors.size()) {
+                    System.out.println("Invalid color choice. Please try again.");
+                }
+            } while (colorChoice < 1 || colorChoice > availableColors.size());
+
+            colors.add(availableColors.get(colorChoice - 1));
         }
         System.out.println("--------------------------------------");
         return colors;
@@ -82,7 +112,6 @@ public class Facade {
 
     /**
      * This method is used to show the available colors for the filament type
-     *
      * @param filamentType FilamentType chosen by the user
      * @return List<String> available colors for the filament type
      */
@@ -180,12 +209,12 @@ public class Facade {
      * This method is used to show the pending print tasks
      */
     public void showPendingPrintTask() {
-        if (printerManager.getPendingPrintTasks().isEmpty()) {
+        if (printManager.getPrintTasks().isEmpty()) {
             System.out.println("No pending print tasks");
             return;
         }
 
-        for (PrintTask printTask : printerManager.getPendingPrintTasks()) {
+        for (PrintTask printTask : printManager.getPrintTasks()) {
             System.out.println(printTask);
         }
     }
@@ -199,21 +228,13 @@ public class Facade {
     }
 
     public void startPrintQueue() {
-        printerManager.selectPrintTask();
-        for (Map.Entry<Printer, PrintTask> showPrints : printerManager.runningPrintTasks.entrySet()) {
-            System.out.println("-------" + showPrints.getKey().getName() + "--------");
-            System.out.println("Spool used: " + showPrints.getKey().getSpools());
-            System.out.println("Print task to be done: " + showPrints.getValue().getPrint().getName());
-            System.out.println();
-        }
+
     }
 
     public void registerPrinterFailure() {
-
     }
 
     public void registerPrintCompletion() {
-
     }
 
     public void changePrintStrategy() {
