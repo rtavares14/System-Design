@@ -15,21 +15,25 @@ import nl.saxion.utils.FilamentType;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PrinterManager {
     public PrinterFactory printerFactory = new PrinterFactory(this);
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
     public final List<Printer> printersList = new ArrayList<>();
-    private final List<PrintTask> pendingPrintTasks = new ArrayList<>();
-    private final List<Printer> freePrinters = new ArrayList<>();
-    private final List<Spool> freeSpools = new ArrayList<>();
+    private List<PrintTask> pendingPrintTasks = new ArrayList<>();
+    private List<Printer> freePrinters = new ArrayList<>();
     private Map<Printer, PrintTask> runningPrintTasks = new HashMap();
+    private Map<Spool, Integer> spoolsInUse = new HashMap<>();
+    private List<Spool> freeSpools = new ArrayList<>();
     private final List<PrintTaskObserver> observers = new ArrayList<>();
 
+    public PrinterManager(SpoolManager spoolManager, PrintManager printManager) {
+        freePrinters = printersList;
+        pendingPrintTasks = printManager.getPrintTasks();
+        freeSpools = spoolManager.getSpools();
+        spoolsInUse = spoolManager.getAllSpools();
+    }
 
     /**
      * Method to add a printer to the printers list.
@@ -44,10 +48,11 @@ public class PrinterManager {
      * Method notify all observers of an event.
      *
      * @param event The observer to notify.
+     * @param size
      */
-    private void notifyObservers(String event) {
+    private void notifyObservers(String event, int size) {
         for (PrintTaskObserver observer : observers) {
-            observer.update(event);
+            observer.update(event, size);
         }
     }
 
@@ -71,6 +76,10 @@ public class PrinterManager {
      */
     public List<Printer> getPrinters() {
         return printersList;
+    }
+
+    public List<Printer> getFreePrinters() {
+        return freePrinters;
     }
 
     /**
@@ -301,14 +310,71 @@ public class PrinterManager {
     }
 
     public void completeTask() {
-        notifyObservers("completed");
+        notifyObservers("completed", 0);
     }
 
     public void failTask() {
-        notifyObservers("failed");
+        notifyObservers("failed", 0);
     }
 
     public List<PrintTask> getPendingPrintTasks() {
         return pendingPrintTasks;
+    }
+
+    public void assignPrintTask(Printer printer, PrintTask printTask) {
+        if (printer == null || printTask == null) {
+            System.err.println("Printer or PrintTask is null");
+            return;
+        }
+
+        // Add the print task to the printer's task list
+        printersMap.get(printer).add(printTask);
+
+        // Remove the printer from the free printers list
+        freePrinters.remove(printer);
+
+        System.out.println("Assigned task: " + printTask + " to printer: " + printer.getName());
+    }
+
+    public void startPrintQueue2() {
+        Iterator<PrintTask> iterator = getPendingPrintTasks().iterator();
+        while (iterator.hasNext()) {
+            PrintTask printTask = iterator.next();
+            boolean taskAssigned = false;
+            for (Printer printer : getFreePrinters()) {
+                if (printer.printFits(printTask.getPrint()) && printer.acceptsFilamentType(printTask.getFilamentType())) {
+                    List<Spool> bestSpools = findBestSpools(printTask);
+                    if (!bestSpools.isEmpty()) {
+                        printer.setCurrentSpools((ArrayList<Spool>) bestSpools);
+                        assignPrintTask(printer, printTask);
+                        iterator.remove(); // Safely remove the print task from the pending list
+                        notifyObservers("changedSpool", bestSpools.size()); // Notify observers about the number of spools changed
+                        taskAssigned = true;
+                        break;
+                    }
+                }
+            }
+            if (!taskAssigned) {
+                System.out.println("No suitable printer found for task: " + printTask);
+            }
+        }
+    }
+
+    private List<Spool> findBestSpools(PrintTask printTask) {
+        List<Spool> bestSpools = new ArrayList<>();
+        for (String color : printTask.getColors()) {
+            Spool bestSpool = null;
+            for (Spool spool : freeSpools) {
+                if (spool.spoolMatch(color, printTask.getFilamentType())) {
+                    if (bestSpool == null || spool.getLength() > bestSpool.getLength()) {
+                        bestSpool = spool;
+                    }
+                }
+            }
+            if (bestSpool != null) {
+                bestSpools.add(bestSpool);
+            }
+        }
+        return bestSpools;
     }
 }

@@ -23,8 +23,8 @@ public class Facade {
 
     public Facade() {
         this.spoolManager = new SpoolManager();
-        this.printerManager = new PrinterManager();
         this.printManager = new PrintManager(spoolManager);
+        this.printerManager = new PrinterManager(spoolManager,printManager);
         this.dashboard = new Dashboard();
         printerManager.addObserver(dashboard);
     }
@@ -225,6 +225,10 @@ public class Facade {
 
     public void startPrintQueue() {
 
+    }
+
+    public void startPrintQueue2() {
+        printerManager.startPrintQueue2();
     }
 
     public void registerPrinterFailure() {

@@ -54,7 +54,7 @@ public class Main {
             case 2 -> facade.registerPrintCompletion();
             case 3 -> facade.registerPrinterFailure();
             case 4 -> facade.changePrintStrategy();
-            case 5 -> facade.startPrintQueue();
+            case 5 -> facade.startPrintQueue2();
             case 6 -> facade.showPrints();
             case 7 -> facade.showPrinters();
             case 8 -> facade.showSpools();
