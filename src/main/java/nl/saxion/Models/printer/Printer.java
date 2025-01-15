@@ -3,6 +3,7 @@ package nl.saxion.Models.printer;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.PrintTaskObserver;
+import nl.saxion.utils.FilamentType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -109,5 +110,13 @@ public abstract class Printer {
                 "- Housed: " + housed + System.lineSeparator() +
                 "- Type: " + this.getClass().getSimpleName() + System.lineSeparator() +
                  "- Status: " + status ;
+    }
+
+    public boolean acceptsFilamentType(FilamentType filamentType) {
+        if (this.isHoused()) {
+            return true;
+        } else {
+            return filamentType != FilamentType.ABS;
+        }
     }
 }

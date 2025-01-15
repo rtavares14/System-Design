@@ -222,6 +222,16 @@ public class Facade {
         }
     }
 
+    public void initPrintQueue() {
+        if (optimizedSpoolStrategy) {
+            printerManager.selectPrintTask();
+        } else {
+            printerManager.startPrintQueue2();
+        }
+    }
+
+
+
     public void startPrintQueue() {
         System.out.println("Starting print queue with method 1");
         printerManager.selectPrintTask();

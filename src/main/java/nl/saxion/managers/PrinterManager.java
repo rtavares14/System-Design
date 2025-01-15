@@ -333,4 +333,64 @@ public class PrinterManager {
         System.out.print("Task added to the queue");
     }
 
+    public void assignPrintTask(Printer printer, PrintTask printTask) {
+        if (printer == null || printTask == null) {
+            System.err.println("Printer or PrintTask is null");
+            return;
+        }
+
+        // Add the print task to the printer's task list
+        printersMap.get(printer).add(printTask);
+
+        // Remove the printer from the free printers list
+        freePrinters.remove(printer);
+
+        // Print the number of spools changed
+        System.out.println("Assigned task: " + printTask + " to printer: " + printer.getName());
+        System.out.println("Number of spools changed: " + printer.getSpools().size());
+    }
+
+
+    public void startPrintQueue2() {
+        Iterator<PrintTask> iterator = getPendingPrintTasks().iterator();
+        while (iterator.hasNext()) {
+            PrintTask printTask = iterator.next();
+            boolean taskAssigned = false;
+
+            for (Printer printer : getFreePrinters()) {
+                if (printer.printFits(printTask.getPrint()) && printer.acceptsFilamentType(printTask.getFilamentType())) {
+                    List<Spool> bestSpools = findBestSpools(printTask);
+                    if (!bestSpools.isEmpty()) {
+                        printer.setCurrentSpools((ArrayList<Spool>) bestSpools);
+                        assignPrintTask(printer, printTask);
+                        iterator.remove(); //remove the print task from the pending list
+                        notifyObservers("changedSpool", bestSpools.size()); //observers about the number of spools changed
+                        taskAssigned = true;
+                        break;
+                    }
+                }
+            }
+            if (!taskAssigned) {
+                System.out.println("No suitable printer found for task: " + printTask);
+            }
+        }
+    }
+
+    private List<Spool> findBestSpools(PrintTask printTask) {
+        List<Spool> bestSpools = new ArrayList<>();
+        for (String color : printTask.getColors()) {
+            Spool bestSpool = null;
+            for (Spool spool : freeSpools) {
+                if (spool.spoolMatch(color, printTask.getFilamentType())) {
+                    if (bestSpool == null || spool.getLength() > bestSpool.getLength()) {
+                        bestSpool = spool;
+                    }
+                }
+            }
+            if (bestSpool != null) {
+                bestSpools.add(bestSpool);
+            }
+        }
+        return bestSpools;
+    }
 }
