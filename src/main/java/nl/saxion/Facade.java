@@ -25,7 +25,7 @@ public class Facade {
     public Facade() {
         this.spoolManager = new SpoolManager();
         this.printManager = new PrintManager();
-        this.printerManager = new PrinterManager(spoolManager,printManager);
+        this.printerManager = new PrinterManager(spoolManager, printManager);
         this.dashboard = new Dashboard();
         printerManager.addObserver(dashboard);
     }
@@ -81,11 +81,10 @@ public class Facade {
     }
 
 
-
     /**
      * This method is used to select the colors for the print
      *
-     * @param type FilamentType chosen by the user
+     * @param type  FilamentType chosen by the user
      * @param print Print chosen by the user
      * @return List<String> colors selected by the user
      */
@@ -111,6 +110,7 @@ public class Facade {
 
     /**
      * This method is used to show the available colors for the filament type
+     *
      * @param filamentType FilamentType chosen by the user
      * @return List<String> available colors for the filament type
      */
@@ -150,6 +150,50 @@ public class Facade {
             System.out.println(i++ + " - " + type);
         }
         System.out.print("Choice:");
+    }
+
+    /**
+     * OPTION : 2
+     * This method is used to register the printer completion
+     */
+    public void registerPrintCompletion() {
+        printerManager.completeTask();
+    }
+
+    /**
+     * OPTION : 3
+     * This method is used to register the printer failure
+     */
+    public void registerPrinterFailure() {
+        printerManager.failTask();
+    }
+
+    /**
+     * OPTION : 4
+     * This method is used to change the print strategy
+     */
+    public void changePrintStrategy() {
+        if (!optimizedSpoolStrategy) {
+            optimizedSpoolStrategy = true;
+            System.out.println("Changed to Optimized Spool Strategy");
+        } else {
+            optimizedSpoolStrategy = false;
+            System.out.println("Changed to Fastest Spool Strategy");
+        }
+    }
+
+    /**
+     * OPTION : 5
+     * This method is used to start the print queue
+     */
+    public void initPrintQueue() {
+        if (!optimizedSpoolStrategy) {
+            System.out.println("Starting print queue with Fastest Spool Strategy");
+            printerManager.startPrintQueue2();
+        } else {
+            System.out.println("Starting print queue with Optimized Spool Strategy");
+            printerManager.startInitialQueue();
+        }
     }
 
     /**
@@ -218,52 +262,10 @@ public class Facade {
         }
     }
 
-    public void listSpools() {
-        System.out.println("Choose a color and a filament type:");
-        for (Spool spool : spoolManager.getSpools()) {
-            System.out.println("Color:" + spool.getColor());
-            System.out.println("Filament type:" + spool.getFilamentType());
-        }
-    }
-
-    public void initPrintQueue() {
-        if (optimizedSpoolStrategy) {
-            printerManager.startInitialQueue();
-        } else {
-            printerManager.startPrintQueue2();
-        }
-    }
-
-    public void startPrintQueue() {
-        System.out.println("Starting print queue with method 1");
-    }
-
-    public void startPrintQueue2() {
-        System.out.println("Starting print queue with method 2");
-        printerManager.startPrintQueue2();
-    }
-
-    public void registerPrinterFailure() {
-        printerManager.failTask();
-    }
-
-    public void registerPrintCompletion() {
-        printerManager.completeTask();
-    }
-
-    public void changePrintStrategy() {
-        if (!optimizedSpoolStrategy){
-            optimizedSpoolStrategy = true;
-            System.out.println("Changed to optimized spool strategy");
-        } else {
-            optimizedSpoolStrategy = false;
-            System.out.println("Changed to optimized time strategy");
-        }
-    }
-
-    private void exit() {
-    }
-
+    /**
+     * OPTION : 10
+     * This method is used to show the dashboard stats
+     */
     public void showDashboardStats() {
         dashboard.showDashboard();
     }
