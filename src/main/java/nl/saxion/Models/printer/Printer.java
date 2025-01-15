@@ -3,6 +3,7 @@ package nl.saxion.Models.printer;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.PrintTaskObserver;
+import nl.saxion.utils.FilamentType;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,10 +16,10 @@ public abstract class Printer {
     private final int maxX;
     private final int maxY;
     private final int maxZ;
-    private boolean housed;
     private final List<Spool> spools;
-    private String status;
     private final List<PrintTaskObserver> observers; // List of observers
+    private boolean housed;
+    private String status;
 
     public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed) {
         this.id = id;
@@ -88,6 +89,14 @@ public abstract class Printer {
         return housed;
     }
 
+    public boolean acceptsFilamentType(FilamentType filamentType) {
+        if (this.isHoused()) {
+            return true;
+        } else {
+            return filamentType != FilamentType.ABS;
+        }
+    }
+
     @Override
     public String toString() {
         return "-----------------------------------" + System.lineSeparator() +
@@ -98,6 +107,6 @@ public abstract class Printer {
                 "- Max Dimensions: (" + maxX + " x " + maxY + " x " + maxZ + ")" + System.lineSeparator() +
                 "- Housed: " + housed + System.lineSeparator() +
                 "- Type: " + this.getClass().getSimpleName() + System.lineSeparator() +
-                 "- Status: " + status ;
+                "- Status: " + status;
     }
 }
