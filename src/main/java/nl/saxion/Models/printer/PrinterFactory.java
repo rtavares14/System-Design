@@ -31,11 +31,13 @@ public class PrinterFactory {
         if (printerType == 1 || printerType == 2) {
             // Create a StandardFDM printer (or a housed printer)
             StandardFDM printer = new StandardFDM(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused = printerType == 2);
+            printerManager.freePrinters.add(printer);
             printerManager.printersList.add(printer);
             printerManager.printersMap.put(printer, new ArrayList<>());
         } else if (printerType == 3 || printerType == 4) {
             // Create a MultiColor printer
             MultiColor printer = new MultiColor(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused = printerType == 4, maxColors);
+            printerManager.freePrinters.add(printer);
             printerManager.printersList.add(printer);
             printerManager.printersMap.put(printer, new ArrayList<>());
         }

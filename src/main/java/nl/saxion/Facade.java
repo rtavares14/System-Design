@@ -24,7 +24,7 @@ public class Facade {
 
     public Facade() {
         this.spoolManager = new SpoolManager();
-        this.printManager = new PrintManager(spoolManager);
+        this.printManager = new PrintManager();
         this.printerManager = new PrinterManager(spoolManager,printManager);
         this.dashboard = new Dashboard();
         printerManager.addObserver(dashboard);
@@ -76,9 +76,11 @@ public class Facade {
 
         System.out.println(print.getName() + " " + filamentType + " " + colors);
         //creates the print task
-        printManager.addPrintTask(print, colors, filamentType);
+        printerManager.addPrintTask(print, colors, filamentType);
         System.out.println("-----------------------------------");
     }
+
+
 
     /**
      * This method is used to select the colors for the print
@@ -206,12 +208,12 @@ public class Facade {
      * This method is used to show the pending print tasks
      */
     public void showPendingPrintTask() {
-        if (printManager.getPrintTasks().isEmpty()) {
+        if (printerManager.getPendingPrintTasks().isEmpty()) {
             System.out.println("No pending print tasks");
             return;
         }
 
-        for (PrintTask printTask : printManager.getPrintTasks()) {
+        for (PrintTask printTask : printerManager.getPendingPrintTasks()) {
             System.out.println(printTask);
         }
     }
