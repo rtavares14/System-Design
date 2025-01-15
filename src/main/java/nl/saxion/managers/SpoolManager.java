@@ -9,18 +9,17 @@ import nl.saxion.utils.FilamentType;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SpoolManager {
     private final List<Spool> spools;
 
-
     public SpoolManager() {
         this.spools = new ArrayList<>();
-
     }
-
-
 
     /**
      * Getter for the JSON file handler.
@@ -42,7 +41,6 @@ public class SpoolManager {
     public List<Spool> getSpools() {
         return spools;
     }
-
 
     /**
      * Method to read spools from a file.
@@ -88,6 +86,5 @@ public class SpoolManager {
         }
         return availableColors.stream().toList();
     }
-
 
 }

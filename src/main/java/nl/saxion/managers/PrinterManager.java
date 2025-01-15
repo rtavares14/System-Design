@@ -1,6 +1,5 @@
 package nl.saxion.managers;
 
-import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.PrintTaskObserver;
@@ -11,16 +10,12 @@ import nl.saxion.Models.printer.printerTypes.StandardFDM;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
 import nl.saxion.adapter.AdapterReader;
-import nl.saxion.exceptions.ColorNotFoundException;
 import nl.saxion.utils.FilamentType;
 
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class PrinterManager {
     public PrinterFactory printerFactory = new PrinterFactory(this);
@@ -215,11 +210,11 @@ public class PrinterManager {
     }
 
     public void completeTask() {
-        notifyObservers("completed");
+        notifyObservers("completed",0);
     }
 
     public void failTask() {
-        notifyObservers("failed");
+        notifyObservers("failed",0);
     }
 
     public PrintTask getPrinterCurrentTask(Printer printer) {
@@ -243,10 +238,11 @@ public class PrinterManager {
      * Method notify all observers of an event.
      *
      * @param event The observer to notify.
+     * @param size
      */
-    private void notifyObservers(String event) {
+    private void notifyObservers(String event, int size) {
         for (PrintTaskObserver observer : observers) {
-            observer.update(event);
+            observer.update(event, size);
         }
     }
 
@@ -270,6 +266,10 @@ public class PrinterManager {
      */
     public List<Printer> getPrinters() {
         return new ArrayList<>(printersList);
+    }
+
+    public List<Printer> getFreePrinters() {
+        return freePrinters;
     }
 
     /**
@@ -305,38 +305,7 @@ public class PrinterManager {
         return new ArrayList<>(pendingPrintTasks);
     }
 
-    /**
-     * Method to add a new printTask to the list of prints.
-     *
-     * @param printName the name of the print
-     * @param colors    the colors of the print
-     * @param type      the type of filament
-     */
-
-    public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
-        Print print = printName;
-        if (print == null || colors.isEmpty()) {
-            System.err.println("All fields must be filled in");
-            return;
-        }
-
-        for (String color : colors) {
-            boolean found = false;
-            for (Spool spool : freeSpools) {
-                if (spool.getColor().equals(color) && spool.getFilamentType().equals(type)) {
-                    found = true;
-                    break;
-                }
-            }
-            if (!found) {
-                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
-            }
-        }
-
-        PrintTask task = new PrintTask(print, colors, type);
-        pendingPrintTasks.add(task);
-
-        System.out.print("Task added to the queue");
+    public List<PrintTask> getPendingPrintTasks() {
+        return pendingPrintTasks;
     }
-
 }

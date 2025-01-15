@@ -6,7 +6,7 @@ public class Dashboard implements PrintTaskObserver {
     private int changedSpools = 0;
 
     @Override
-    public void update(String event) {
+    public void update(String event, int spoolsChanged) {
         switch (event) {
             case "completed":
                 completedTasks++;
@@ -15,7 +15,7 @@ public class Dashboard implements PrintTaskObserver {
                 failedTasks++;
                 break;
             case "changedSpool":
-                changedSpools++;
+                changedSpools += spoolsChanged;
                 break;
         }
     }
@@ -27,5 +27,4 @@ public class Dashboard implements PrintTaskObserver {
         System.out.println("Changed spools: " + changedSpools);
         System.out.println("-----------------------------------");
     }
-
 }

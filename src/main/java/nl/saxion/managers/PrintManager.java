@@ -19,12 +19,8 @@ import java.util.NoSuchElementException;
 public class PrintManager {
     private List<Print> prints = new ArrayList<>();
 
-
     public PrintManager() {
-
     }
-
-
 
     /**
      * Getter for the JSON file handler.
@@ -73,6 +69,8 @@ public class PrintManager {
         List<Print> printsFromFile = fileHandler.readPrints(path);
         prints.addAll(printsFromFile);
     }
+
+
 
 
     public Print findPrint(String print) {
