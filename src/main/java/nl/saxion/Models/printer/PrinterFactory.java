@@ -26,16 +26,18 @@ public class PrinterFactory {
      * @param maxZ         the maximum Z dimension
      * @param maxColors    the maximum colors (only applicable to MultiColor printers)
      */
-    public static Printer addPrinter(int id, int printerType, String printerName,String model, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
+    public static Printer addPrinter(int id, int printerType, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, int maxColors) {
         boolean isHoused;
         if (printerType == 1 || printerType == 2) {
             // Create a StandardFDM printer (or a housed printer)
-            StandardFDM printer = new StandardFDM(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused = printerType == 2,maxColors);
+            StandardFDM printer = new StandardFDM(id, printerName, model, manufacturer, maxX, maxY, maxZ, isHoused = printerType == 2, maxColors);
+            printerManager.freePrinters.add(printer);
             printerManager.printersList.add(printer);
             printerManager.printersMap.put(printer, new ArrayList<>());
         } else if (printerType == 3 || printerType == 4) {
             // Create a MultiColor printer
-            MultiColor printer = new MultiColor(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused = printerType == 4, maxColors);
+            MultiColor printer = new MultiColor(id, printerName, model, manufacturer, maxX, maxY, maxZ, isHoused = printerType == 4, maxColors);
+            printerManager.freePrinters.add(printer);
             printerManager.printersList.add(printer);
             printerManager.printersMap.put(printer, new ArrayList<>());
         }

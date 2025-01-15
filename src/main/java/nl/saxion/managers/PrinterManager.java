@@ -1,5 +1,6 @@
 package nl.saxion.managers;
 
+import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.PrintTaskObserver;
@@ -10,6 +11,7 @@ import nl.saxion.Models.printer.printerTypes.StandardFDM;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
 import nl.saxion.adapter.AdapterReader;
+import nl.saxion.exceptions.ColorNotFoundException;
 import nl.saxion.utils.FilamentType;
 
 import java.net.URL;
@@ -26,8 +28,8 @@ public class PrinterManager {
     // all the printers and print tasks
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
 
-    public final List<Printer> printersList = new ArrayList<>();
-    private List<Printer> freePrinters = new ArrayList<>();
+    public List<Printer> printersList = new ArrayList<>();
+    public List<Printer> freePrinters = new ArrayList<>();
 
     private List<PrintTask> pendingPrintTasks = new ArrayList<>();
     public Map<Printer, PrintTask> runningPrintTasks = new HashMap();
@@ -39,11 +41,10 @@ public class PrinterManager {
 
 
     // todo discuss: should we make static methods for the spools nad prints insteas of using instances???
-    public PrinterManager(SpoolManager spoolManager, PrintManager printManager) {
-        freePrinters = printersList;
-        pendingPrintTasks = printManager.getPrintTasks();
-        freeSpools = spoolManager.getSpools();
+    public PrinterManager(SpoolManager spoolManager) {
 
+        freeSpools = spoolManager.getSpools();
+        freePrinters = new ArrayList<>(printersList);
     }
 
     /**
@@ -125,12 +126,11 @@ public class PrinterManager {
                 }
             }
 
-//            increaseSpoolUsage(minSpool);
             printerSpools.add(minSpool);
-            freeSpools.remove(minSpool);
+
         }
 
-
+        freeSpools.removeAll(printerSpools);
         return printerSpools;
     }
 
@@ -138,7 +138,7 @@ public class PrinterManager {
 
         FilamentType filamentType = printTask.getFilamentType();
 
-        if ((printer.getMaxColors() == printTask.getColors().size())) {
+        if ((printer.getMaxColors() >= printTask.getColors().size())) {
             switch (filamentType) {
                 case FilamentType.ABS -> {
                     return printer.isHoused();
@@ -153,27 +153,36 @@ public class PrinterManager {
     }
 
     private void reduceLenghtOfSpools(PrintTask printTask, Printer printer) {
-        for (Spool spool : printer.getSpools()) {
+        for (int j=0;j<printer.getSpools().size();j++) {
             for (int i = 0; i < printTask.getColors().size(); i++) {
-                if (spool.spoolMatch(printTask.getColors().get(i), spool.getFilamentType())) {
-                    spool.reduceLength(printTask.getPrint().getSpecificFilamentLenght(i));
+                Spool spoolNotEmpty = printer.getSpools().get(j);
+                if(printer.getSpools().get(j)!=null){
+                if (spoolNotEmpty.spoolMatch(printTask.getColors().get(i), spoolNotEmpty.getFilamentType())) {
+                    spoolNotEmpty.reduceLength(printTask.getPrint().getSpecificFilamentLenght(i));
                 }
-            }
+            }}
         }
     }
 
     public void registerCompletion(int printerId) {
-        failTask();
+        Printer printer = findPrinterById(printerId);
+        PrintTask printTask = runningPrintTasks.remove(printer);
+
+        reduceLenghtOfSpools(printTask,printer);
+        removeTasksFromPrinter(printer,printTask);
+        freePrinters.add(printer);
+
+        completeTask();
     }
 
     public void registerFailure(int printerId) {
         Printer printer = findPrinterById(printerId);
         PrintTask printTask = runningPrintTasks.remove(printer);
 
-        reduceLenghtOfSpools(printTask,printer);
-        removeTasksFromPrinter(printer,printTask);
+        pendingPrintTasks.add(printTask);
 
-        completeTask();
+        freePrinters.add(printer);
+        failTask();
     }
 
     public Printer findPrinterById(int id) {
@@ -240,7 +249,7 @@ public class PrinterManager {
      * Getter for the printers list.
      */
     public List<Printer> getPrinters() {
-        return printersList;
+        return new ArrayList<>(printersList);
     }
 
     /**
@@ -272,5 +281,42 @@ public class PrinterManager {
         freePrinters.addAll(printersFromFile);
     }
 
+    public List<PrintTask> getPendingPrintTasks() {
+        return new ArrayList<>(pendingPrintTasks);
+    }
+
+    /**
+     * Method to add a new printTask to the list of prints.
+     *
+     * @param printName the name of the print
+     * @param colors    the colors of the print
+     * @param type      the type of filament
+     */
+
+    public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
+        Print print = printName;
+        if (print == null || colors.isEmpty()) {
+            System.err.println("All fields must be filled in");
+            return;
+        }
+
+        for (String color : colors) {
+            boolean found = false;
+            for (Spool spool : freeSpools) {
+                if (spool.getColor().equals(color) && spool.getFilamentType().equals(type)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
+            }
+        }
+
+        PrintTask task = new PrintTask(print, colors, type);
+        pendingPrintTasks.add(task);
+
+        System.out.print("Task added to the queue");
+    }
 
 }

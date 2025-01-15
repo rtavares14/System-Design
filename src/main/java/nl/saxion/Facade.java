@@ -21,8 +21,8 @@ public class Facade {
 
     public Facade() {
         this.spoolManager = new SpoolManager();
-        this.printManager = new PrintManager(spoolManager);
-        this.printerManager = new PrinterManager(spoolManager, printManager);
+        this.printManager = new PrintManager();
+        this.printerManager = new PrinterManager(spoolManager);
         this.dashboard = new Dashboard();
         printerManager.addObserver(dashboard);
     }
@@ -72,16 +72,21 @@ public class Facade {
         //check available colors
         List<String> colors = selectColors(filamentType, print);
         System.out.println(print.getName() + " " + filamentType + " " + colors);
+
+
         //creates the print task
-        printManager.addPrintTask(print, colors, filamentType);
+        printerManager.addPrintTask(print, colors, filamentType);
         System.out.println("-----------------------------------");
 
     }
 
+    private  Print findPrint(String name){
+        return printManager.findPrint(name);
+    }
     /**
      * This method is used to select the colors for the print
      *
-     * @param type FilamentType chosen by the user
+     * @param type  FilamentType chosen by the user
      * @param print Print chosen by the user
      * @return List<String> colors selected by the user
      */
@@ -110,6 +115,7 @@ public class Facade {
 
     /**
      * This method is used to show the available colors for the filament type
+     *
      * @param filamentType FilamentType chosen by the user
      * @return List<String> available colors for the filament type
      */
@@ -237,9 +243,24 @@ public class Facade {
     }
 
     public void registerPrinterFailure() {
+        printerManager.registerFailure(choosePrinter());
     }
 
     public void registerPrintCompletion() {
+        printerManager.registerCompletion(choosePrinter());
+    }
+
+    private int choosePrinter() {
+        System.out.println("------Choose right printer by its id:-------");
+
+        int counter = 1;
+        for (Map.Entry<Printer,PrintTask> printer : printerManager.runningPrintTasks.entrySet()) {
+            System.out.println(counter + ")" + printer.getKey());
+            System.out.println(counter + ")" + printer.getValue().getPrint());
+            counter++;
+        }
+        System.out.println("---------What printer finished:----------");
+        return scanner.nextInt();
     }
 
     public void changePrintStrategy() {

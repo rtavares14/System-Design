@@ -13,14 +13,11 @@ import java.util.*;
 
 public class SpoolManager {
     private final List<Spool> spools;
-    private Map<Spool,Integer> allSpools = new HashMap<>();
 
 
     public SpoolManager() {
         this.spools = new ArrayList<>();
-        for (Spool spool:spools){
-            allSpools.put(spool,0);
-        }
+
     }
 
 
@@ -46,9 +43,6 @@ public class SpoolManager {
         return spools;
     }
 
-    public Map<Spool, Integer> getAllSpools() {
-        return allSpools;
-    }
 
     /**
      * Method to read spools from a file.
