@@ -1,5 +1,6 @@
 package nl.saxion.managers;
 
+import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.PrintTaskObserver;
@@ -10,6 +11,7 @@ import nl.saxion.Models.printer.printerTypes.StandardFDM;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
 import nl.saxion.adapter.AdapterReader;
+import nl.saxion.exceptions.ColorNotFoundException;
 import nl.saxion.utils.FilamentType;
 
 import java.net.URL;
@@ -302,10 +304,33 @@ public class PrinterManager {
     }
 
     public List<PrintTask> getPendingPrintTasks() {
-        return new ArrayList<>(pendingPrintTasks);
-    }
-
-    public List<PrintTask> getPendingPrintTasks() {
         return pendingPrintTasks;
     }
+
+    public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
+        Print print = printName;
+        if (print == null || colors.isEmpty()) {
+            System.err.println("All fields must be filled in");
+            return;
+        }
+
+        for (String color : colors) {
+            boolean found = false;
+            for (Spool spool : freeSpools) {
+                if (spool.getColor().equals(color) && spool.getFilamentType().equals(type)) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) {
+                throw new ColorNotFoundException("Color " + color + " (" + type + ") not found");
+            }
+        }
+
+        PrintTask task = new PrintTask(print, colors, type);
+        pendingPrintTasks.add(task);
+
+        System.out.print("Task added to the queue");
+    }
+
 }

@@ -223,16 +223,37 @@ public class Facade {
     }
 
     public void startPrintQueue() {
+        System.out.println("Starting print queue with method 1");
+        printerManager.selectPrintTask();
+        for (Map.Entry<Printer, PrintTask> showPrints : printerManager.runningPrintTasks.entrySet()) {
+            System.out.println("-------" + showPrints.getKey().getName() + "--------");
+            System.out.println("Spool used: " + showPrints.getKey().getSpools());
+            System.out.println("Print task to be done: " + showPrints.getValue().getPrint().getName());
+            System.out.println();
+        }
+    }
 
+    private int choosePrinter() {
+        System.out.println("------Choose right printer by its id:-------");
+
+        int counter = 1;
+        for (Map.Entry<Printer,PrintTask> printer : printerManager.runningPrintTasks.entrySet()) {
+            System.out.println(counter + ")" + printer.getKey());
+            System.out.println(counter + ")" + printer.getValue().getPrint());
+            counter++;
+        }
+        System.out.println("---------What printer finished:----------");
+        return scanner.nextInt();
     }
 
     public void registerPrinterFailure() {
-        printerManager.failTask();
+        printerManager.registerFailure(choosePrinter());
     }
 
     public void registerPrintCompletion() {
-        printerManager.completeTask();
+        printerManager.registerCompletion(choosePrinter());
     }
+
 
     public void changePrintStrategy() {
     }
