@@ -165,7 +165,17 @@ public class PrinterManager {
     }
 
     public void registerCompletion(int printerId) {
+        if(runningPrintTasks.isEmpty()){
+            System.out.println("no running tasks yet");
+            return;
+        }
         Printer printer = findPrinterById(printerId);
+
+        if(printer == null){
+            System.out.println("Try again, you typed invalid id");
+            return;
+        }
+
         PrintTask printTask = runningPrintTasks.remove(printer);
 
         reduceLenghtOfSpools(printTask,printer);
@@ -176,7 +186,17 @@ public class PrinterManager {
     }
 
     public void registerFailure(int printerId) {
+        if(runningPrintTasks.isEmpty()){
+            System.out.println("no running tasks yet");
+            return;
+        }
         Printer printer = findPrinterById(printerId);
+
+        if(printer == null){
+            System.out.println("Try again, you typed invalid id");
+            return;
+        }
+
         PrintTask printTask = runningPrintTasks.remove(printer);
 
         pendingPrintTasks.add(printTask);
