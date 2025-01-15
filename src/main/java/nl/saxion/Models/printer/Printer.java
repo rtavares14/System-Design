@@ -16,12 +16,13 @@ public abstract class Printer {
     private final int maxX;
     private final int maxY;
     private final int maxZ;
-    private final List<Spool> spools;
-    private final List<PrintTaskObserver> observers; // List of observers
     private boolean housed;
+    private final List<Spool> spools;
     private String status;
+    private final List<PrintTaskObserver> observers; // List of observers
+    private final int maxColors;
 
-    public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed) {
+    public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed, int maxColors) {
         this.id = id;
         this.name = printerName;
         this.model = model;
@@ -30,6 +31,7 @@ public abstract class Printer {
         this.maxY = maxY;
         this.maxZ = maxZ;
         this.housed = housed;
+        this.maxColors = maxColors;
         this.spools = new ArrayList<>();
         this.status = "Idle"; // Default status
         this.observers = new ArrayList<>(); // Initialize observers list
@@ -75,9 +77,13 @@ public abstract class Printer {
         spools.clear();
     }
 
-    public abstract Spool[] getSpools();
+    public Spool getCurrentSpool(){
+        return spools.getFirst();
+    }
 
-    public abstract void setCurrentSpools(ArrayList<Spool> spools);
+    public abstract List<Spool> getSpools();
+
+    public abstract void setCurrentSpools(List<Spool> spools);
 
     public boolean printFits(Print print) {
         return print.getLength() <= maxX &&
@@ -89,12 +95,8 @@ public abstract class Printer {
         return housed;
     }
 
-    public boolean acceptsFilamentType(FilamentType filamentType) {
-        if (this.isHoused()) {
-            return true;
-        } else {
-            return filamentType != FilamentType.ABS;
-        }
+    public int getMaxColors() {
+        return maxColors;
     }
 
     @Override
@@ -107,6 +109,14 @@ public abstract class Printer {
                 "- Max Dimensions: (" + maxX + " x " + maxY + " x " + maxZ + ")" + System.lineSeparator() +
                 "- Housed: " + housed + System.lineSeparator() +
                 "- Type: " + this.getClass().getSimpleName() + System.lineSeparator() +
-                "- Status: " + status;
+                 "- Status: " + status ;
+    }
+
+    public boolean acceptsFilamentType(FilamentType filamentType) {
+        if (this.isHoused()) {
+            return true;
+        } else {
+            return filamentType != FilamentType.ABS;
+        }
     }
 }

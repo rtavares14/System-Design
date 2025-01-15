@@ -1,11 +1,13 @@
 package nl.saxion.managers;
 
 import nl.saxion.Models.Print;
-
+import nl.saxion.Models.PrintTask;
+import nl.saxion.Models.Spool;
 import nl.saxion.adapter.AdapterReader;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
-
+import nl.saxion.exceptions.ColorNotFoundException;
+import nl.saxion.utils.FilamentType;
 
 import java.net.URL;
 import java.net.URLDecoder;

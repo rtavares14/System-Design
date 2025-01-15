@@ -10,9 +10,7 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Facade {
     private final SpoolManager spoolManager;
@@ -25,7 +23,7 @@ public class Facade {
     public Facade() {
         this.spoolManager = new SpoolManager();
         this.printManager = new PrintManager();
-        this.printerManager = new PrinterManager(spoolManager,printManager);
+        this.printerManager = new PrinterManager(spoolManager);
         this.dashboard = new Dashboard();
         printerManager.addObserver(dashboard);
     }
@@ -79,8 +77,6 @@ public class Facade {
         printerManager.addPrintTask(print, colors, filamentType);
         System.out.println("-----------------------------------");
     }
-
-
 
     /**
      * This method is used to select the colors for the print
@@ -228,37 +224,48 @@ public class Facade {
 
     public void initPrintQueue() {
         if (optimizedSpoolStrategy) {
-            printerManager.startInitialQueue();
+            printerManager.selectPrintTask();
         } else {
             printerManager.startPrintQueue2();
         }
     }
 
+
+
     public void startPrintQueue() {
         System.out.println("Starting print queue with method 1");
+        printerManager.selectPrintTask();
+        for (Map.Entry<Printer, PrintTask> showPrints : printerManager.runningPrintTasks.entrySet()) {
+            System.out.println("-------" + showPrints.getKey().getName() + "--------");
+            System.out.println("Spool used: " + showPrints.getKey().getSpools());
+            System.out.println("Print task to be done: " + showPrints.getValue().getPrint().getName());
+            System.out.println();
+        }
     }
 
-    public void startPrintQueue2() {
-        System.out.println("Starting print queue with method 2");
-        printerManager.startPrintQueue2();
+    private int choosePrinter() {
+        System.out.println("------Choose right printer by its id:-------");
+
+        int counter = 1;
+        for (Map.Entry<Printer,PrintTask> printer : printerManager.runningPrintTasks.entrySet()) {
+            System.out.println(counter + ")" + printer.getKey());
+            System.out.println(counter + ")" + printer.getValue().getPrint());
+            counter++;
+        }
+        System.out.println("---------What printer finished:----------");
+        return scanner.nextInt();
     }
 
     public void registerPrinterFailure() {
-        printerManager.failTask();
+        printerManager.registerFailure(choosePrinter());
     }
 
     public void registerPrintCompletion() {
-        printerManager.completeTask();
+        printerManager.registerCompletion(choosePrinter());
     }
 
+
     public void changePrintStrategy() {
-        if (!optimizedSpoolStrategy){
-            optimizedSpoolStrategy = true;
-            System.out.println("Changed to optimized spool strategy");
-        } else {
-            optimizedSpoolStrategy = false;
-            System.out.println("Changed to optimized time strategy");
-        }
     }
 
     private void exit() {

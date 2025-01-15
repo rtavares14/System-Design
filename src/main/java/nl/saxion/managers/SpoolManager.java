@@ -9,7 +9,10 @@ import nl.saxion.utils.FilamentType;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 public class SpoolManager {
     private final List<Spool> spools;

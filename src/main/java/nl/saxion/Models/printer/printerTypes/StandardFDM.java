@@ -3,35 +3,30 @@ package nl.saxion.Models.printer.printerTypes;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.interfaces.PrintTimeCalculator;
 import nl.saxion.Models.printer.Printer;
+import nl.saxion.exceptions.ColorNotFoundException;
 
 import java.util.ArrayList;
+import java.util.List;
 
 /* Standard cartesian FDM printer */
 public class StandardFDM extends Printer implements PrintTimeCalculator {
-    private Spool currentSpool;
+    private List<Spool> allSpools;
 
-    public StandardFDM(int id, String printerName,String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused) {
-        super(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused);
-    }
 
-    public Spool getCurrentSpool() {
-        return currentSpool;
+    public StandardFDM(int id, String printerName,String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused,int maxColors) {
+        super(id, printerName,model, manufacturer, maxX, maxY, maxZ, isHoused,maxColors);
     }
 
     public void setCurrentSpool(Spool spool) {
-        this.currentSpool = spool;
+        this.allSpools.set(0,spool);
     }
 
-    public Spool[] getSpools() {
-        Spool[] spools = new Spool[1];
-        if (currentSpool != null) {
-            spools[0] = currentSpool;
-        }
-        return spools;
+    public List<Spool> getSpools() {
+        return allSpools;
     }
 
-    public void setCurrentSpools(ArrayList<Spool> spools) {
-        this.currentSpool = spools.get(0);
+    public void setCurrentSpools(List<Spool> spools) {
+        this.allSpools = spools;
     }
 
     /**
@@ -49,9 +44,9 @@ public class StandardFDM extends Printer implements PrintTimeCalculator {
     public String toString() {
         String result = super.toString();
         String append = "";
-        if (currentSpool != null) {
-            append += "- Spool(s): " + currentSpool.getId() + System.lineSeparator();
-        }
+//        for(Spool spool:allSpools) {
+//            append += "- Spool(s): " + spool.getId() + System.lineSeparator();
+//        }
         append += "--------";
         result = result.replace("--------", append);
         return result;

@@ -86,10 +86,12 @@ public class JSONAdapterReader implements AdapterReader {
     public List<Printer> readPrinters(String filePath) {
         JSONArray printersJson = parseJsonFromFile(filePath);
         List<Printer> printers = new ArrayList<>();
+
         for (Object printerObj : printersJson) {
             JSONObject printerJson = (JSONObject) printerObj;
             printers.add(convertJsonToPrinter(printerJson));
         }
+
         return printers;
     }
 
