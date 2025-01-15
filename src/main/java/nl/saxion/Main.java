@@ -32,7 +32,7 @@ public class Main {
         System.out.println("- 1) Add new Print Task");
         System.out.println("- 2) Register Printer Completion");
         System.out.println("- 3) Register Printer Failure");
-        System.out.println("- 4) Change printing style");
+        System.out.println("- 4) Change printing strategy");
         System.out.println("- 5) Start Print Queue");
         System.out.println("- 6) Show prints");
         System.out.println("- 7) Show printers");
@@ -54,7 +54,7 @@ public class Main {
             case 2 -> facade.registerPrintCompletion();
             case 3 -> facade.registerPrinterFailure();
             case 4 -> facade.changePrintStrategy();
-            case 5 -> facade.startPrintQueue();
+            case 5 -> facade.initPrintQueue();
             case 6 -> facade.showPrints();
             case 7 -> facade.showPrinters();
             case 8 -> facade.showSpools();
