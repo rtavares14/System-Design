@@ -1,5 +1,6 @@
 package nl.saxion.Models;
 
+
 import java.util.ArrayList;
 
 public class Print {
@@ -17,18 +18,6 @@ public class Print {
         this.length = length;
         this.filamentLength = filamentLength;
         this.printTime = printTime;
-    }
-
-    @Override
-    public String toString() {
-        return "--------" + System.lineSeparator() +
-                "- Name: " + name + System.lineSeparator() +
-                "- Height: " + height + System.lineSeparator() +
-                "- Width: " + width + System.lineSeparator() +
-                "- Length: " + length + System.lineSeparator() +
-                "- FilamentLength: " + filamentLength + System.lineSeparator() +
-                "- Print Time: " + printTime + System.lineSeparator() +
-                "--------";
     }
 
     public String getName() {
@@ -49,5 +38,20 @@ public class Print {
 
     public ArrayList<Double> getFilamentLength() {
         return filamentLength;
+    }
+
+    public Double getSpecificFilamentLenght(int index) {
+        return filamentLength.get(index);
+    }
+
+    @Override
+    public String toString() {
+        return "-----------------------------------" + System.lineSeparator() +
+                "- Name: " + name + System.lineSeparator() +
+                "- Height: " + height + System.lineSeparator() +
+                "- Width: " + width + System.lineSeparator() +
+                "- Length: " + length + System.lineSeparator() +
+                "- FilamentLength: " + filamentLength + System.lineSeparator() +
+                "- Print Time: " + printTime;
     }
 }

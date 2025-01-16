@@ -1,6 +1,6 @@
 package nl.saxion.Models;
 
-import java.util.Objects;
+import nl.saxion.utils.FilamentType;
 
 public class Spool {
     private final int id;
@@ -9,14 +9,10 @@ public class Spool {
     private double length;
 
     public Spool(int id, String color, FilamentType filamentType, double length) {
-        this.id = id;
         this.color = color;
         this.filamentType = filamentType;
         this.length = length;
-    }
-
-    public int getId() {
-        return this.id;
+        this.id = id;
     }
 
     public double getLength() {
@@ -24,42 +20,36 @@ public class Spool {
     }
 
     public boolean spoolMatch(String color, FilamentType type) {
-        if(color.equals(this.color) && type == this.getFilamentType()) {
-            return true;
-        }
-        return false;
+        return color.equals(this.color) && type == this.getFilamentType();
     }
+
     /**
      * This method will try to reduce the length of the spool.
      *
      * @param byLength
      * @return boolean which tells you if it is possible or not.
      */
-    public boolean reduceLength(double byLength) {
-        boolean success = true;
-        this.length -= byLength;
-        if (this.length < 0) {
-            this.length -= byLength;
-            success = false;
-        }
-        return success;
+    public void reduceLength(double byLength) {
+        length = -byLength;
     }
 
     public String getColor() {
         return color;
     }
 
-    public FilamentType getFilamentType(){
+    public FilamentType getFilamentType() {
         return filamentType;
+    }
+
+    public int getId() {
+        return id;
     }
 
     @Override
     public String toString() {
-        return  "--------" + System.lineSeparator() +
-                "- id: " + id + System.lineSeparator() +
-                "- color: " + color + System.lineSeparator() +
-                "- filamentType: " + filamentType + System.lineSeparator() +
-                "- length: " + length + System.lineSeparator() +
-                "--------";
+        return "-----------------------------------" + System.lineSeparator() +
+                "- Color: " + color + System.lineSeparator() +
+                "- FilamentType: " + filamentType + System.lineSeparator() +
+                "- Length: " + length;
     }
 }

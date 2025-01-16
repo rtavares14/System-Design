@@ -75,6 +75,17 @@
     "maxY": 150,
     "maxZ": 150,
     "maxColors": 1
+  },
+  {
+    "id": 8,
+    "type": 4,
+    "name": "Space Ball One",
+    "model": "Ultimaker S5",
+    "manufacturer": "Ultimaker",
+    "maxX": 330,
+    "maxY": 240,
+    "maxZ": 300,
+    "maxColors": 6
   }
 ]
 
