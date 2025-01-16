@@ -18,21 +18,16 @@ import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class PrinterManager {
-    public PrinterFactory printerFactory = new PrinterFactory(this);
-
     // all the printers and print tasks
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
-
+    private final Scanner scanner = new Scanner(System.in);
+    private final List<PrintTaskObserver> observers = new ArrayList<>();
+    public PrinterFactory printerFactory = new PrinterFactory(this);
     public List<Printer> printersList = new ArrayList<>();
     public List<Printer> freePrinters = new ArrayList<>();
-
-    private List<PrintTask> pendingPrintTasks = new ArrayList<>();
     public Map<Printer, PrintTask> runningPrintTasks = new HashMap();
-
-
+    private List<PrintTask> pendingPrintTasks = new ArrayList<>();
     private List<Spool> freeSpools = new ArrayList<>();
-
-    private final List<PrintTaskObserver> observers = new ArrayList<>();
 
 
     // todo discuss: should we make static methods for the spools nad prints insteas of using instances???
@@ -66,17 +61,13 @@ public class PrinterManager {
         }
     }
 
-    /**
-     * loops through all the printers, so to find the appropriate one
-     *
-     * @param printTask
-     */
     private void loopThroughPrinter(PrintTask printTask) {
         for (int i = 0; i < freePrinters.size(); i++) {
             Printer printer = freePrinters.get(i);
 
             if (taskSuitsPrinter(freePrinters.get(i), printTask)) {
                 if (printer.printFits(printTask.getPrint())) {
+                    System.out.println("Assigned task: " + printTask + " to printer: " + printer.getName());
                     printer.setCurrentSpools(assignProperSpool(printTask));
                     addTasksToPrinter(printer, printTask);
                     freePrinters.remove(printer);
@@ -118,7 +109,8 @@ public class PrinterManager {
             printerSpools.add(minSpool);
 
         }
-
+        notifyObservers("changedSpool", printerSpools.size()); //observers about the number of spools changed
+        System.out.println("Number of spools changed: " + printerSpools.size());
         freeSpools.removeAll(printerSpools);
         return printerSpools;
     }
@@ -154,19 +146,45 @@ public class PrinterManager {
         }
     }
 
-    public void registerCompletion(int printerId) {
+    /**
+     * This method is used to choose the printer
+     */
+    private Printer choosePrinter() {
+        System.out.println("-----Choose printer completion-----");
+        List<Printer> printerList = new ArrayList<>(runningPrintTasks.keySet());
+
+        for (int i = 0; i < printerList.size(); i++) {
+            Printer printer = printerList.get(i);
+            System.out.println((i + 1) + ") " + printer.getName() + " --> " +
+                    runningPrintTasks.get(printer).getPrint().getName());
+        }
+
+        int choice;
+        do {
+            System.out.print("Enter a valid option: ");
+            while (!scanner.hasNextInt()) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+                scanner.next();
+            }
+            choice = scanner.nextInt();
+        } while (choice < 1 || choice > printerList.size());
+
+        return printerList.get(choice - 1);
+    }
+
+    public void registerCompletion() {
         if (runningPrintTasks.isEmpty()) {
-            System.out.println("no running tasks yet");
-            return;
-        }
-        Printer printer = findPrinterById(printerId);
-
-        if (printer == null) {
-            System.out.println("Try again, you typed invalid id");
+            System.out.println("No running tasks yet");
             return;
         }
 
+        Printer printer = choosePrinter();
         PrintTask printTask = runningPrintTasks.remove(printer);
+
+        if (printTask == null) {
+            System.out.println("Error: Selected printer does not have a running task.");
+            return;
+        }
 
         reduceLenghtOfSpools(printTask, printer);
         removeTasksFromPrinter(printer, printTask);
@@ -175,33 +193,24 @@ public class PrinterManager {
         completeTask();
     }
 
-    public void registerFailure(int printerId) {
+    public void registerFailure() {
         if (runningPrintTasks.isEmpty()) {
-            System.out.println("no running tasks yet");
-            return;
-        }
-        Printer printer = findPrinterById(printerId);
-
-        if (printer == null) {
-            System.out.println("Try again, you typed invalid id");
+            System.out.println("No running tasks yet");
             return;
         }
 
+        Printer printer = choosePrinter();
         PrintTask printTask = runningPrintTasks.remove(printer);
 
-        pendingPrintTasks.add(printTask);
-
-        freePrinters.add(printer);
-        failTask();
-    }
-
-    public Printer findPrinterById(int id) {
-        for (Printer printer : printersList) {
-            if (printer.getId() == id) {
-                return printer;
-            }
+        if (printTask == null) {
+            System.out.println("Error: Selected printer does not have a running task.");
+            return;
         }
-        return null;
+
+        pendingPrintTasks.add(printTask);
+        freePrinters.add(printer);
+
+        failTask();
     }
 
     public void completeTask() {
@@ -347,8 +356,10 @@ public class PrinterManager {
                     if (!bestSpools.isEmpty()) {
                         printer.setCurrentSpools((ArrayList<Spool>) bestSpools);
                         assignPrintTask(printer, printTask, bestSpools.size());
+                        runningPrintTasks.put(printer, printTask);
                         iterator.remove(); //remove the print task from the pending list
                         notifyObservers("changedSpool", bestSpools.size()); //observers about the number of spools changed
+                        freeSpools.removeAll(bestSpools);
                         taskAssigned = true;
                         break;
                     }

@@ -153,7 +153,7 @@ public class Facade {
      * This method is used to register the printer completion
      */
     public void registerPrintCompletion() {
-        printerManager.registerCompletion(choosePrinter());
+        printerManager.registerCompletion();
     }
 
     /**
@@ -161,23 +161,7 @@ public class Facade {
      * This method is used to register the printer failure
      */
     public void registerPrinterFailure() {
-        printerManager.registerFailure(choosePrinter());
-    }
-
-    /**
-     * This method is used to choose the printer
-     */
-    private int choosePrinter() {
-        System.out.println("------Choose printer by its id:-------");
-
-        int counter = 1;
-        for (Map.Entry<Printer,PrintTask> printer : printerManager.runningPrintTasks.entrySet()) {
-            System.out.println(counter + ")" + printer.getKey());
-            System.out.println(counter + ")" + printer.getValue().getPrint());
-            counter++;
-        }
-        System.out.println("---------What printer finished:----------");
-        return scanner.nextInt();
+        printerManager.registerFailure();
     }
 
     /**
@@ -272,25 +256,6 @@ public class Facade {
 
         for (PrintTask printTask : printerManager.getPendingPrintTasks()) {
             System.out.println(printTask);
-        }
-    }
-
-    public void listSpools() {
-        System.out.println("Choose a color and a filament type:");
-        for (Spool spool : spoolManager.getSpools()) {
-            System.out.println("Color:" + spool.getColor());
-            System.out.println("Filament type:" + spool.getFilamentType());
-        }
-    }
-
-    public void startPrintQueue() {
-        System.out.println("Starting print queue with method 1");
-        printerManager.startOptimizedSpoolStrategy();
-        for (Map.Entry<Printer, PrintTask> showPrints : printerManager.runningPrintTasks.entrySet()) {
-            System.out.println("-------" + showPrints.getKey().getName() + "--------");
-            System.out.println("Spool used: " + showPrints.getKey().getSpools());
-            System.out.println("Print task to be done: " + showPrints.getValue().getPrint().getName());
-            System.out.println();
         }
     }
 
