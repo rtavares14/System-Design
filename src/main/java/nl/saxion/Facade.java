@@ -101,7 +101,7 @@ public class Facade {
 
             colors.add(availableColors.get(colorChoice - 1));
         }
-        System.out.println("--------------------------------------");
+        System.out.println("-----------------------------------");
         return colors;
     }
 
@@ -146,6 +146,51 @@ public class Facade {
             System.out.println(i++ + " - " + type);
         }
         System.out.print("Choice:");
+    }
+
+    /**
+     * OPTION : 2
+     * This method is used to register the printer completion
+     */
+    public void registerPrintCompletion() {
+        printerManager.registerCompletion();
+    }
+
+    /**
+     * OPTION : 3
+     * This method is used to register the printer failure
+     */
+    public void registerPrinterFailure() {
+        printerManager.registerFailure();
+    }
+
+    /**
+     * OPTION : 4
+     * This method is used to change the print strategy
+     */
+    public void changePrintStrategy() {
+        if (!optimizedSpoolStrategy) {
+            optimizedSpoolStrategy = true;
+            System.out.println("Changed to Optimized Spool Strategy");
+        } else {
+            optimizedSpoolStrategy = false;
+            System.out.println("Changed to Fastest Spool Strategy");
+        }
+    }
+
+    /**
+     * OPTION : 5
+     * This method is used to start the print queue
+     */
+    public void initPrintQueue() {
+        //false = FastestSpoolStrategy
+        if (!optimizedSpoolStrategy) {
+            System.out.println("Starting print queue with Fastest Spool Strategy");
+            printerManager.startFastestSpoolStrategy();
+        } else {
+            System.out.println("Starting print queue with Optimized Spool Strategy");
+            printerManager.startOptimizedSpoolStrategy();
+        }
     }
 
     /**
@@ -214,63 +259,10 @@ public class Facade {
         }
     }
 
-    public void listSpools() {
-        System.out.println("Choose a color and a filament type:");
-        for (Spool spool : spoolManager.getSpools()) {
-            System.out.println("Color:" + spool.getColor());
-            System.out.println("Filament type:" + spool.getFilamentType());
-        }
-    }
-
-    public void initPrintQueue() {
-        if (optimizedSpoolStrategy) {
-            printerManager.selectPrintTask();
-        } else {
-            printerManager.startPrintQueue2();
-        }
-    }
-
-
-
-    public void startPrintQueue() {
-        System.out.println("Starting print queue with method 1");
-        printerManager.selectPrintTask();
-        for (Map.Entry<Printer, PrintTask> showPrints : printerManager.runningPrintTasks.entrySet()) {
-            System.out.println("-------" + showPrints.getKey().getName() + "--------");
-            System.out.println("Spool used: " + showPrints.getKey().getSpools());
-            System.out.println("Print task to be done: " + showPrints.getValue().getPrint().getName());
-            System.out.println();
-        }
-    }
-
-    private int choosePrinter() {
-        System.out.println("------Choose right printer by its id:-------");
-
-        int counter = 1;
-        for (Map.Entry<Printer,PrintTask> printer : printerManager.runningPrintTasks.entrySet()) {
-            System.out.println(counter + ")" + printer.getKey());
-            System.out.println(counter + ")" + printer.getValue().getPrint());
-            counter++;
-        }
-        System.out.println("---------What printer finished:----------");
-        return scanner.nextInt();
-    }
-
-    public void registerPrinterFailure() {
-        printerManager.registerFailure(choosePrinter());
-    }
-
-    public void registerPrintCompletion() {
-        printerManager.registerCompletion(choosePrinter());
-    }
-
-
-    public void changePrintStrategy() {
-    }
-
-    private void exit() {
-    }
-
+    /**
+     * OPTION : 10
+     * This method is used to show the dashboard stats
+     */
     public void showDashboardStats() {
         dashboard.showDashboard();
     }

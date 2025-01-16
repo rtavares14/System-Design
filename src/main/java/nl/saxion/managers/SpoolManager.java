@@ -1,9 +1,9 @@
 package nl.saxion.managers;
 
 import nl.saxion.Models.Spool;
+import nl.saxion.adapter.AdapterReader;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
-import nl.saxion.adapter.AdapterReader;
 import nl.saxion.utils.FilamentType;
 
 import java.net.URL;

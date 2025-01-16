@@ -10,14 +10,14 @@ import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-import java.util.List;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 
 public class JSONAdapterReader implements AdapterReader {
-    private final JSONParser jsonParser = new JSONParser();
     private static JSONAdapterReader reader;
+    private final JSONParser jsonParser = new JSONParser();
 
     private JSONAdapterReader() {
     }
@@ -114,6 +114,7 @@ public class JSONAdapterReader implements AdapterReader {
 
     /**
      * Convert a JSONObject to a Printer object
+     *
      * @param printerJson JSONObject to convert
      * @return Printer object
      */
@@ -129,7 +130,7 @@ public class JSONAdapterReader implements AdapterReader {
             int maxZ = ((Long) printerJson.get("maxZ")).intValue();
             int maxColors = ((Long) printerJson.get("maxColors")).intValue();
 
-            Printer printer = PrinterFactory.addPrinter(id, type, name,model, manufacturer, maxX, maxY, maxZ, maxColors);
+            Printer printer = PrinterFactory.addPrinter(id, type, name, model, manufacturer, maxX, maxY, maxZ, maxColors);
             if (printer != null) {
                 return printer;
             }
@@ -143,6 +144,7 @@ public class JSONAdapterReader implements AdapterReader {
 
     /**
      * Convert a JSONObject to a Print object
+     *
      * @param printJson JSONObject to convert
      * @return Print object
      */
@@ -163,6 +165,7 @@ public class JSONAdapterReader implements AdapterReader {
 
     /**
      * Convert a JSONObject to a Spool object
+     *
      * @param spoolJson JSONObject to convert
      * @return Spool object
      */

@@ -4,9 +4,6 @@ import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
-import nl.saxion.Models.printer.printerTypes.MultiColor;
-import nl.saxion.Models.printer.printerTypes.StandardFDM;
-import nl.saxion.managers.PrinterManager;
 import nl.saxion.utils.FilamentType;
 
 import java.io.BufferedReader;
@@ -33,6 +30,12 @@ public class CSVAdapterReader implements AdapterReader {
         return filename.endsWith(".csv");
     }
 
+    /**
+     * Read the spools from a CSV file
+     *
+     * @param filePath The path to the file
+     * @return List of spools
+     */
     @Override
     public List<Spool> readSpools(String filePath) {
         List<Spool> spools = new ArrayList<>();
@@ -56,7 +59,12 @@ public class CSVAdapterReader implements AdapterReader {
         return spools;
     }
 
-
+    /**
+     * Read the printers from a CSV file
+     *
+     * @param filePath The path to the file
+     * @return List of printers
+     */
     @Override
     public List<Printer> readPrinters(String filePath) {
         List<Printer> printers = new ArrayList<>();
@@ -77,7 +85,7 @@ public class CSVAdapterReader implements AdapterReader {
                 int maxColors = Integer.parseInt(values[8]);
 
                 // call the factory to create the printer
-                PrinterFactory.addPrinter(id,type,name,model,manufacturer,maxX,maxY,maxZ,maxColors);
+                PrinterFactory.addPrinter(id, type, name, model, manufacturer, maxX, maxY, maxZ, maxColors);
             }
         } catch (IOException | NumberFormatException e) {
             e.printStackTrace();
@@ -86,6 +94,12 @@ public class CSVAdapterReader implements AdapterReader {
     }
 
 
+    /**
+     * Will read the prints from a file and return a list of prints
+     *
+     * @param filePath The path to the file
+     * @return List of prints
+     */
     @Override
     public List<Print> readPrints(String filePath) {
         List<Print> prints = new ArrayList<>();
