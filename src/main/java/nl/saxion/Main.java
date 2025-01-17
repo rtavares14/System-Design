@@ -1,9 +1,8 @@
 package nl.saxion;
 
-import nl.saxion.Models.Print;
-import nl.saxion.Models.records.PrintR;
-import nl.saxion.Models.records.PrinterR;
+import nl.saxion.Models.records.PrintBP;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Main {
@@ -59,7 +58,7 @@ public class Main {
             case 3 -> facade.registerPrinterFailure();
             case 4 -> facade.changePrintStrategy();
             case 5 -> facade.initPrintQueue();
-            case 6 -> facade.showPrints();
+            case 6 -> showPrints();
             case 7 -> facade.showPrinters();
             case 8 -> facade.showSpools();
             case 9 -> facade.showPendingPrintTask();
@@ -69,6 +68,25 @@ public class Main {
         }
     }
 
+    /**
+     * Show prints OPTION 6
+     */
+    private void showPrints() {
+        List<PrintBP> prints = facade.getPrints();
+        System.out.println("------------- Prints -------------");
+
+        if (prints.isEmpty()) {
+            System.out.println("No prints available");
+        }
+
+        for (PrintBP print : prints) {
+            System.out.println(print.toString());
+        }
+    }
+
+    /**
+     * Show dashboard stats OPTION 10
+     */
     public void showDashboardStats() {
         int[] dashboardStats = facade.showDashboardStats();
         System.out.println("------------- Dashboard Stats -------------");
@@ -85,7 +103,7 @@ public class Main {
     public void listPrintsName() {
         int i = 1;
 
-        for (PrintR print : facade.getPrints()) {
+        for (PrintBP print : facade.getPrints()) {
             System.out.println(i++ + " - " + print.name() + "(" + print.length() + ")");
         }
         System.out.print("Choice:");

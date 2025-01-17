@@ -6,16 +6,14 @@ import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.Dashboard;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
-import nl.saxion.Models.records.PrintR;
-import nl.saxion.Models.records.PrinterR;
+import nl.saxion.Models.records.PrintBP;
+import nl.saxion.Models.records.PrinterBP;
 import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
 import java.util.*;
-
-import static java.util.stream.Collectors.toList;
 
 public class Facade {
     private final SpoolManager spoolManager;
@@ -44,15 +42,15 @@ public class Facade {
         spoolManager.readSpoolsFromFile("spools.csv");
     }
 
-    public List<PrintR> getPrints(){
+    public List<PrintBP> getPrints(){
         return printManager.getPrints().stream()
-                .map(print -> new PrintR(print.getName(), print.getHeight(),print.getWidth(),print.getLength(),print.getFilamentLength(),print.getPrintTime()))
+                .map(print -> new PrintBP(print.getName(), print.getHeight(),print.getWidth(),print.getLength(),print.getFilamentLength(),print.getPrintTime()))
                 .toList();
     }
 
-    public List<PrinterR> getPrinter(){
+    public List<PrinterBP> getPrinter(){
         return printerManager.getPrinters().stream()
-                .map(printer -> new PrinterR(printer.getId(), printer.getName(),printer.getModel(),printer.getManufacturer(),printer.getMaxX(),printer.getMaxY(),printer.getMaxZ(),printer.isHoused(),printer.getMaxColors()))
+                .map(printer -> new PrinterBP(printer.getId(), printer.getName(),printer.getModel(),printer.getManufacturer(),printer.getMaxX(),printer.getMaxY(),printer.getMaxZ(),printer.isHoused(),printer.getMaxColors()))
                 .toList();
     }
 
