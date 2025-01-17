@@ -1,5 +1,9 @@
 package nl.saxion;
 
+import nl.saxion.Models.Print;
+import nl.saxion.Models.records.PrintR;
+import nl.saxion.Models.records.PrinterR;
+
 import java.util.Scanner;
 
 public class Main {
@@ -73,4 +77,18 @@ public class Main {
         System.out.println("Changed Spools: " + dashboardStats[2]);
         System.out.println("------------------------------------------");
     }
+
+    public void addNewPrintTask(){
+
+    }
+
+    public void listPrintsName() {
+        int i = 1;
+
+        for (PrintR print : facade.getPrints()) {
+            System.out.println(i++ + " - " + print.name() + "(" + print.length() + ")");
+        }
+        System.out.print("Choice:");
+    }
+
 }

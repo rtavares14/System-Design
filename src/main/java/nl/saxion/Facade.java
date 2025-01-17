@@ -5,6 +5,9 @@ import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.Dashboard;
 import nl.saxion.Models.printer.Printer;
+import nl.saxion.Models.printer.PrinterFactory;
+import nl.saxion.Models.records.PrintR;
+import nl.saxion.Models.records.PrinterR;
 import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
@@ -12,10 +15,13 @@ import nl.saxion.utils.FilamentType;
 
 import java.util.*;
 
+import static java.util.stream.Collectors.toList;
+
 public class Facade {
     private final SpoolManager spoolManager;
     private final PrinterManager printerManager;
     private final PrintManager printManager;
+    private final PrinterFactory printerFactory;
     private final Dashboard dashboard;
     private final Scanner scanner = new Scanner(System.in);
     private boolean optimizedSpoolStrategy = false; // Default strategy (raf)
@@ -24,6 +30,7 @@ public class Facade {
         this.spoolManager = new SpoolManager();
         this.printManager = new PrintManager();
         this.printerManager = new PrinterManager(spoolManager);
+        this.printerFactory = new PrinterFactory(printerManager);
         this.dashboard = new Dashboard();
         printerManager.addObserver(dashboard);
     }
@@ -35,6 +42,18 @@ public class Facade {
         printerManager.readPrintersFromFile("printers.csv");
         printManager.readPrintsFromFile("prints.csv");
         spoolManager.readSpoolsFromFile("spools.csv");
+    }
+
+    public List<PrintR> getPrints(){
+        return printManager.getPrints().stream()
+                .map(print -> new PrintR(print.getName(), print.getHeight(),print.getWidth(),print.getLength(),print.getFilamentLength(),print.getPrintTime()))
+                .toList();
+    }
+
+    public List<PrinterR> getPrinter(){
+        return printerManager.getPrinters().stream()
+                .map(printer -> new PrinterR(printer.getId(), printer.getName(),printer.getModel(),printer.getManufacturer(),printer.getMaxX(),printer.getMaxY(),printer.getMaxZ(),printer.isHoused(),printer.getMaxColors()))
+                .toList();
     }
 
     /**
@@ -126,8 +145,7 @@ public class Facade {
      */
     public void listPrintsName() {
         int i = 1;
-        System.out.println("-----------------------------------");
-        System.out.println("Choose a print:");
+
         for (Print print : printManager.getPrints()) {
             System.out.println(i++ + " - " + print.getName() + "(" + print.getFilamentLength().size() + ")");
         }

@@ -44,6 +44,10 @@ public class Print {
         return filamentLength.get(index);
     }
 
+    public int getPrintTime() {
+        return printTime;
+    }
+
     @Override
     public String toString() {
         return "-----------------------------------" + System.lineSeparator() +

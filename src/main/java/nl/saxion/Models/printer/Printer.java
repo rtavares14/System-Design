@@ -61,6 +61,14 @@ public abstract class Printer {
         return maxZ;
     }
 
+    public String getModel() {
+        return model;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
     public abstract List<Spool> getSpools();
 
     public abstract void setCurrentSpools(List<Spool> spools);
