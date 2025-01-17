@@ -10,6 +10,7 @@ import nl.saxion.adapter.AdapterReader;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
 import nl.saxion.exceptions.ColorNotFoundException;
+import nl.saxion.exceptions.FileNotSupportedException;
 import nl.saxion.utils.FilamentType;
 
 import java.net.URL;
@@ -70,7 +71,7 @@ public class PrinterManager {
 
             if (taskSuitsPrinter(freePrinters.get(i), printTask)) {
                 if (printer.printFits(printTask.getPrint())) {
-                    System.out.println("Assigned task: " + printTask + " to printer: " + printer.getName());
+                    System.out.println("Assigned task: 1" + printTask.getFilamentType() + " to printer: " + printer.getName());
                     printer.setCurrentSpools(assignProperSpool(printTask));
                     addTasksToPrinter(printer, printTask);
                     freePrinters.remove(printer);
@@ -278,8 +279,7 @@ public class PrinterManager {
         } else if (getCsvFileHandler().supportsFileType(path)) {
             fileHandler = getCsvFileHandler();
         } else {
-            System.out.println("Unsupported file type for filename: " + path);
-            return;
+            throw new FileNotSupportedException("Unsupported file type");
         }
 
 
@@ -303,8 +303,7 @@ public class PrinterManager {
     public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
         Print print = printName;
         if (print == null || colors.isEmpty()) {
-            System.err.println("All fields must be filled in");
-            return;
+            throw new IllegalArgumentException("Print and colors must be set");
         }
 
         for (String color : colors) {
@@ -333,8 +332,7 @@ public class PrinterManager {
      */
     public void assignPrintTask(Printer printer, PrintTask printTask, int spoolsChanged) {
         if (printer == null || printTask == null) {
-            System.err.println("Printer or PrintTask is null");
-            return;
+            throw new IllegalArgumentException("Printer and print task must be set");
         }
 
         // Add the print task to the printer's task list
@@ -344,14 +342,14 @@ public class PrinterManager {
         freePrinters.remove(printer);
 
         // Print the number of spools changed
-        System.out.println("Assigned task: " + printTask + " to printer: " + printer.getName());
+        System.out.println("Assigned task: 2" + printTask.getPrint() + " to printer: " + printer.getName());
         System.out.println("Number of spools changed: " + spoolsChanged);
     }
 
     /**
      * Start the fastest spool strategy
      */
-    public void startFastestSpoolStrategy() {
+    public void startFastestSpoolStrategy() throws Exception {
         Iterator<PrintTask> iterator = getPendingPrintTasks().iterator();
         while (iterator.hasNext()) {
             PrintTask printTask = iterator.next();
@@ -373,7 +371,7 @@ public class PrinterManager {
                 }
             }
             if (!taskAssigned) {
-                System.out.println("No suitable printer found for task: " + printTask);
+                throw new Exception("No suitable printer found for task: " + printTask);
             }
         }
     }
@@ -402,6 +400,12 @@ public class PrinterManager {
         return bestSpools;
     }
 
+    /**
+     * Get the running printer by name
+     *
+     * @param name The name of the printer
+     * @return The printer with the given name
+     */
     public Printer getRunningPrinterByName(String name){
         for(Printer printer:runningPrintTasks.keySet()){
             if(printer.getName().equals(name)){

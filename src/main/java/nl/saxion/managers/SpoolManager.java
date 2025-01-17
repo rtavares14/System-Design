@@ -4,6 +4,7 @@ import nl.saxion.Models.Spool;
 import nl.saxion.adapter.AdapterReader;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
+import nl.saxion.exceptions.FileNotSupportedException;
 import nl.saxion.utils.FilamentType;
 
 import java.net.URL;
@@ -61,7 +62,7 @@ public class SpoolManager {
         } else if (getCsvFileHandler().supportsFileType(path)) {
             fileHandler = getCsvFileHandler();
         } else {
-            throw new IllegalArgumentException("Unsupported file type");
+            throw new FileNotSupportedException("Unsupported file type");
         }
 
         List<Spool> spoolsFromFile = fileHandler.readSpools(path);

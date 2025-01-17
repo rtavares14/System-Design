@@ -2,7 +2,6 @@ package nl.saxion;
 
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
-import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.Dashboard;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.records.PrintBP;
@@ -14,7 +13,6 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
-import java.util.ArrayList;
 import java.util.List;
 
 public class Facade {
@@ -41,25 +39,13 @@ public class Facade {
         spoolManager.readSpoolsFromFile("spools.csv");
     }
 
-
+    /**
+     * OPTION : 1
+     * This method is used to add the print task
+     */
     public void addPrintTask(PrintBP printBP, List<String> colors, FilamentType filamentType) {
         Print print = printManager.findPrint(printBP.name());
         printerManager.addPrintTask(print, colors, filamentType);
-
-    }
-
-    public boolean getOptimizedSpoolStrategy() {
-        return optimizedSpoolStrategy;
-    }
-
-    /**
-     * This method is used to show the available colors for the filament type
-     *
-     * @param filamentType FilamentType chosen by the user
-     * @return List<String> available colors for the filament type
-     */
-    public List<String> getAvailableColors(FilamentType filamentType) {
-        return spoolManager.getAvailableColors(filamentType);
 
     }
 
@@ -109,7 +95,7 @@ public class Facade {
      * OPTION : 5
      * This method is used to start the print queue
      */
-    public void initPrintQueue() {
+    public void initPrintQueue() throws Exception {
         //false = FastestSpoolStrategy
         if (!optimizedSpoolStrategy) {
             printerManager.startFastestSpoolStrategy();
@@ -175,6 +161,11 @@ public class Facade {
     }
 
 
+    /**
+     * This method is used to show the running printers
+     *
+     * @return List<PrinterBP> running printers
+     */
     public List<PrinterBP> showRunningPrinters() {
         return printerManager.runningPrintTasks.keySet().stream()
                 .map(printer -> new PrinterBP(printer.getId(), printer.getName(), printer.getModel(), printer.getManufacturer(), printer.getMaxX(), printer.getMaxY(), printer.getMaxZ(), printer.isHoused(), printer.getMaxColors()))
@@ -182,16 +173,46 @@ public class Facade {
 
     }
 
+    /**
+     * This method is used to get the running print tasks
+     *
+     * @return List<PrintTaskBP> running print tasks
+     */
     public List<PrintTaskBP> getRunningPrintTasks() {
         return printerManager.runningPrintTasks.values().stream()
                 .map(printTask -> new PrintTaskBP(printTask.getPrint(), printTask.getColors(), printTask.getFilamentType()))
                 .toList();
     }
 
+    /**
+     * This method is used to get the print
+     *
+     * @param printer PrinterBP chosen by the user
+     * @return Print print
+     */
     public Print getPrint(PrinterBP printer) {
         Printer printer1 = printerManager.getRunningPrinterByName(printer.printerName());
         return printerManager.runningPrintTasks.get(printer1).getPrint();
     }
 
+    /**
+     * This method is used to get the optimized spool strategy
+     *
+     * @return boolean optimized spool strategy
+     */
+    public boolean getOptimizedSpoolStrategy() {
+        return optimizedSpoolStrategy;
+    }
 
+
+    /**
+     * This method is used to show the available colors for the filament type
+     *
+     * @param filamentType FilamentType chosen by the user
+     * @return List<String> available colors for the filament type
+     */
+    public List<String> getAvailableColors(FilamentType filamentType) {
+        return spoolManager.getAvailableColors(filamentType);
+
+    }
 }

@@ -1,7 +1,5 @@
 package nl.saxion;
 
-import nl.saxion.Models.PrintTask;
-import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.records.PrintBP;
 import nl.saxion.Models.records.PrintTaskBP;
 import nl.saxion.Models.records.PrinterBP;
@@ -137,16 +135,20 @@ public class Main {
      * Initialize print queue OPTION 5
      */
     private void initPrintQueue() {
-        if (facade.getPendingPrintTasks().isEmpty()) {
-            System.out.println("Queue is empty. Please add a print task first.");
-        } else {
-            if (facade.getOptimizedSpoolStrategy()) {
-                System.out.println("Starting queue with Optimized Spool Strategy");
-                facade.initPrintQueue();
+        try {
+            if (facade.getPendingPrintTasks().isEmpty()) {
+                System.out.println("Queue is empty. Please add a print task first.");
             } else {
-                facade.initPrintQueue();
-                System.out.println("Starting queue with Fastest Spool Strategy");
+                if (facade.getOptimizedSpoolStrategy()) {
+                    System.out.println("Starting queue with Optimized Spool Strategy");
+                    facade.initPrintQueue();
+                } else {
+                    facade.initPrintQueue();
+                    System.out.println("Starting queue with Fastest Spool Strategy");
+                }
             }
+        } catch (Exception e) {
+            System.err.println("Error: " + e.getMessage());
         }
     }
 

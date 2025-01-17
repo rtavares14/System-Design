@@ -4,6 +4,7 @@ import nl.saxion.Models.Print;
 import nl.saxion.adapter.AdapterReader;
 import nl.saxion.adapter.CSVAdapterReader;
 import nl.saxion.adapter.JSONAdapterReader;
+import nl.saxion.exceptions.FileNotSupportedException;
 
 import java.net.URL;
 import java.net.URLDecoder;
@@ -58,7 +59,7 @@ public class PrintManager {
         } else if (getCsvFileHandler().supportsFileType(path)) {
             fileHandler = getCsvFileHandler();
         } else {
-            throw new IllegalArgumentException("Unsupported file type");
+            throw new FileNotSupportedException("Unsupported file type");
         }
 
         List<Print> printsFromFile = fileHandler.readPrints(path);
