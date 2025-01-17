@@ -61,8 +61,7 @@ public class SpoolManager {
         } else if (getCsvFileHandler().supportsFileType(path)) {
             fileHandler = getCsvFileHandler();
         } else {
-            System.out.println("Unsupported file type for filename: " + path);
-            return;
+            throw new IllegalArgumentException("Unsupported file type");
         }
 
         List<Spool> spoolsFromFile = fileHandler.readSpools(path);

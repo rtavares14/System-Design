@@ -22,7 +22,7 @@ public class PrinterManager {
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
     private final Scanner scanner = new Scanner(System.in);
     private final List<PrintTaskObserver> observers = new ArrayList<>();
-
+    private final PrinterFactory printerFactory = new PrinterFactory(this);
     public List<Printer> printersList = new ArrayList<>();
     public List<Printer> freePrinters = new ArrayList<>();
     public Map<Printer, PrintTask> runningPrintTasks = new HashMap();
@@ -30,7 +30,6 @@ public class PrinterManager {
     private List<Spool> freeSpools = new ArrayList<>();
 
     public PrinterManager(SpoolManager spoolManager) {
-
         freeSpools = spoolManager.getSpools();
         freePrinters = new ArrayList<>(printersList);
     }

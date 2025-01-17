@@ -1,11 +1,7 @@
 package nl.saxion;
 
 import nl.saxion.Models.Print;
-import nl.saxion.Models.PrintTask;
-import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.Dashboard;
-import nl.saxion.Models.printer.Printer;
-import nl.saxion.Models.printer.PrinterFactory;
 import nl.saxion.Models.records.PrintBP;
 import nl.saxion.Models.records.PrintTaskBP;
 import nl.saxion.Models.records.PrinterBP;
@@ -15,22 +11,19 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
-import java.util.*;
+import java.util.List;
 
 public class Facade {
     private final SpoolManager spoolManager;
     private final PrinterManager printerManager;
     private final PrintManager printManager;
-    private final PrinterFactory printerFactory;
     private final Dashboard dashboard;
-    private final Scanner scanner = new Scanner(System.in);
     private boolean optimizedSpoolStrategy = false; // Default strategy (raf)
 
     public Facade() {
         this.spoolManager = new SpoolManager();
         this.printManager = new PrintManager();
         this.printerManager = new PrinterManager(spoolManager);
-        this.printerFactory = new PrinterFactory(printerManager);
         this.dashboard = new Dashboard();
         printerManager.addObserver(dashboard);
     }
@@ -51,6 +44,9 @@ public class Facade {
 
     }
 
+    public boolean getOptimizedSpoolStrategy() {
+        return optimizedSpoolStrategy;
+    }
 
     /**
      * This method is used to show the available colors for the filament type
@@ -61,33 +57,6 @@ public class Facade {
     public List<String> getAvailableColors(FilamentType filamentType) {
         return spoolManager.getAvailableColors(filamentType);
 
-    }
-
-    /**
-     * This method is used to start the print queue
-     * By displaying the prints name and how many spools are needed
-     */
-    public void listPrintsName() {
-        int i = 1;
-
-        for (Print print : printManager.getPrints()) {
-            System.out.println(i++ + " - " + print.getName() + "(" + print.getFilamentLength().size() + ")");
-        }
-        System.out.print("Choice:");
-    }
-
-    /**
-     * This method is used to display the list of filament types
-     */
-    public void listOfTypes() {
-        int i = 1;
-        System.out.println("-----------------------------------");
-        System.out.println("Choose a filament type:");
-
-        for (FilamentType type : FilamentType.values()) {
-            System.out.println(i++ + " - " + type);
-        }
-        System.out.print("Choice:");
     }
 
     /**
@@ -111,11 +80,7 @@ public class Facade {
      * This method is used to change the print strategy
      */
     public void changePrintStrategy(boolean choice) {
-        if (choice) {
-            optimizedSpoolStrategy = false;
-        } else {
-            optimizedSpoolStrategy = true;
-        }
+        optimizedSpoolStrategy = choice;
     }
 
     /**
@@ -125,10 +90,8 @@ public class Facade {
     public void initPrintQueue() {
         //false = FastestSpoolStrategy
         if (!optimizedSpoolStrategy) {
-            System.out.println("Starting print queue with Fastest Spool Strategy");
             printerManager.startFastestSpoolStrategy();
         } else {
-            System.out.println("Starting print queue with Optimized Spool Strategy");
             printerManager.startOptimizedSpoolStrategy();
         }
     }
@@ -136,6 +99,7 @@ public class Facade {
     /**
      * OPTION : 6
      * This method is used to get the prints
+     *
      * @return List<PrintBP> prints
      */
     public List<PrintBP> getPrints() {
@@ -147,6 +111,7 @@ public class Facade {
     /**
      * OPTION : 7
      * This method is used to get the printers
+     *
      * @return List<PrinterBP> printers
      */
     public List<PrinterBP> getPrinters() {
@@ -158,6 +123,7 @@ public class Facade {
     /**
      * OPTION : 8
      * This method is used to get the spools
+     *
      * @return List<SpoolBP> spools
      */
     public List<SpoolBP> getSpools() {
@@ -169,11 +135,12 @@ public class Facade {
     /**
      * OPTION : 9
      * This method is used to get the pending print tasks
+     *
      * @return List<PrintTaskBP> pending print tasks
      */
-    public List<PrintTaskBP> getPendingPrintTasks(){
+    public List<PrintTaskBP> getPendingPrintTasks() {
         return printerManager.getPendingPrintTasks().stream()
-                .map(printTask -> new PrintTaskBP(printTask.getPrint(), printTask.getColors(),printTask.getFilamentType()))
+                .map(printTask -> new PrintTaskBP(printTask.getPrint(), printTask.getColors(), printTask.getFilamentType()))
                 .toList();
     }
 

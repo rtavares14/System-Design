@@ -74,31 +74,6 @@ public class Main {
     }
 
     /**
-     * Change print strategy OPTION 4
-     */
-    private void changePrintStrategy() {
-        int choice = scanner.nextInt();
-        System.out.println("------------ Change Printing Strategy -------------");
-        System.out.println("1) Changed to Fastest Spool Strategy");
-        System.out.println("2) Changed to Optimized Spool Strategy");
-        System.out.println("Choose a strategy: ");
-
-        if (choice == 1) {
-            facade.changePrintStrategy(true);
-        } else if (choice == 2) {
-            facade.changePrintStrategy(false);
-        } else {
-            System.out.println("Invalid choice. Please try again.");
-        }
-    }
-
-    /**
-     * Initialize print queue OPTION 5
-     */
-    private void initPrintQueue() {
-    }
-
-    /**
      * OPTION : 1
      * This method is used to add a new task to the print queue
      * It will ask the user to select a print, filament type and colors
@@ -138,6 +113,39 @@ public class Main {
         facade.addPrintTask(print, colors, filamentType);
         System.out.println("-----------------------------------");
     }
+
+    /**
+     * Change print strategy OPTION 4
+     */
+    private void changePrintStrategy() {
+        System.out.println("------------ Change Printing Strategy -------------");
+        if (facade.getOptimizedSpoolStrategy()) {
+            System.out.println("Current Strategy: Optimized Spool Strategy");
+            System.out.println("Changing to Fastest Spool Strategy");
+            facade.changePrintStrategy(false);
+        } else {
+            System.out.println("Current Strategy: Fastest Spool Strategy");
+            System.out.println("Changing to Optimized Spool Strategy");
+            facade.changePrintStrategy(true);
+        }
+    }
+
+    /**
+     * Initialize print queue OPTION 5
+     */
+    private void initPrintQueue() {
+        if (facade.getPendingPrintTasks().isEmpty()) {
+            System.out.println("Queue is empty. Please add a print task first.");
+        } else {
+        if (facade.getOptimizedSpoolStrategy()) {
+            System.out.println("Starting queue with Optimized Spool Strategy");
+            facade.initPrintQueue();
+        }else {
+            facade.initPrintQueue();
+            System.out.println("Starting queue with Fastest Spool Strategy");
+        }}
+    }
+
 
     /**
      * Show prints OPTION 6
@@ -191,7 +199,7 @@ public class Main {
      * Show pending print tasks OPTION 9
      */
     public void showPendingPrintTask() {
-        System.out.println("------------- Pending Print Tasks -------------");
+        System.out.println("------- Pending Print Tasks --------");
         if (facade.getPendingPrintTasks().isEmpty()) {
             System.out.println("No pending print tasks available");
             return;
@@ -229,11 +237,14 @@ public class Main {
         System.out.print("Choice:");
     }
 
+    /**
+     * This method is used to display the list of prints
+     */
     public void listPrintsName() {
         int i = 1;
 
         for (PrintBP print : facade.getPrints()) {
-            System.out.println(i++ + " - " + print.name() + "(" + print.length() + ")");
+            System.out.println(i++ + " - " + print.name() + "(" + print.filamentLength().size() + " colors)");
         }
         System.out.print("Choice:");
     }
