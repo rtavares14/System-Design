@@ -137,8 +137,7 @@ public class JSONAdapterReader implements AdapterReader {
 
             return null;
         } catch (Exception e) {
-            System.out.println("Error while converting printer: " + e.getMessage());
-            return null;
+            throw new IllegalArgumentException("Invalid printer JSON object");
         }
     }
 
@@ -179,8 +178,7 @@ public class JSONAdapterReader implements AdapterReader {
         try {
             filamentType = FilamentType.valueOf(filamentTypeStr);
         } catch (IllegalArgumentException e) {
-            System.out.println("Invalid filament type: " + filamentTypeStr);
-            return null;
+            throw new IllegalArgumentException("Invalid filament type in JSON object");
         }
 
         return new Spool(id, color, filamentType, length);
