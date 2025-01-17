@@ -37,10 +37,6 @@ public abstract class Printer {
         this.observers = new ArrayList<>(); // Initialize observers list
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public int getId() {
         return id;
     }
@@ -63,22 +59,6 @@ public abstract class Printer {
 
     public int getMaxZ() {
         return maxZ;
-    }
-
-    public void addSpool(Spool spool) {
-        spools.add(spool);
-    }
-
-    public void removeSpool(Spool spool) {
-        spools.remove(spool);
-    }
-
-    public void clearSpools() {
-        spools.clear();
-    }
-
-    public Spool getCurrentSpool(){
-        return spools.getFirst();
     }
 
     public abstract List<Spool> getSpools();

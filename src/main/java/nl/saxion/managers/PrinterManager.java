@@ -29,8 +29,6 @@ public class PrinterManager {
     private List<PrintTask> pendingPrintTasks = new ArrayList<>();
     private List<Spool> freeSpools = new ArrayList<>();
 
-
-    // todo discuss: should we make static methods for the spools nad prints insteas of using instances???
     public PrinterManager(SpoolManager spoolManager) {
 
         freeSpools = spoolManager.getSpools();
