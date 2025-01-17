@@ -61,7 +61,7 @@ public class Main {
             case 6 -> showPrints();
             case 7 -> showPrinters();
             case 8 -> showSpools();
-            case 9 -> facade.showPendingPrintTask();
+            case 9 -> showPendingPrintTask();
             case 10 -> showDashboardStats();
             case 0 -> System.out.println("Exiting...");
             default -> System.out.println("Invalid choice. Please try again.");
@@ -112,6 +112,22 @@ public class Main {
 
         for (SpoolBP spool : facade.getSpools()) {
             System.out.println(spool.toString());
+        }
+        System.out.println("-----------------------------------");
+    }
+
+    /**
+     * Show pending print tasks OPTION 9
+     */
+    public void showPendingPrintTask() {
+        System.out.println("------------- Pending Print Tasks -------------");
+        if (facade.getPendingPrintTasks().isEmpty()) {
+            System.out.println("No pending print tasks available");
+            return;
+        }
+
+        for (PrintTaskBP printTask : facade.getPendingPrintTasks()) {
+            System.out.println(printTask.toString());
         }
         System.out.println("-----------------------------------");
     }

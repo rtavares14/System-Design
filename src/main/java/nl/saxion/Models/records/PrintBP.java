@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 public record PrintBP(String name, int height, int width, double length, ArrayList<Double>filamentLength, int printTime) {
 
+    @Override
     public String toString() {
         return "-----------------------------------" + System.lineSeparator() +
                 "- Name: " + name + System.lineSeparator() +

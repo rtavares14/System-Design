@@ -7,6 +7,7 @@ import nl.saxion.Models.observer.Dashboard;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
 import nl.saxion.Models.records.PrintBP;
+import nl.saxion.Models.records.PrintTaskBP;
 import nl.saxion.Models.records.PrinterBP;
 import nl.saxion.Models.records.SpoolBP;
 import nl.saxion.managers.PrintManager;
@@ -58,6 +59,12 @@ public class Facade {
     public List<SpoolBP> getSpools(){
         return spoolManager.getSpools().stream()
                 .map(spool -> new SpoolBP(spool.getId(), spool.getColor(),spool.getFilamentType(),spool.getLength()))
+                .toList();
+    }
+
+    public List<PrintTaskBP> getPendingPrintTasks(){
+        return printerManager.getPendingPrintTasks().stream()
+                .map(printTask -> new PrintTaskBP(printTask.getPrint(), printTask.getColors(),printTask.getFilamentType()))
                 .toList();
     }
 
