@@ -263,7 +263,7 @@ public class Facade {
      * OPTION : 10
      * This method is used to show the dashboard stats
      */
-    public void showDashboardStats() {
-        dashboard.showDashboard();
+    public int[] showDashboardStats() {
+        return dashboard.showDashboard();
     }
 }

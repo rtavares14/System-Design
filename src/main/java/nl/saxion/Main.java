@@ -59,9 +59,18 @@ public class Main {
             case 7 -> facade.showPrinters();
             case 8 -> facade.showSpools();
             case 9 -> facade.showPendingPrintTask();
-            case 10 -> facade.showDashboardStats();
+            case 10 -> showDashboardStats();
             case 0 -> System.out.println("Exiting...");
             default -> System.out.println("Invalid choice. Please try again.");
         }
+    }
+
+    public void showDashboardStats() {
+        int[] dashboardStats = facade.showDashboardStats();
+        System.out.println("------------- Dashboard Stats -------------");
+        System.out.println("Completed Tasks: " + dashboardStats[0]);
+        System.out.println("Failed Tasks: " + dashboardStats[1]);
+        System.out.println("Changed Spools: " + dashboardStats[2]);
+        System.out.println("------------------------------------------");
     }
 }

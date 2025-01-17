@@ -20,11 +20,7 @@ public class Dashboard implements PrintTaskObserver {
         }
     }
 
-    public void showDashboard() {
-        System.out.println("----------- Dashboard --------------");
-        System.out.println("Completed tasks: " + completedTasks);
-        System.out.println("Failed tasks: " + failedTasks);
-        System.out.println("Changed spools: " + changedSpools);
-        System.out.println("-----------------------------------");
+    public int[] showDashboard() {
+        return new int[]{completedTasks, failedTasks, changedSpools};
     }
 }
