@@ -21,15 +21,4 @@ public class StandardFDM extends Printer {
         this.allSpools = spools;
     }
 
-    @Override
-    public String toString() {
-        String result = super.toString();
-        String append = "";
-//        for(Spool spool:allSpools) {
-//            append += "- Spool(s): " + spool.getId() + System.lineSeparator();
-//        }
-        append += "--------";
-        result = result.replace("--------", append);
-        return result;
-    }
 }

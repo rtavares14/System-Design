@@ -41,11 +41,13 @@ public class PrinterManager {
         for (int i = 0; i < pendingPrintTasks.size(); i++) {
             loopThroughPrinter(pendingPrintTasks.get(i));
         }
-        startInitalQueue();
+        startInitialQueue();
     }
 
-    // choose the print and it here
-    private void startInitalQueue() {
+    /**
+     * This method is used to start the initial queue
+     */
+    private void startInitialQueue() {
         for (Map.Entry<Printer, ArrayList<PrintTask>> entry : printersMap.entrySet()) {
             Printer printer = entry.getKey();
             ArrayList<PrintTask> tasks = entry.getValue();
@@ -58,6 +60,11 @@ public class PrinterManager {
         }
     }
 
+    /**
+     * This method is used to loop through the printer
+     *
+     * @param printTask The print task
+     */
     private void loopThroughPrinter(PrintTask printTask) {
         for (int i = 0; i < freePrinters.size(); i++) {
             Printer printer = freePrinters.get(i);
@@ -74,18 +81,36 @@ public class PrinterManager {
         }
     }
 
+    /**
+     * This method is used to add tasks to the printer
+     *
+     * @param printer   The printer
+     * @param printTask The print task
+     */
     private void addTasksToPrinter(Printer printer, PrintTask printTask) {
         ArrayList<PrintTask> printTasks = printersMap.get(printer);
         printTasks.add(printTask);
         printersMap.replace(printer, printTasks);
     }
 
+    /**
+     * This method is used to remove the tasks from the printer
+     *
+     * @param printer   The printer
+     * @param printTask The print task
+     */
     private void removeTasksFromPrinter(Printer printer, PrintTask printTask) {
         ArrayList<PrintTask> printTasks = printersMap.get(printer);
         printTasks.remove(printTask);
         printersMap.replace(printer, printTasks);
     }
 
+    /**
+     * This method is used to assign the proper spool
+     *
+     * @param printTask The print task
+     * @return List<Spool>
+     */
     private List<Spool> assignProperSpool(PrintTask printTask) {
         List<Spool> printerSpools = new ArrayList<>();
 
@@ -95,8 +120,7 @@ public class PrinterManager {
 
             for (int j = 0; j < freeSpools.size(); j++) {
                 // checks if the color and the size match, and if there is enough filament
-                if (freeSpools.get(j).spoolMatch(printTask.getColors().get(i), printTask.getFilamentType()) &&
-                        printTask.getPrint().getSpecificFilamentLenght(i) <= freeSpools.get(j).getLength()) {
+                if (freeSpools.get(j).spoolMatch(printTask.getColors().get(i), printTask.getFilamentType()) && printTask.getPrint().getSpecificFilamentLenght(i) <= freeSpools.get(j).getLength()) {
                     if (minSpool == null || minSpool.getLength() > freeSpools.get(j).getLength()) {
                         minSpool = freeSpools.get(j);
                     }
@@ -112,6 +136,13 @@ public class PrinterManager {
         return printerSpools;
     }
 
+    /**
+     * This method is used to check if the task suits the printer
+     *
+     * @param printer   The printer
+     * @param printTask The print task
+     * @return boolean
+     */
     private boolean taskSuitsPrinter(Printer printer, PrintTask printTask) {
 
         FilamentType filamentType = printTask.getFilamentType();
@@ -130,7 +161,13 @@ public class PrinterManager {
         return false;
     }
 
-    private void reduceLenghtOfSpools(PrintTask printTask, Printer printer) {
+    /**
+     * This method is used to reduce the length of the spools
+     *
+     * @param printTask The print task
+     * @param printer   The printer
+     */
+    private void reduceLengthOfSpools(PrintTask printTask, Printer printer) {
         for (int j = 0; j < printer.getSpools().size(); j++) {
             for (int i = 0; i < printTask.getColors().size(); i++) {
                 Spool spoolNotEmpty = printer.getSpools().get(j);
@@ -152,8 +189,7 @@ public class PrinterManager {
 
         for (int i = 0; i < printerList.size(); i++) {
             Printer printer = printerList.get(i);
-            System.out.println((i + 1) + ") " + printer.getName() + " --> " +
-                    runningPrintTasks.get(printer).getPrint().getName());
+            System.out.println((i + 1) + ") " + printer.getName() + " --> " + runningPrintTasks.get(printer).getPrint().getName());
         }
 
         int choice;
@@ -169,6 +205,9 @@ public class PrinterManager {
         return printerList.get(choice - 1);
     }
 
+    /**
+     * This method is used to register a completion
+     */
     public void registerCompletion() {
         if (runningPrintTasks.isEmpty()) {
             System.out.println("No running tasks yet");
@@ -183,13 +222,16 @@ public class PrinterManager {
             return;
         }
 
-        reduceLenghtOfSpools(printTask, printer);
+        reduceLengthOfSpools(printTask, printer);
         removeTasksFromPrinter(printer, printTask);
         freePrinters.add(printer);
 
         completeTask();
     }
 
+    /**
+     * This method is used to register a failure
+     */
     public void registerFailure() {
         if (runningPrintTasks.isEmpty()) {
             System.out.println("No running tasks yet");
@@ -204,16 +246,23 @@ public class PrinterManager {
             return;
         }
 
+        reduceLengthOfSpools(printTask, printer);
         pendingPrintTasks.add(printTask);
         freePrinters.add(printer);
 
         failTask();
     }
 
+    /**
+     * This method is used to notify the observers that the task has been completed
+     */
     public void completeTask() {
         notifyObservers("completed", 0);
     }
 
+    /**
+     * This method is used to notify the observers that the task has failed
+     */
     public void failTask() {
         notifyObservers("failed", 0);
     }
@@ -239,7 +288,6 @@ public class PrinterManager {
         }
     }
 
-
     /**
      * Getter for the JSON file handler.
      */
@@ -261,6 +309,9 @@ public class PrinterManager {
         return new ArrayList<>(printersList);
     }
 
+    /**
+     * Getter for the free printers list.
+     */
     public List<Printer> getFreePrinters() {
         return freePrinters;
     }
@@ -298,6 +349,14 @@ public class PrinterManager {
         return pendingPrintTasks;
     }
 
+    /**
+     * Method to add a print task to the pending print tasks list.
+     * The print task will be added to the list if all fields are filled in.
+     *
+     * @param printName The name of the print.
+     * @param colors    The colors of the print.
+     * @param type      The type of filament.
+     */
     public void addPrintTask(Print printName, List<String> colors, FilamentType type) {
         Print print = printName;
         if (print == null || colors.isEmpty()) {
@@ -324,6 +383,12 @@ public class PrinterManager {
         System.out.println("Task added to the queue");
     }
 
+    /**
+     * Assign a print task to a printer
+     *
+     * @param printer   The printer to assign the task to
+     * @param printTask The print task to assign
+     */
     public void assignPrintTask(Printer printer, PrintTask printTask, int spoolsChanged) {
         if (printer == null || printTask == null) {
             System.err.println("Printer or PrintTask is null");
@@ -341,6 +406,9 @@ public class PrinterManager {
         System.out.println("Number of spools changed: " + spoolsChanged);
     }
 
+    /**
+     * Start the fastest spool strategy
+     */
     public void startFastestSpoolStrategy() {
         Iterator<PrintTask> iterator = getPendingPrintTasks().iterator();
         while (iterator.hasNext()) {
@@ -368,6 +436,12 @@ public class PrinterManager {
         }
     }
 
+    /**
+     * Find the best spools for a print task
+     *
+     * @param printTask The print task to find spools for
+     * @return A list of spools that match the print task
+     */
     private List<Spool> findBestSpools(PrintTask printTask) {
         List<Spool> bestSpools = new ArrayList<>();
         for (String color : printTask.getColors()) {

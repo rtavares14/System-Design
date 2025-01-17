@@ -18,7 +18,6 @@ public abstract class Printer {
     private final int maxZ;
     private boolean housed;
     private final List<Spool> spools;
-    private String status;
     private final List<PrintTaskObserver> observers; // List of observers
     private final int maxColors;
 
@@ -33,7 +32,6 @@ public abstract class Printer {
         this.housed = housed;
         this.maxColors = maxColors;
         this.spools = new ArrayList<>();
-        this.status = "Idle"; // Default status
         this.observers = new ArrayList<>(); // Initialize observers list
     }
 
@@ -65,14 +63,13 @@ public abstract class Printer {
         return model;
     }
 
-    public String getStatus() {
-        return status;
-    }
-
     public abstract List<Spool> getSpools();
 
     public abstract void setCurrentSpools(List<Spool> spools);
 
+    /**
+     * Will check if the printer can print the print
+     */
     public boolean printFits(Print print) {
         return print.getLength() <= maxX &&
                 print.getHeight() <= maxY &&
@@ -83,23 +80,19 @@ public abstract class Printer {
         return housed;
     }
 
+
     public int getMaxColors() {
         return maxColors;
     }
 
-    @Override
-    public String toString() {
-        return "-----------------------------------" + System.lineSeparator() +
-                "- ID: " + id + System.lineSeparator() +
-                "- Name: " + name + System.lineSeparator() +
-                "- Model: " + model + System.lineSeparator() +
-                "- Manufacturer: " + manufacturer + System.lineSeparator() +
-                "- Max Dimensions: (" + maxX + " x " + maxY + " x " + maxZ + ")" + System.lineSeparator() +
-                "- Housed: " + housed + System.lineSeparator() +
-                "- Type: " + this.getClass().getSimpleName() + System.lineSeparator() +
-                 "- Status: " + status ;
-    }
-
+    /**
+     * Will check if the printer accepts the filament type
+     * If the printer is housed it will accept all filament types
+     * If the printer is not housed it will not accept ABS
+     *
+     * @param filamentType The filament type to check
+     * @return True if the printer accepts the filament type
+     */
     public boolean acceptsFilamentType(FilamentType filamentType) {
         if (this.isHoused()) {
             return true;

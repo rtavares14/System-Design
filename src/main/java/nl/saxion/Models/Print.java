@@ -47,15 +47,4 @@ public class Print {
     public int getPrintTime() {
         return printTime;
     }
-
-    @Override
-    public String toString() {
-        return "-----------------------------------" + System.lineSeparator() +
-                "- Name: " + name + System.lineSeparator() +
-                "- Height: " + height + System.lineSeparator() +
-                "- Width: " + width + System.lineSeparator() +
-                "- Length: " + length + System.lineSeparator() +
-                "- FilamentLength: " + filamentLength + System.lineSeparator() +
-                "- Print Time: " + printTime;
-    }
 }

@@ -45,11 +45,4 @@ public class Spool {
         return id;
     }
 
-    @Override
-    public String toString() {
-        return "-----------------------------------" + System.lineSeparator() +
-                "- Color: " + color + System.lineSeparator() +
-                "- FilamentType: " + filamentType + System.lineSeparator() +
-                "- Length: " + length;
-    }
 }

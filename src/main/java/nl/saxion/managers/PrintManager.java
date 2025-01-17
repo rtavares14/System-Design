@@ -58,8 +58,7 @@ public class PrintManager {
         } else if (getCsvFileHandler().supportsFileType(path)) {
             fileHandler = getCsvFileHandler();
         } else {
-            System.out.println("Unsupported file type for filename: " + path);
-            return;
+            throw new IllegalArgumentException("Unsupported file type");
         }
 
         List<Print> printsFromFile = fileHandler.readPrints(path);
@@ -67,6 +66,13 @@ public class PrintManager {
     }
 
 
+    /**
+     * Method to find a print by its name.
+     *
+     * @param print the name of the print to find
+     * @return the print with the given name
+     * @throws NoSuchElementException if the print does not exist
+     */
     public Print findPrint(String print) {
         for (Print allPrints : prints) {
             if (allPrints.getName().equals(print)) {

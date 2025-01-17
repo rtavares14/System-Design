@@ -290,5 +290,4 @@ public class Main {
         }
         return availableColors;
     }
-
 }
