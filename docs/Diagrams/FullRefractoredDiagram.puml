@@ -1,0 +1,261 @@
+@startuml
+'https://plantuml.com/sequence-diagram
+
+class Main {
+    - facade: Facade
+    - scanner: Scanner
+    + main(String[] args)
+    + run()
+    + menu()
+    + chooseMenuOption(choice: int)
+}
+
+class Facade {
+    - spoolManager: SpoolManager
+    - printerManager: PrinterManager
+    - printManager: PrintManager
+    - dashboard: Dashboard
+    - scanner: Scanner
+    - optimizedSpoolStrategy: boolean
+    + Facade()
+    + readData()
+    + addNewPrintTask()
+    + selectColors(type: FilamentType, print: Print): List<String>
+    + showAvailableColors(filamentType: FilamentType): List<String>
+    + listPrintsName()
+    + listOfTypes()
+    + registerPrintCompletion()
+    + registerPrinterFailure()
+    + changePrintStrategy()
+    + initPrintQueue()
+    + showPrints()
+    + showPrinters()
+    + showSpools()
+    + showPendingPrintTask()
+    + showDashboardStats()
+}
+
+class PrintManager {
+    - List<Print> prints
+    + PrintManager()
+    + List<Print> getPrints()
+    + void readPrintsFromFile(String filename)
+    + Print findPrint(String print)
+    - AdapterReader getJsonFileHandler()
+    - AdapterReader getCsvFileHandler()
+}
+
+class SpoolManager {
+    - List<Spool> spools
+    + SpoolManager()
+    + List<Spool> getSpools()
+    + void readSpoolsFromFile(String filename)
+    + List<String> getAvailableColors(FilamentType filamentType)
+    - AdapterReader getJsonFileHandler()
+    - AdapterReader getCsvFileHandler()
+}
+
+class PrinterManager {
+    - Map<Printer, ArrayList<PrintTask>> printersMap
+    - Scanner scanner
+    - List<PrintTaskObserver> observers
+    - PrinterFactory printerFactory
+    - List<Printer> printersList
+    - List<Printer> freePrinters
+    - Map<Printer, PrintTask> runningPrintTasks
+    - List<PrintTask> pendingPrintTasks
+    - List<Spool> freeSpools
+
+    + PrinterManager(SpoolManager spoolManager)
+    + void startOptimizedSpoolStrategy()
+    + void registerCompletion()
+    + void registerFailure()
+    + void completeTask()
+    + void failTask()
+    + void addObserver(PrintTaskObserver observer)
+    + List<Printer> getPrinters()
+    + List<Printer> getFreePrinters()
+    + void readPrintersFromFile(String filename)
+    + List<PrintTask> getPendingPrintTasks()
+    + void addPrintTask(Print printName, List<String> colors, FilamentType type)
+    + void startFastestSpoolStrategy()
+}
+
+abstract class Printer {
+    - int id
+    - String name
+    - String model
+    - String manufacturer
+    - int maxX
+    - int maxY
+    - int maxZ
+    - boolean housed
+    - List<Spool> spools
+    - String status
+    - List<PrintTaskObserver> observers
+    - int maxColors
+
+    + Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed, int maxColors)
+    + int getId()
+    + String getName()
+    + String getManufacturer()
+    + int getMaxX()
+    + int getMaxY()
+    + int getMaxZ()
+    + abstract List<Spool> getSpools()
+    + abstract void setCurrentSpools(List<Spool> spools)
+    + boolean printFits(Print print)
+    + boolean isHoused()
+    + int getMaxColors()
+    + String toString()
+    + boolean acceptsFilamentType(FilamentType filamentType)
+}
+
+class StandardFDM{
+    - List<Spool> allSpools
+
+    + StandardFDM(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused, int maxColors)
+    + List<Spool> getSpools()
+    + void setCurrentSpools(List<Spool> spools)
+    + String toString()
+}
+
+class MultiColor {
+    - int maxColors
+    - List<Spool> spools
+
+    + MultiColor(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused, int maxColors)
+    + List<Spool> getSpools()
+    + void setCurrentSpools(List<Spool> spools)
+    + Spool getCurrentSpool()
+    + int getMaxColors()
+}
+
+class Print {
+    - String name
+    - int height
+    - int width
+    - int length
+    - ArrayList<Double> filamentLength
+    - int printTime
+    + Print(String name, int height, int width, int length, ArrayList<Double> filamentLength, int printTime)
+    + String getName()
+    + double getLength()
+    + int getHeight()
+    + int getWidth()
+    + ArrayList<Double> getFilamentLength()
+    + Double getSpecificFilamentLenght(int index)
+    + String toString()
+}
+
+class PrintTask {
+    - Print print
+    - List<String> colors
+    - FilamentType filamentType
+    + PrintTask(Print print, List<String> colors, FilamentType filamentType)
+    + List<String> getColors()
+    + FilamentType getFilamentType()
+    + Print getPrint()
+    + String toString()
+}
+
+class Spool {
+    - int id
+    - String color
+    - FilamentType filamentType
+    - double length
+    + Spool(int id, String color, FilamentType filamentType, double length)
+    + double getLength()
+    + boolean spoolMatch(String color, FilamentType type)
+    + void reduceLength(double byLength)
+    + String getColor()
+    + FilamentType getFilamentType()
+    + int getId()
+    + String toString()
+}
+
+enum FilamentType {
+    PLA
+    PETG
+    ABS
+}
+
+class PrinterFactory {
+    - static PrinterManager printerManager
+    + PrinterFactory(PrinterManager printerManager)
+    + static Printer addPrinter(int id, int printerType, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, int maxColors)
+}
+
+interface PrintTaskObserver {
+    + void update(String event, int spoolsChanged)
+}
+
+class Dashboard {
+    - int completedTasks
+    - int failedTasks
+    - int changedSpools
+
+    + void update(String event, int spoolsChanged)
+    + void showDashboard()
+}
+
+exception ColorNotFoundException {
+    + ColorNotFoundException(String message)
+}
+
+interface AdapterReader {
+    + boolean supportsFileType(String filename)
+    + List<Spool> readSpools(String filePath)
+    + List<Printer> readPrinters(String filePath)
+    + List<Print> readPrints(String filePath)
+}
+
+class CSVAdapterReader {
+    - static CSVAdapterReader reader
+    - CSVAdapterReader()
+    + static CSVAdapterReader getReader()
+    + boolean supportsFileType(String filename)
+    + List<Spool> readSpools(String filePath)
+    + List<Printer> readPrinters(String filePath)
+    + List<Print> readPrints(String filePath)
+}
+
+class JSONAdapterReader {
+    - static JSONAdapterReader reader
+    - final JSONParser jsonParser
+    - JSONAdapterReader()
+    + static JSONAdapterReader getReader()
+    + boolean supportsFileType(String filename)
+    + List<Spool> readSpools(String filePath)
+    + List<Printer> readPrinters(String filePath)
+    + List<Print> readPrints(String filePath)
+    - JSONArray parseJsonFromFile(String filePath)
+    - Printer convertJsonToPrinter(JSONObject printerJson)
+    - Print convertJsonToPrint(JSONObject printJson)
+    - Spool convertJsonToSpool(JSONObject spoolJson)
+}
+
+Main --> Facade
+Facade --> SpoolManager
+Facade --> PrintManager
+Facade --> PrinterManager
+PrintManager --> Print
+SpoolManager --> Spool
+Spool --> FilamentType
+Spool --> Printer
+PrinterManager --> PrinterFactory
+PrinterManager --> SpoolManager
+PrinterFactory --> Printer
+Print --> PrintTask
+Printer <-- PrintTask
+Printer <|-- StandardFDM
+Printer <|-- MultiColor
+PrinterManager --> Printer
+PrintTaskObserver <|-- Dashboard
+Dashboard --> PrinterManager
+AdapterReader <|-- CSVAdapterReader
+AdapterReader <|-- JSONAdapterReader
+AdapterReader --> Facade
+ColorNotFoundException --> PrinterManager
+
+@enduml

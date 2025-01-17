@@ -3,7 +3,6 @@ package nl.saxion.Models;
 import nl.saxion.utils.FilamentType;
 
 import java.util.List;
-import java.util.Map;
 
 public class PrintTask {
     private Print print;
@@ -11,7 +10,7 @@ public class PrintTask {
     private FilamentType filamentType;
 
 
-    public PrintTask(Print print, List<String> colors, FilamentType filamentType){
+    public PrintTask(Print print, List<String> colors, FilamentType filamentType) {
         this.print = print;
         this.colors = colors;
         this.filamentType = filamentType;
@@ -26,12 +25,12 @@ public class PrintTask {
         return filamentType;
     }
 
-    public Print getPrint(){
+    public Print getPrint() {
         return print;
     }
 
     @Override
     public String toString() {
-        return "< " + print.getName() +" " + filamentType + " " + colors.toString() + " >";
+        return "< " + print.getName() + " " + filamentType + " " + colors.toString() + " >";
     }
 }
