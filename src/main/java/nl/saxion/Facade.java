@@ -44,30 +44,6 @@ public class Facade {
         spoolManager.readSpoolsFromFile("spools.csv");
     }
 
-    public List<PrintBP> getPrints(){
-        return printManager.getPrints().stream()
-                .map(print -> new PrintBP(print.getName(), print.getHeight(),print.getWidth(),print.getLength(),print.getFilamentLength(),print.getPrintTime()))
-                .toList();
-    }
-
-    public List<PrinterBP> getPrinters(){
-        return printerManager.getPrinters().stream()
-                .map(printer -> new PrinterBP(printer.getId(), printer.getName(),printer.getModel(),printer.getManufacturer(),printer.getMaxX(),printer.getMaxY(),printer.getMaxZ(),printer.isHoused(),printer.getMaxColors()))
-                .toList();
-    }
-
-    public List<SpoolBP> getSpools(){
-        return spoolManager.getSpools().stream()
-                .map(spool -> new SpoolBP(spool.getId(), spool.getColor(),spool.getFilamentType(),spool.getLength()))
-                .toList();
-    }
-
-    public List<PrintTaskBP> getPendingPrintTasks(){
-        return printerManager.getPendingPrintTasks().stream()
-                .map(printTask -> new PrintTaskBP(printTask.getPrint(), printTask.getColors(),printTask.getFilamentType()))
-                .toList();
-    }
-
     /**
      * OPTION : 1
      * This method is used to add a new task to the print queue
@@ -198,13 +174,11 @@ public class Facade {
      * OPTION : 4
      * This method is used to change the print strategy
      */
-    public void changePrintStrategy() {
-        if (!optimizedSpoolStrategy) {
-            optimizedSpoolStrategy = true;
-            System.out.println("Changed to Optimized Spool Strategy");
-        } else {
+    public void changePrintStrategy(boolean choice) {
+        if (choice) {
             optimizedSpoolStrategy = false;
-            System.out.println("Changed to Fastest Spool Strategy");
+        } else {
+            optimizedSpoolStrategy = true;
         }
     }
 
@@ -225,68 +199,46 @@ public class Facade {
 
     /**
      * OPTION : 6
-     * This method is used to show the prints
+     * This method is used to get the prints
+     * @return List<PrintBP> prints
      */
-    public void showPrints() {
-        System.out.println("------------- Prints -------------");
-        if (printManager.getPrints().isEmpty()) {
-            System.out.println("No prints available");
-            return;
-        }
-
-        for (Print print : printManager.getPrints()) {
-            System.out.println(print);
-        }
-        System.out.println("-----------------------------------");
+    public List<PrintBP> getPrints(){
+        return printManager.getPrints().stream()
+                .map(print -> new PrintBP(print.getName(), print.getHeight(),print.getWidth(),print.getLength(),print.getFilamentLength(),print.getPrintTime()))
+                .toList();
     }
 
     /**
      * OPTION : 7
-     * This method is used to show the printers
+     * This method is used to get the printers
+     * @return List<PrinterBP> printers
      */
-    public void showPrinters() {
-        System.out.println("------------- Printers -------------");
-        if (printerManager.getPrinters().isEmpty()) {
-            System.out.println("No printers available");
-            return;
-        }
-
-        for (Printer printer : printerManager.getPrinters()) {
-            System.out.println(printer);
-        }
-        System.out.println("-----------------------------------");
+    public List<PrinterBP> getPrinters(){
+        return printerManager.getPrinters().stream()
+                .map(printer -> new PrinterBP(printer.getId(), printer.getName(),printer.getModel(),printer.getManufacturer(),printer.getMaxX(),printer.getMaxY(),printer.getMaxZ(),printer.isHoused(),printer.getMaxColors()))
+                .toList();
     }
 
     /**
      * OPTION : 8
-     * This method is used to show the spools
+     * This method is used to get the spools
+     * @return List<SpoolBP> spools
      */
-    public void showSpools() {
-        System.out.println("------------- Spools -------------");
-        if (spoolManager.getSpools().isEmpty()) {
-            System.out.println("No spools available");
-            return;
-        }
-
-        for (Spool spool : spoolManager.getSpools()) {
-            System.out.println(spool);
-        }
-        System.out.println("-----------------------------------");
+    public List<SpoolBP> getSpools(){
+        return spoolManager.getSpools().stream()
+                .map(spool -> new SpoolBP(spool.getId(), spool.getColor(),spool.getFilamentType(),spool.getLength()))
+                .toList();
     }
 
     /**
      * OPTION : 9
-     * This method is used to show the pending print tasks
+     * This method is used to get the pending print tasks
+     * @return List<PrintTaskBP> pending print tasks
      */
-    public void showPendingPrintTask() {
-        if (printerManager.getPendingPrintTasks().isEmpty()) {
-            System.out.println("No pending print tasks");
-            return;
-        }
-
-        for (PrintTask printTask : printerManager.getPendingPrintTasks()) {
-            System.out.println(printTask);
-        }
+    public List<PrintTaskBP> getPendingPrintTasks(){
+        return printerManager.getPendingPrintTasks().stream()
+                .map(printTask -> new PrintTaskBP(printTask.getPrint(), printTask.getColors(),printTask.getFilamentType()))
+                .toList();
     }
 
     /**

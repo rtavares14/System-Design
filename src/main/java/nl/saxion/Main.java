@@ -56,8 +56,8 @@ public class Main {
             case 1 -> facade.addNewPrintTask();
             case 2 -> facade.registerPrintCompletion();
             case 3 -> facade.registerPrinterFailure();
-            case 4 -> facade.changePrintStrategy();
-            case 5 -> facade.initPrintQueue();
+            case 4 -> changePrintStrategy();
+            case 5 -> initPrintQueue();
             case 6 -> showPrints();
             case 7 -> showPrinters();
             case 8 -> showSpools();
@@ -66,6 +66,31 @@ public class Main {
             case 0 -> System.out.println("Exiting...");
             default -> System.out.println("Invalid choice. Please try again.");
         }
+    }
+
+    /**
+     * Change print strategy OPTION 4
+     */
+    private void changePrintStrategy() {
+        int choice = scanner.nextInt();
+        System.out.println("------------ Change Printing Strategy -------------");
+        System.out.println("1) Changed to Fastest Spool Strategy");
+        System.out.println("2) Changed to Optimized Spool Strategy");
+        System.out.println("Choose a strategy: ");
+
+        if (choice == 1) {
+            facade.changePrintStrategy(true);
+        } else if (choice == 2) {
+            facade.changePrintStrategy(false);
+        } else {
+            System.out.println("Invalid choice. Please try again.");
+        }
+    }
+
+    /**
+     * Initialize print queue OPTION 5
+     */
+    private void initPrintQueue() {
     }
 
     /**
