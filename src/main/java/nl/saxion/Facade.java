@@ -8,6 +8,7 @@ import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
 import nl.saxion.Models.records.PrintBP;
 import nl.saxion.Models.records.PrinterBP;
+import nl.saxion.Models.records.SpoolBP;
 import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
@@ -48,9 +49,15 @@ public class Facade {
                 .toList();
     }
 
-    public List<PrinterBP> getPrinter(){
+    public List<PrinterBP> getPrinters(){
         return printerManager.getPrinters().stream()
                 .map(printer -> new PrinterBP(printer.getId(), printer.getName(),printer.getModel(),printer.getManufacturer(),printer.getMaxX(),printer.getMaxY(),printer.getMaxZ(),printer.isHoused(),printer.getMaxColors()))
+                .toList();
+    }
+
+    public List<SpoolBP> getSpools(){
+        return spoolManager.getSpools().stream()
+                .map(spool -> new SpoolBP(spool.getId(), spool.getColor(),spool.getFilamentType(),spool.getLength()))
                 .toList();
     }
 

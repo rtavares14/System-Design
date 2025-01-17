@@ -1,6 +1,6 @@
 package nl.saxion;
 
-import nl.saxion.Models.records.PrintBP;
+import nl.saxion.Models.records.*;
 
 import java.util.List;
 import java.util.Scanner;
@@ -59,8 +59,8 @@ public class Main {
             case 4 -> facade.changePrintStrategy();
             case 5 -> facade.initPrintQueue();
             case 6 -> showPrints();
-            case 7 -> facade.showPrinters();
-            case 8 -> facade.showSpools();
+            case 7 -> showPrinters();
+            case 8 -> showSpools();
             case 9 -> facade.showPendingPrintTask();
             case 10 -> showDashboardStats();
             case 0 -> System.out.println("Exiting...");
@@ -82,6 +82,38 @@ public class Main {
         for (PrintBP print : prints) {
             System.out.println(print.toString());
         }
+    }
+
+    /**
+     * Show printers OPTION 7
+     */
+    private void showPrinters() {
+        System.out.println("------------- Printers -------------");
+        if (facade.getPrinters().isEmpty()) {
+            System.out.println("No printers available");
+            return;
+        }
+
+        for (PrinterBP printer : facade.getPrinters()) {
+            System.out.println(printer.toString());
+        }
+        System.out.println("-----------------------------------");
+    }
+
+    /**
+     * Show spools OPTION 8
+     */
+    public void showSpools() {
+        System.out.println("------------- Spools -------------");
+        if (facade.getSpools().isEmpty()) {
+            System.out.println("No spools available");
+            return;
+        }
+
+        for (SpoolBP spool : facade.getSpools()) {
+            System.out.println(spool.toString());
+        }
+        System.out.println("-----------------------------------");
     }
 
     /**
