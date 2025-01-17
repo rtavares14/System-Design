@@ -1,7 +1,10 @@
 package nl.saxion;
 
 import nl.saxion.Models.Print;
+import nl.saxion.Models.PrintTask;
+import nl.saxion.Models.Spool;
 import nl.saxion.Models.observer.Dashboard;
+import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.records.PrintBP;
 import nl.saxion.Models.records.PrintTaskBP;
 import nl.saxion.Models.records.PrinterBP;
@@ -11,6 +14,7 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class Facade {
@@ -63,16 +67,34 @@ public class Facade {
      * OPTION : 2
      * This method is used to register the printer completion
      */
-    public void registerPrintCompletion() {
-        printerManager.registerCompletion();
+    public boolean registerPrintCompletion(PrinterBP printerBP) {
+
+        Printer printer = printerManager.getRunningPrinterByName(printerBP.printerName());
+        PrintTask printTask1 = printerManager.runningPrintTasks.remove(printer);
+
+        if (printTask1 == null) {
+            return false;
+        }
+
+        printerManager.registerCompletion(printer,printTask1);
+
+        return true;
     }
 
     /**
      * OPTION : 3
      * This method is used to register the printer failure
      */
-    public void registerPrinterFailure() {
-        printerManager.registerFailure();
+    public boolean registerPrinterFailure(PrinterBP printerBP) {
+        Printer printer = printerManager.getRunningPrinterByName(printerBP.printerName());
+        PrintTask printTask1 = printerManager.runningPrintTasks.remove(printer);
+
+        if (printTask1 == null) {
+            return false;
+        }
+
+        printerManager.registerFailure(printer,printTask1);
+        return true;
     }
 
     /**
@@ -115,7 +137,7 @@ public class Facade {
      * @return List<PrinterBP> printers
      */
     public List<PrinterBP> getPrinters() {
-        return printerManager.getPrinters().stream()
+        return  printerManager.printersList.stream()
                 .map(printer -> new PrinterBP(printer.getId(), printer.getName(), printer.getModel(), printer.getManufacturer(), printer.getMaxX(), printer.getMaxY(), printer.getMaxZ(), printer.isHoused(), printer.getMaxColors()))
                 .toList();
     }
@@ -151,4 +173,25 @@ public class Facade {
     public int[] showDashboardStats() {
         return dashboard.showDashboard();
     }
+
+
+    public List<PrinterBP> showRunningPrinters() {
+        return printerManager.runningPrintTasks.keySet().stream()
+                .map(printer -> new PrinterBP(printer.getId(), printer.getName(), printer.getModel(), printer.getManufacturer(), printer.getMaxX(), printer.getMaxY(), printer.getMaxZ(), printer.isHoused(), printer.getMaxColors()))
+                .toList();
+
+    }
+
+    public List<PrintTaskBP> getRunningPrintTasks() {
+        return printerManager.runningPrintTasks.values().stream()
+                .map(printTask -> new PrintTaskBP(printTask.getPrint(), printTask.getColors(), printTask.getFilamentType()))
+                .toList();
+    }
+
+    public Print getPrint(PrinterBP printer) {
+        Printer printer1 = printerManager.getRunningPrinterByName(printer.printerName());
+        return printerManager.runningPrintTasks.get(printer1).getPrint();
+    }
+
+
 }

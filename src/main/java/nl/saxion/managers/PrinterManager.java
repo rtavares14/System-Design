@@ -20,7 +20,6 @@ import java.util.*;
 public class PrinterManager {
     // all the printers and print tasks
     public final Map<Printer, ArrayList<PrintTask>> printersMap = new HashMap<>();
-    private final Scanner scanner = new Scanner(System.in);
     private final List<PrintTaskObserver> observers = new ArrayList<>();
     private final PrinterFactory printerFactory = new PrinterFactory(this);
     public List<Printer> printersList = new ArrayList<>();
@@ -180,48 +179,8 @@ public class PrinterManager {
         }
     }
 
-    /**
-     * This method is used to choose the printer
-     */
-    private Printer choosePrinter() {
-        System.out.println("-----Choose printer completion-----");
-        List<Printer> printerList = new ArrayList<>(runningPrintTasks.keySet());
 
-        for (int i = 0; i < printerList.size(); i++) {
-            Printer printer = printerList.get(i);
-            System.out.println((i + 1) + ") " + printer.getName() + " --> " + runningPrintTasks.get(printer).getPrint().getName());
-        }
-
-        int choice;
-        do {
-            System.out.print("Enter a valid option: ");
-            while (!scanner.hasNextInt()) {
-                System.out.print("Invalid input. Please enter a valid number: ");
-                scanner.next();
-            }
-            choice = scanner.nextInt();
-        } while (choice < 1 || choice > printerList.size());
-
-        return printerList.get(choice - 1);
-    }
-
-    /**
-     * This method is used to register a completion
-     */
-    public void registerCompletion() {
-        if (runningPrintTasks.isEmpty()) {
-            System.out.println("No running tasks yet");
-            return;
-        }
-
-        Printer printer = choosePrinter();
-        PrintTask printTask = runningPrintTasks.remove(printer);
-
-        if (printTask == null) {
-            System.out.println("Error: Selected printer does not have a running task.");
-            return;
-        }
-
+    public void registerCompletion(Printer printer,PrintTask printTask){
         reduceLengthOfSpools(printTask, printer);
         removeTasksFromPrinter(printer, printTask);
         freePrinters.add(printer);
@@ -229,23 +188,7 @@ public class PrinterManager {
         completeTask();
     }
 
-    /**
-     * This method is used to register a failure
-     */
-    public void registerFailure() {
-        if (runningPrintTasks.isEmpty()) {
-            System.out.println("No running tasks yet");
-            return;
-        }
-
-        Printer printer = choosePrinter();
-        PrintTask printTask = runningPrintTasks.remove(printer);
-
-        if (printTask == null) {
-            System.out.println("Error: Selected printer does not have a running task.");
-            return;
-        }
-
+    public void registerFailure(Printer printer,PrintTask printTask) {
         reduceLengthOfSpools(printTask, printer);
         pendingPrintTasks.add(printTask);
         freePrinters.add(printer);
@@ -380,7 +323,6 @@ public class PrinterManager {
         PrintTask task = new PrintTask(print, colors, type);
         pendingPrintTasks.add(task);
 
-        System.out.println("Task added to the queue");
     }
 
     /**
@@ -458,5 +400,14 @@ public class PrinterManager {
             }
         }
         return bestSpools;
+    }
+
+    public Printer getRunningPrinterByName(String name){
+        for(Printer printer:runningPrintTasks.keySet()){
+            if(printer.getName().equals(name)){
+                return printer;
+            }
+        }
+        return null;
     }
 }

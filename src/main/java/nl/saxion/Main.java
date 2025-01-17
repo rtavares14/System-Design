@@ -1,5 +1,7 @@
 package nl.saxion;
 
+import nl.saxion.Models.PrintTask;
+import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.records.PrintBP;
 import nl.saxion.Models.records.PrintTaskBP;
 import nl.saxion.Models.records.PrinterBP;
@@ -54,13 +56,14 @@ public class Main {
 
     /**
      * Choose menu option based on user input
+     *
      * @param choice the choice
      */
     public void chooseMenuOption(int choice) {
         switch (choice) {
             case 1 -> addNewPrintTask();
-            case 2 -> facade.registerPrintCompletion();
-            case 3 -> facade.registerPrinterFailure();
+            case 2 -> registerCompletion();
+            case 3 -> registerFailure();
             case 4 -> changePrintStrategy();
             case 5 -> initPrintQueue();
             case 6 -> showPrints();
@@ -137,13 +140,14 @@ public class Main {
         if (facade.getPendingPrintTasks().isEmpty()) {
             System.out.println("Queue is empty. Please add a print task first.");
         } else {
-        if (facade.getOptimizedSpoolStrategy()) {
-            System.out.println("Starting queue with Optimized Spool Strategy");
-            facade.initPrintQueue();
-        }else {
-            facade.initPrintQueue();
-            System.out.println("Starting queue with Fastest Spool Strategy");
-        }}
+            if (facade.getOptimizedSpoolStrategy()) {
+                System.out.println("Starting queue with Optimized Spool Strategy");
+                facade.initPrintQueue();
+            } else {
+                facade.initPrintQueue();
+                System.out.println("Starting queue with Fastest Spool Strategy");
+            }
+        }
     }
 
 
@@ -252,7 +256,7 @@ public class Main {
     /**
      * This method is used to select the colors for the print
      *
-     * @param type FilamentType chosen by the user
+     * @param type  FilamentType chosen by the user
      * @param print Print chosen by the user
      * @return List<String> colors selected by the user
      */
@@ -278,6 +282,7 @@ public class Main {
 
     /**
      * This method is used to show the available colors for the filament type
+     *
      * @param filamentType FilamentType chosen by the user
      * @return List<String> available colors for the filament type
      */
@@ -289,5 +294,68 @@ public class Main {
             System.out.println("- " + i + ": " + colorString + " (" + filamentType.name() + ")");
         }
         return availableColors;
+    }
+
+    /**
+     * This method is used to register a completion
+     */
+    public void registerCompletion() {
+        if (facade.getRunningPrintTasks().isEmpty()) {
+            System.out.println("No running tasks yet");
+            return;
+        }
+
+        PrinterBP printer = choosePrinter();
+
+        if (!facade.registerPrintCompletion(printer)) {
+            System.out.println("Printer has no running print tasks");
+            return;
+        }
+        System.out.println("Printer successfully printed");
+
+    }
+
+    /**
+     * This method is used to register a failure
+     */
+    public void registerFailure() {
+        if (facade.getRunningPrintTasks().isEmpty()) {
+            System.out.println("No running tasks yet");
+            return;
+        }
+
+        PrinterBP printer = choosePrinter();
+
+        if (!facade.registerPrinterFailure(printer)) {
+            System.out.println("Printer has no running print tasks");
+            return;
+        }
+        System.out.println("Printer failed to print");
+
+    }
+
+    /**
+     * This method is used to choose the printer
+     */
+    private PrinterBP choosePrinter() {
+        System.out.println("-----Choose printer completion-----");
+        List<PrinterBP> printerList = facade.showRunningPrinters();
+
+        for (int i = 0; i < printerList.size(); i++) {
+            PrinterBP printer = printerList.get(i);
+            System.out.println((i + 1) + ") " + printer.printerName() + " --> " + facade.getPrint(printer).getName());
+        }
+
+        int choice;
+        do {
+            System.out.print("Enter a valid option: ");
+            while (!scanner.hasNextInt()) {
+                System.out.print("Invalid input. Please enter a valid number: ");
+                scanner.next();
+            }
+            choice = scanner.nextInt();
+        } while (choice < 1 || choice > printerList.size());
+
+        return printerList.get(choice - 1);
     }
 }
