@@ -44,87 +44,23 @@ public class Facade {
         spoolManager.readSpoolsFromFile("spools.csv");
     }
 
-    /**
-     * OPTION : 1
-     * This method is used to add a new task to the print queue
-     * It will ask the user to select a print, filament type and colors
-     */
-    public void addNewPrintTask() {
-        int choice;
 
-        listPrintsName();
-
-        do {
-            System.out.print("Choose a print: ");
-            choice = scanner.nextInt();
-            if (choice < 1 || choice > printManager.getPrints().size()) {
-                System.out.println("Invalid print choice. Please try again.");
-            }
-        } while (choice < 1 || choice > printManager.getPrints().size());
-
-        Print print = printManager.getPrints().get(choice - 1);
-
-        listOfTypes();
-
-        do {
-            System.out.print("Choose a filament type: ");
-            choice = scanner.nextInt();
-            if (choice < 1 || choice > FilamentType.values().length) {
-                System.out.println("Invalid filament type choice. Please try again.");
-            }
-        } while (choice < 1 || choice > FilamentType.values().length);
-
-        FilamentType filamentType = FilamentType.values()[choice - 1];
-
-        //check available colors
-        List<String> colors = selectColors(filamentType, print);
-
-        System.out.println(print.getName() + " " + filamentType + " " + colors);
-        //creates the print task
+    public void addPrintTask(PrintBP printBP, List<String> colors, FilamentType filamentType) {
+        Print print = printManager.findPrint(printBP.name());
         printerManager.addPrintTask(print, colors, filamentType);
-        System.out.println("-----------------------------------");
+
     }
 
-    /**
-     * This method is used to select the colors for the print
-     *
-     * @param type FilamentType chosen by the user
-     * @param print Print chosen by the user
-     * @return List<String> colors selected by the user
-     */
-    private List<String> selectColors(FilamentType type, Print print) {
-        List<String> colors = new ArrayList<>();
-        List<String> availableColors = showAvailableColors(type);
-
-        for (int i = 0; i < print.getFilamentLength().size(); i++) {
-            int colorChoice;
-            do {
-                System.out.print("Choose color for position: ");
-                colorChoice = scanner.nextInt();
-                if (colorChoice < 1 || colorChoice > availableColors.size()) {
-                    System.out.println("Invalid color choice. Please try again.");
-                }
-            } while (colorChoice < 1 || colorChoice > availableColors.size());
-
-            colors.add(availableColors.get(colorChoice - 1));
-        }
-        System.out.println("-----------------------------------");
-        return colors;
-    }
 
     /**
      * This method is used to show the available colors for the filament type
+     *
      * @param filamentType FilamentType chosen by the user
      * @return List<String> available colors for the filament type
      */
-    public List<String> showAvailableColors(FilamentType filamentType) {
-        List<String> availableColors = spoolManager.getAvailableColors(filamentType);
-        System.out.println("---------- Colors ----------");
-        for (int i = 1; i <= availableColors.size(); i++) {
-            String colorString = availableColors.get(i - 1);
-            System.out.println("- " + i + ": " + colorString + " (" + filamentType.name() + ")");
-        }
-        return availableColors;
+    public List<String> getAvailableColors(FilamentType filamentType) {
+        return spoolManager.getAvailableColors(filamentType);
+
     }
 
     /**
@@ -202,9 +138,9 @@ public class Facade {
      * This method is used to get the prints
      * @return List<PrintBP> prints
      */
-    public List<PrintBP> getPrints(){
+    public List<PrintBP> getPrints() {
         return printManager.getPrints().stream()
-                .map(print -> new PrintBP(print.getName(), print.getHeight(),print.getWidth(),print.getLength(),print.getFilamentLength(),print.getPrintTime()))
+                .map(print -> new PrintBP(print.getName(), print.getHeight(), print.getWidth(), print.getLength(), print.getFilamentLength(), print.getPrintTime()))
                 .toList();
     }
 
@@ -213,9 +149,9 @@ public class Facade {
      * This method is used to get the printers
      * @return List<PrinterBP> printers
      */
-    public List<PrinterBP> getPrinters(){
+    public List<PrinterBP> getPrinters() {
         return printerManager.getPrinters().stream()
-                .map(printer -> new PrinterBP(printer.getId(), printer.getName(),printer.getModel(),printer.getManufacturer(),printer.getMaxX(),printer.getMaxY(),printer.getMaxZ(),printer.isHoused(),printer.getMaxColors()))
+                .map(printer -> new PrinterBP(printer.getId(), printer.getName(), printer.getModel(), printer.getManufacturer(), printer.getMaxX(), printer.getMaxY(), printer.getMaxZ(), printer.isHoused(), printer.getMaxColors()))
                 .toList();
     }
 
@@ -224,9 +160,9 @@ public class Facade {
      * This method is used to get the spools
      * @return List<SpoolBP> spools
      */
-    public List<SpoolBP> getSpools(){
+    public List<SpoolBP> getSpools() {
         return spoolManager.getSpools().stream()
-                .map(spool -> new SpoolBP(spool.getId(), spool.getColor(),spool.getFilamentType(),spool.getLength()))
+                .map(spool -> new SpoolBP(spool.getId(), spool.getColor(), spool.getFilamentType(), spool.getLength()))
                 .toList();
     }
 

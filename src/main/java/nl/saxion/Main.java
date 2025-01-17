@@ -1,7 +1,12 @@
 package nl.saxion;
 
-import nl.saxion.Models.records.*;
+import nl.saxion.Models.records.PrintBP;
+import nl.saxion.Models.records.PrintTaskBP;
+import nl.saxion.Models.records.PrinterBP;
+import nl.saxion.Models.records.SpoolBP;
+import nl.saxion.utils.FilamentType;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -53,7 +58,7 @@ public class Main {
      */
     public void chooseMenuOption(int choice) {
         switch (choice) {
-            case 1 -> facade.addNewPrintTask();
+            case 1 -> addNewPrintTask();
             case 2 -> facade.registerPrintCompletion();
             case 3 -> facade.registerPrinterFailure();
             case 4 -> changePrintStrategy();
@@ -91,6 +96,47 @@ public class Main {
      * Initialize print queue OPTION 5
      */
     private void initPrintQueue() {
+    }
+
+    /**
+     * OPTION : 1
+     * This method is used to add a new task to the print queue
+     * It will ask the user to select a print, filament type and colors
+     */
+    public void addNewPrintTask() {
+        int choice;
+
+        listPrintsName();
+
+        do {
+            System.out.print("Choose a print: ");
+            choice = scanner.nextInt();
+            if (choice < 1 || choice > facade.getPrints().size()) {
+                System.out.println("Invalid print choice. Please try again.");
+            }
+        } while (choice < 1 || choice > facade.getPrints().size());
+
+        PrintBP print = facade.getPrints().get(choice - 1);
+
+        listOfTypes();
+
+        do {
+            System.out.print("Choose a filament type: ");
+            choice = scanner.nextInt();
+            if (choice < 1 || choice > FilamentType.values().length) {
+                System.out.println("Invalid filament type choice. Please try again.");
+            }
+        } while (choice < 1 || choice > FilamentType.values().length);
+
+        FilamentType filamentType = FilamentType.values()[choice - 1];
+
+        //check available colors
+        List<String> colors = selectColors(filamentType, print);
+
+        System.out.println(print.name() + " " + filamentType + " " + colors);
+        //creates the print task
+        facade.addPrintTask(print, colors, filamentType);
+        System.out.println("-----------------------------------");
     }
 
     /**
@@ -169,8 +215,18 @@ public class Main {
         System.out.println("------------------------------------------");
     }
 
-    public void addNewPrintTask(){
+    /**
+     * This method is used to display the list of filament types
+     */
+    public void listOfTypes() {
+        int i = 1;
+        System.out.println("-----------------------------------");
+        System.out.println("Choose a filament type:");
 
+        for (FilamentType type : FilamentType.values()) {
+            System.out.println(i++ + " - " + type);
+        }
+        System.out.print("Choice:");
     }
 
     public void listPrintsName() {
@@ -180,6 +236,48 @@ public class Main {
             System.out.println(i++ + " - " + print.name() + "(" + print.length() + ")");
         }
         System.out.print("Choice:");
+    }
+
+    /**
+     * This method is used to select the colors for the print
+     *
+     * @param type FilamentType chosen by the user
+     * @param print Print chosen by the user
+     * @return List<String> colors selected by the user
+     */
+    private List<String> selectColors(FilamentType type, PrintBP print) {
+        List<String> colors = new ArrayList<>();
+        List<String> availableColors = showAvailableColors(type);
+
+        for (int i = 0; i < print.filamentLength().size(); i++) {
+            int colorChoice;
+            do {
+                System.out.print("Choose color for position: ");
+                colorChoice = scanner.nextInt();
+                if (colorChoice < 1 || colorChoice > availableColors.size()) {
+                    System.out.println("Invalid color choice. Please try again.");
+                }
+            } while (colorChoice < 1 || colorChoice > availableColors.size());
+
+            colors.add(availableColors.get(colorChoice - 1));
+        }
+        System.out.println("-----------------------------------");
+        return colors;
+    }
+
+    /**
+     * This method is used to show the available colors for the filament type
+     * @param filamentType FilamentType chosen by the user
+     * @return List<String> available colors for the filament type
+     */
+    public List<String> showAvailableColors(FilamentType filamentType) {
+        List<String> availableColors = facade.getAvailableColors(filamentType);
+        System.out.println("---------- Colors ----------");
+        for (int i = 1; i <= availableColors.size(); i++) {
+            String colorString = availableColors.get(i - 1);
+            System.out.println("- " + i + ": " + colorString + " (" + filamentType.name() + ")");
+        }
+        return availableColors;
     }
 
 }
