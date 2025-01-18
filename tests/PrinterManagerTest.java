@@ -1,9 +1,12 @@
 import nl.saxion.Models.Print;
+import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.printer.Printer;
+import nl.saxion.Models.printer.printerTypes.MultiColor;
 import nl.saxion.managers.PrintManager;
 import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
+import nl.saxion.utils.FilamentType;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -26,25 +29,10 @@ public class PrinterManagerTest {
         printManager = new PrintManager();
         printerManager = new PrinterManager(spoolManager);
 
-        // Read data from files
+        // data from files
         printerManager.readPrintersFromFile("printers.csv");
         printManager.readPrintsFromFile("prints.csv");
         spoolManager.readSpoolsFromFile("spools.csv");
-    }
-
-    @Test
-    public void rawTests() {
-        List<Printer> printers = printerManager.getPrinters();
-        List<Print> prints = printManager.getPrints();
-        List<Spool> spools = spoolManager.getSpools();
-
-        Print testingP = prints.get(3);
-
-
-        for (Printer printer : printers) {
-
-            System.out.println(printer.getName() + " can print " + testingP.getName() + ": " + printer.printFits(testingP));
-        }
     }
 
     @Test
@@ -53,10 +41,8 @@ public class PrinterManagerTest {
         List<Print> prints = printManager.getPrints();
         List<Spool> spools = spoolManager.getSpools();
 
-        // Create a structure to store the results
         Map<String, Map<String, Map<String, Boolean>>> results = new HashMap<>();
 
-        // Define the specified order of print names
         List<String> printOrder = List.of(
                 "Acoustic Guitar Cooky Cutter",
                 "Stegosaurus Pickholder",
@@ -76,7 +62,6 @@ public class PrinterManagerTest {
                 String filamentType = spool.getFilamentType().toString();
                 results.putIfAbsent(filamentType, new HashMap<>());
 
-                // Sort prints based on the predefined order
                 for (String printName : printOrder) {
                     Print print = prints.stream().filter(p -> p.getName().equals(printName)).findFirst().orElse(null);
                     if (print == null) continue;
@@ -84,13 +69,13 @@ public class PrinterManagerTest {
                     results.get(filamentType).putIfAbsent(print.getName(), new HashMap<>());
 
                     for (Printer printer : printers) {
-                        boolean canPrint = printer.printFits(print) && printer.acceptsFilamentType(spool.getFilamentType());
+                        boolean canPrint = printer.canPrinterPrint(printer, spool.getFilamentType(), print);
                         results.get(filamentType).get(print.getName()).put(printer.getName(), canPrint);
                     }
                 }
             }
 
-            // Generate tables for each filament type
+            // tables for each filament type
             for (String filamentType : results.keySet()) {
                 // Write the Markdown table header for the filament type
                 writer.write("| " + filamentType + " | " + String.join(" | ", printers.stream().map(Printer::getName).toList()) + " |\n");

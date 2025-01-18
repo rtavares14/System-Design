@@ -2,6 +2,8 @@ package nl.saxion.Models;
 
 import nl.saxion.utils.FilamentType;
 
+import java.util.List;
+
 public class Spool {
     private final int id;
     private final String color;
@@ -45,4 +47,7 @@ public class Spool {
         return id;
     }
 
+    public List<String> getColors() {
+        return null;
+    }
 }

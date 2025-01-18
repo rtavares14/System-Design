@@ -1,4 +1,4 @@
-package nl.saxion.Models.observer;
+package nl.saxion.observer;
 
 public interface PrintTaskObserver {
     void update(String event, int spoolsChanged);

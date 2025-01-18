@@ -2,7 +2,7 @@ package nl.saxion;
 
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
-import nl.saxion.Models.observer.Dashboard;
+import nl.saxion.observer.Dashboard;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.records.PrintBP;
 import nl.saxion.Models.records.PrintTaskBP;

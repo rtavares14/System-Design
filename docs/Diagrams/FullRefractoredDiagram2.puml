@@ -2,31 +2,11 @@
 'https://plantuml.com/sequence-diagram
 
 class Main {
-    - facade: Facade
-    - scanner: Scanner
-    + main(String[] args)
-    + run()
-    + menu()
-    + chooseMenuOption(choice: int)
+
 }
 
 class Facade {
-    - spoolManager: SpoolManager
-    - printerManager: PrinterManager
-    - printManager: PrintManager
-    - dashboard: Dashboard
-    + Facade()
-    + readData()
-    + addNewPrintTask()
-    + registerPrintCompletion()
-    + registerPrinterFailure()
-    + changePrintStrategy()
-    + initPrintQueue()
-    + showPrints()
-    + showPrinters()
-    + showSpools()
-    + showPendingPrintTask()
-    + showDashboardStats()
+
 }
 
 class PrintManager {
@@ -97,6 +77,22 @@ class MultiColor {
     + void setCurrentSpools(List<Spool> spools)
     + Spool getCurrentSpool()
     + int getMaxColors()
+}
+
+class PrinterBP {
+    + toString() : String
+}
+
+class SpoolBP {
+    + toString() : String
+}
+
+class PrintBP {
+    + toString() : String
+}
+
+class PrintTaskBP {
+    + toString() : String
 }
 
 class Print {

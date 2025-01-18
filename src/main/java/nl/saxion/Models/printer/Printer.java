@@ -2,7 +2,8 @@ package nl.saxion.Models.printer;
 
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
-import nl.saxion.Models.observer.PrintTaskObserver;
+import nl.saxion.Models.printer.printerTypes.MultiColor;
+import nl.saxion.observer.PrintTaskObserver;
 import nl.saxion.utils.FilamentType;
 
 import java.util.ArrayList;
@@ -18,7 +19,7 @@ public abstract class Printer {
     private final int maxZ;
     private boolean housed;
     private final List<Spool> spools;
-    private final List<PrintTaskObserver> observers; // List of observers
+    private final List<PrintTaskObserver> observers;
     private final int maxColors;
 
     public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed, int maxColors) {
@@ -32,7 +33,7 @@ public abstract class Printer {
         this.housed = housed;
         this.maxColors = maxColors;
         this.spools = new ArrayList<>();
-        this.observers = new ArrayList<>(); // Initialize observers list
+        this.observers = new ArrayList<>();
     }
 
     public int getId() {
@@ -97,5 +98,27 @@ public abstract class Printer {
         } else {
             return filamentType != FilamentType.ABS;
         }
+    }
+
+    /**
+     * Supper important method that was missing
+     * This method will check if the print can be printed by the printer
+     * It will check if the printer can print the print and if the printer accepts the filament type
+     * By checking the instance of the printer we can check if the printer is a MultiColor printer
+     *
+     * @param printer printer to check
+     * @param filamentType filament type to check
+     * @param print print to check
+     * @return true if the printer can print the print
+     */
+    public boolean canPrinterPrint(Printer printer, FilamentType filamentType, Print print) {
+        boolean isMultiColor = printer instanceof MultiColor;
+        boolean hasMultipleColors = print.getFilamentLength().size() > 1;
+
+        if (hasMultipleColors && !isMultiColor) {
+            return false; // only multiColor printers can handle multi-color prints.
+        }
+
+        return printer.printFits(print) && printer.acceptsFilamentType(filamentType);
     }
 }

@@ -1,4 +1,4 @@
-package nl.saxion.Models.observer;
+package nl.saxion.observer;
 
 public class Dashboard implements PrintTaskObserver {
     private int completedTasks = 0;

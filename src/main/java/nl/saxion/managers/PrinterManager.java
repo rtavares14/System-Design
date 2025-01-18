@@ -3,7 +3,7 @@ package nl.saxion.managers;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.PrintTask;
 import nl.saxion.Models.Spool;
-import nl.saxion.Models.observer.PrintTaskObserver;
+import nl.saxion.observer.PrintTaskObserver;
 import nl.saxion.Models.printer.Printer;
 import nl.saxion.Models.printer.PrinterFactory;
 import nl.saxion.adapter.AdapterReader;
@@ -69,7 +69,7 @@ public class PrinterManager {
         for (int i = 0; i < freePrinters.size(); i++) {
             Printer printer = freePrinters.get(i);
 
-            if (taskSuitsPrinter(freePrinters.get(i), printTask)) {
+            if (taskSuitsPrinter(freePrinters.get(i), printTask) && printer.canPrinterPrint(printer, printTask.getFilamentType(), printTask.getPrint())) {
                 if (printer.printFits(printTask.getPrint())) {
                     System.out.println("Assigned task: 1" + printTask.getFilamentType() + " to printer: " + printer.getName());
                     printer.setCurrentSpools(assignProperSpool(printTask));
@@ -356,7 +356,7 @@ public class PrinterManager {
             boolean taskAssigned = false;
 
             for (Printer printer : getFreePrinters()) {
-                if (printer.printFits(printTask.getPrint()) && printer.acceptsFilamentType(printTask.getFilamentType())) {
+                if (printer.printFits(printTask.getPrint()) && printer.acceptsFilamentType(printTask.getFilamentType()) && taskSuitsPrinter(printer, printTask) && printer.canPrinterPrint(printer, printTask.getFilamentType(), printTask.getPrint())) {
                     List<Spool> bestSpools = findBestSpools(printTask);
                     if (!bestSpools.isEmpty()) {
                         printer.setCurrentSpools((ArrayList<Spool>) bestSpools);

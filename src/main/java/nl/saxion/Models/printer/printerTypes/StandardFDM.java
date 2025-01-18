@@ -9,8 +9,8 @@ public class StandardFDM extends Printer {
     private List<Spool> allSpools;
 
 
-    public StandardFDM(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused, int maxColors) {
-        super(id, printerName, model, manufacturer, maxX, maxY, maxZ, isHoused, maxColors);
+    public StandardFDM(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean isHoused) {
+        super(id, printerName, model, manufacturer, maxX, maxY, maxZ, isHoused, 1);
     }
 
     public List<Spool> getSpools() {
