@@ -6,9 +6,7 @@ import nl.saxion.Models.records.PrinterBP;
 import nl.saxion.Models.records.SpoolBP;
 import nl.saxion.utils.FilamentType;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Scanner;
+import java.util.*;
 
 public class Main {
     Facade facade = new Facade();
@@ -147,6 +145,19 @@ public class Main {
                     System.out.println("Starting queue with Fastest Spool Strategy");
                 }
             }
+            HashMap<PrinterBP, PrintTaskBP> runningTasks = facade.getRunningPrintersAndTasks();
+
+            if (runningTasks == null) {
+                System.out.println("Nothing to print yet");
+                return;
+            }
+
+            for (Map.Entry<PrinterBP, PrintTaskBP> task : runningTasks.entrySet()) {
+                System.out.println("Assigned task: " + task.getValue().print().getName() + " to printer ");
+                System.out.println(task.getKey().printerName());
+                System.out.println("Spools changed: " + task.getValue().colors().size());
+            }
+
         } catch (Exception e) {
             System.err.println("Error: " + e.getMessage());
         }

@@ -13,7 +13,10 @@ import nl.saxion.managers.PrinterManager;
 import nl.saxion.managers.SpoolManager;
 import nl.saxion.utils.FilamentType;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class Facade {
     private final SpoolManager spoolManager;
@@ -62,7 +65,7 @@ public class Facade {
             return false;
         }
 
-        printerManager.registerCompletion(printer,printTask1);
+        printerManager.registerCompletion(printer, printTask1);
 
         return true;
     }
@@ -79,7 +82,7 @@ public class Facade {
             return false;
         }
 
-        printerManager.registerFailure(printer,printTask1);
+        printerManager.registerFailure(printer, printTask1);
         return true;
     }
 
@@ -123,7 +126,7 @@ public class Facade {
      * @return List<PrinterBP> printers
      */
     public List<PrinterBP> getPrinters() {
-        return  printerManager.printersList.stream()
+        return printerManager.printersList.stream()
                 .map(printer -> new PrinterBP(printer.getId(), printer.getName(), printer.getModel(), printer.getManufacturer(), printer.getMaxX(), printer.getMaxY(), printer.getMaxZ(), printer.isHoused(), printer.getMaxColors()))
                 .toList();
     }
@@ -214,5 +217,20 @@ public class Facade {
     public List<String> getAvailableColors(FilamentType filamentType) {
         return spoolManager.getAvailableColors(filamentType);
 
+    }
+
+
+    public HashMap<PrinterBP, PrintTaskBP> getRunningPrintersAndTasks() {
+        HashMap<PrinterBP, PrintTaskBP> runningTasks = new HashMap<>();
+
+
+        for (Map.Entry<Printer, PrintTask> allRunningTasks : printerManager.runningPrintTasks.entrySet()) {
+            Printer printer = allRunningTasks.getKey();
+            PrintTask printTask = allRunningTasks.getValue();
+            runningTasks.put(new PrinterBP(printer.getId(), printer.getName(), printer.getModel(), printer.getManufacturer(), printer.getMaxX(), printer.getMaxY(), printer.getMaxZ(), printer.isHoused(), printer.getMaxColors()),
+                    new PrintTaskBP(printTask.getPrint(), printTask.getColors(), printTask.getFilamentType()));
+        }
+
+        return runningTasks;
     }
 }

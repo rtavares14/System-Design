@@ -71,7 +71,6 @@ public class PrinterManager {
 
             if (taskSuitsPrinter(freePrinters.get(i), printTask) && printer.canPrinterPrint(printer, printTask.getFilamentType(), printTask.getPrint())) {
                 if (printer.printFits(printTask.getPrint())) {
-                    System.out.println("Assigned task: 1" + printTask.getFilamentType() + " to printer: " + printer.getName());
                     printer.setCurrentSpools(assignProperSpool(printTask));
                     addTasksToPrinter(printer, printTask);
                     freePrinters.remove(printer);
@@ -131,7 +130,6 @@ public class PrinterManager {
 
         }
         notifyObservers("changedSpool", printerSpools.size()); //observers about the number of spools changed
-        System.out.println("Number of spools changed: " + printerSpools.size());
         freeSpools.removeAll(printerSpools);
         return printerSpools;
     }
@@ -341,10 +339,7 @@ public class PrinterManager {
         // Remove the printer from the free printers list
         freePrinters.remove(printer);
 
-        // Print the number of spools changed
-        System.out.println("Assigned task: 2" + printTask.getPrint() + " to printer: " + printer.getName());
-        System.out.println("Number of spools changed: " + spoolsChanged);
-    }
+       }
 
     /**
      * Start the fastest spool strategy
