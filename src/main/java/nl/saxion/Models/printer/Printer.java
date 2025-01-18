@@ -71,9 +71,7 @@ public abstract class Printer {
      * Will check if the printer can print the print
      */
     public boolean printFits(Print print) {
-        return print.getLength() <= maxX &&
-                print.getHeight() <= maxY &&
-                print.getWidth() <= maxZ;
+        return print.getHeight() <= maxZ && print.getWidth() <= maxX && print.getLength() <= maxY;
     }
 
     public boolean isHoused() {

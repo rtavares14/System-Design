@@ -394,6 +394,7 @@ public class PrinterManager {
                 }
             }
             if (bestSpool != null) {
+                freeSpools.remove(bestSpool);
                 bestSpools.add(bestSpool);
             }
         }
