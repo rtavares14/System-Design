@@ -79,7 +79,7 @@ public class PrinterManagerTest {
             for (String filamentType : results.keySet()) {
                 // Write the Markdown table header for the filament type
                 writer.write("| " + filamentType + " | " + String.join(" | ", printers.stream().map(Printer::getName).toList()) + " |\n");
-                writer.write("|" + "-".repeat(filamentType.length() + 2) + "|" + "-".repeat(printers.size() * 12) + "|\n");
+                writer.write("|-----|------------|----------|-----------|---------------|--------|-----------|-------|\n");
 
                 for (String printName : printOrder) {
                     Print print = prints.stream().filter(p -> p.getName().equals(printName)).findFirst().orElse(null);
