@@ -143,8 +143,8 @@ public class Main {
                     System.out.println("Starting queue with Optimized Spool Strategy");
                     facade.initPrintQueue();
                 } else {
-                    facade.initPrintQueue();
                     System.out.println("Starting queue with Fastest Spool Strategy");
+                    facade.initPrintQueue();
                 }
             }
         } catch (Exception e) {

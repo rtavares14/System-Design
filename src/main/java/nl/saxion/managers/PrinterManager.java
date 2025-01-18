@@ -70,12 +70,18 @@ public class PrinterManager {
             Printer printer = freePrinters.get(i);
 
             if (taskSuitsPrinter(freePrinters.get(i), printTask) && printer.canPrinterPrint(printer, printTask.getFilamentType(), printTask.getPrint())) {
+                List<Spool> assignedSpools = assignProperSpool(printTask);
+
                 if (printer.printFits(printTask.getPrint())) {
-                    System.out.println("Assigned task: 1" + printTask.getFilamentType() + " to printer: " + printer.getName());
-                    printer.setCurrentSpools(assignProperSpool(printTask));
+                    System.out.println("Assigned task: " + printTask.getPrint().getName() + " to printer: " + printer.getName());
+                    printer.setCurrentSpools(assignedSpools);
                     addTasksToPrinter(printer, printTask);
                     freePrinters.remove(printer);
+                    freePrinters.remove(printer);
+
                     return;
+                } else {
+                    System.out.println("No suitable spools found for task: " + printTask.getPrint().getName());
                 }
             }
         }
@@ -126,10 +132,9 @@ public class PrinterManager {
                     }
                 }
             }
-
             printerSpools.add(minSpool);
-
         }
+        freeSpools.removeAll(printerSpools);
         notifyObservers("changedSpool", printerSpools.size()); //observers about the number of spools changed
         System.out.println("Number of spools changed: " + printerSpools.size());
         freeSpools.removeAll(printerSpools);
@@ -342,7 +347,7 @@ public class PrinterManager {
         freePrinters.remove(printer);
 
         // Print the number of spools changed
-        System.out.println("Assigned task: 2" + printTask.getPrint() + " to printer: " + printer.getName());
+        System.out.println("Assigned task: " + printTask.getPrint().getName() + " to printer: " + printer.getName());
         System.out.println("Number of spools changed: " + spoolsChanged);
     }
 
@@ -371,7 +376,7 @@ public class PrinterManager {
                 }
             }
             if (!taskAssigned) {
-                System.err.println("No suitable printer found for task: " + printTask);
+                System.out.println("No suitable printer found for task: " + printTask.getPrint().getName());
             }
         }
     }
