@@ -371,7 +371,7 @@ public class PrinterManager {
                 }
             }
             if (!taskAssigned) {
-                throw new Exception("No suitable printer found for task: " + printTask);
+                System.err.println("No suitable printer found for task: " + printTask);
             }
         }
     }
