@@ -34,70 +34,42 @@ public class PrinterManager {
         freePrinters = new ArrayList<>(printersList);
     }
 
-    /**
-     * loops through all the pending print tasks
-     */
-    public void startOptimizedSpoolStrategy() {
-        for (int i = 0; i < pendingPrintTasks.size(); i++) {
-            loopThroughPrinter(pendingPrintTasks.get(i));
-        }
-        startInitialQueue();
-    }
+    public void selectPrintTask() {
+        for (Printer printer : freePrinters) {
+            for (PrintTask printTask : pendingPrintTasks) {
 
-    /**
-     * This method is used to start the initial queue
-     */
-    private void startInitialQueue() {
-        for (Map.Entry<Printer, ArrayList<PrintTask>> entry : printersMap.entrySet()) {
-            Printer printer = entry.getKey();
-            ArrayList<PrintTask> tasks = entry.getValue();
 
-            if (!tasks.isEmpty()) {
-                PrintTask firstTask = tasks.removeFirst();
-                runningPrintTasks.put(printer, firstTask);
-                pendingPrintTasks.remove(firstTask);
-            }
-        }
-    }
+                if (printer.getSpools() != null) {
+                    List<Spool> spools = printer.getSpools();
+                    if (taskSuitsPrinter(printer, printTask) && printTask.getColors().size() == 1) {
 
-    /**
-     * This method is used to loop through the printer
-     *
-     * @param printTask The print task
-     */
-    private void loopThroughPrinter(PrintTask printTask) {
-        for (int i = 0; i < freePrinters.size(); i++) {
-            Printer printer = freePrinters.get(i);
+                        if (spools.getFirst().spoolMatch(printTask.getColors().getFirst(), printTask.getFilamentType())) {
+                            assignPrintTask(printer, printTask, spools.size());
+                            freeSpools.remove(spools.getFirst());
 
-            if (taskSuitsPrinter(freePrinters.get(i), printTask) && printer.canPrinterPrint(printer, printTask.getFilamentType(), printTask.getPrint())) {
-                List<Spool> assignedSpools = assignProperSpool(printTask);
-
-                if (printer.printFits(printTask.getPrint())) {
-                    System.out.println("Assigned task: " + printTask.getPrint().getName() + " to printer: " + printer.getName());
-                    printer.setCurrentSpools(assignedSpools);
-                    addTasksToPrinter(printer, printTask);
-                    freePrinters.remove(printer);
-                    freePrinters.remove(printer);
-
-                    return;
+                        }
+                        continue;
+                    } else if (taskSuitsPrinter(printer, printTask) && printTask.getColors().size() <= printer.getMaxColors()) {
+                        for (int i = 0; i < spools.size(); i++) {
+                            if (!spools.get(i).spoolMatch(printTask.getColors().get(i), printTask.getFilamentType())) {
+                                continue;
+                            }
+                        }
+                        assignPrintTask(printer, printTask, spools.size());
+                        freeSpools.removeAll(spools);
+                    }
                 } else {
-                    System.out.println("No suitable spools found for task: " + printTask.getPrint().getName());
+                    List<Spool> bspools = findBestSpools(printTask);
+                    printer.setCurrentSpools(bspools);
+
+                    assignPrintTask(printer, printTask, bspools.size());
+                    freeSpools.removeAll(bspools);
+
                 }
             }
         }
     }
 
-    /**
-     * This method is used to add tasks to the printer
-     *
-     * @param printer   The printer
-     * @param printTask The print task
-     */
-    private void addTasksToPrinter(Printer printer, PrintTask printTask) {
-        ArrayList<PrintTask> printTasks = printersMap.get(printer);
-        printTasks.add(printTask);
-        printersMap.replace(printer, printTasks);
-    }
 
     /**
      * This method is used to remove the tasks from the printer
@@ -109,36 +81,6 @@ public class PrinterManager {
         ArrayList<PrintTask> printTasks = printersMap.get(printer);
         printTasks.remove(printTask);
         printersMap.replace(printer, printTasks);
-    }
-
-    /**
-     * This method is used to assign the proper spool
-     *
-     * @param printTask The print task
-     * @return List<Spool>
-     */
-    private List<Spool> assignProperSpool(PrintTask printTask) {
-        List<Spool> printerSpools = new ArrayList<>();
-
-        // keeps track of the needed color
-        for (int i = 0; i < printTask.getColors().size(); i++) {
-            Spool minSpool = null;
-
-            for (int j = 0; j < freeSpools.size(); j++) {
-                // checks if the color and the size match, and if there is enough filament
-                if (freeSpools.get(j).spoolMatch(printTask.getColors().get(i), printTask.getFilamentType()) && printTask.getPrint().getSpecificFilamentLenght(i) <= freeSpools.get(j).getLength()) {
-                    if (minSpool == null || minSpool.getLength() > freeSpools.get(j).getLength()) {
-                        minSpool = freeSpools.get(j);
-                    }
-                }
-            }
-            printerSpools.add(minSpool);
-        }
-
-        notifyObservers("changedSpool", printerSpools.size()); //observers about the number of spools changed
-        System.out.println("Number of spools changed: " + printerSpools.size());
-        freeSpools.removeAll(printerSpools);
-        return printerSpools;
     }
 
     /**
@@ -186,7 +128,7 @@ public class PrinterManager {
     }
 
 
-    public void registerCompletion(Printer printer,PrintTask printTask){
+    public void registerCompletion(Printer printer, PrintTask printTask) {
         reduceLengthOfSpools(printTask, printer);
         removeTasksFromPrinter(printer, printTask);
         freePrinters.add(printer);
@@ -195,7 +137,7 @@ public class PrinterManager {
         completeTask();
     }
 
-    public void registerFailure(Printer printer,PrintTask printTask) {
+    public void registerFailure(Printer printer, PrintTask printTask) {
         reduceLengthOfSpools(printTask, printer);
         pendingPrintTasks.add(printTask);
         freePrinters.add(printer);
@@ -344,7 +286,7 @@ public class PrinterManager {
 
         // Add the print task to the printer's task list
         printersMap.get(printer).add(printTask);
-
+        runningPrintTasks.put(printer, printTask);
         // Remove the printer from the free printers list
         freePrinters.remove(printer);
 
@@ -358,20 +300,28 @@ public class PrinterManager {
      */
     public void startFastestSpoolStrategy() throws Exception {
         Iterator<PrintTask> iterator = getPendingPrintTasks().iterator();
+
         while (iterator.hasNext()) {
+
             PrintTask printTask = iterator.next();
+
             boolean taskAssigned = false;
 
             for (Printer printer : getFreePrinters()) {
+
                 if (printer.printFits(printTask.getPrint()) && printer.acceptsFilamentType(printTask.getFilamentType()) && taskSuitsPrinter(printer, printTask) && printer.canPrinterPrint(printer, printTask.getFilamentType(), printTask.getPrint())) {
                     List<Spool> bestSpools = findBestSpools(printTask);
+
                     if (!bestSpools.isEmpty()) {
+
                         printer.setCurrentSpools((ArrayList<Spool>) bestSpools);
                         assignPrintTask(printer, printTask, bestSpools.size());
-                        runningPrintTasks.put(printer, printTask);
+
                         iterator.remove(); //remove the print task from the pending list
+
                         notifyObservers("changedSpool", bestSpools.size()); //observers about the number of spools changed
                         freeSpools.removeAll(bestSpools);
+
                         taskAssigned = true;
                         break;
                     }
@@ -391,8 +341,10 @@ public class PrinterManager {
      */
     private List<Spool> findBestSpools(PrintTask printTask) {
         List<Spool> bestSpools = new ArrayList<>();
+
         for (String color : printTask.getColors()) {
             Spool bestSpool = null;
+
             for (Spool spool : freeSpools) {
                 if (spool.spoolMatch(color, printTask.getFilamentType())) {
                     if (bestSpool == null || spool.getLength() > bestSpool.getLength()) {
@@ -400,10 +352,11 @@ public class PrinterManager {
                     }
                 }
             }
+
             if (bestSpool != null) {
-                freeSpools.remove(bestSpool);
                 bestSpools.add(bestSpool);
             }
+
         }
         return bestSpools;
     }
@@ -414,9 +367,9 @@ public class PrinterManager {
      * @param name The name of the printer
      * @return The printer with the given name
      */
-    public Printer getRunningPrinterByName(String name){
-        for(Printer printer:runningPrintTasks.keySet()){
-            if(printer.getName().equals(name)){
+    public Printer getRunningPrinterByName(String name) {
+        for (Printer printer : runningPrintTasks.keySet()) {
+            if (printer.getName().equals(name)) {
                 return printer;
             }
         }
