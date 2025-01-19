@@ -3,7 +3,6 @@ package nl.saxion.Models.printer;
 import nl.saxion.Models.Print;
 import nl.saxion.Models.Spool;
 import nl.saxion.Models.printer.printerTypes.MultiColor;
-import nl.saxion.observer.PrintTaskObserver;
 import nl.saxion.utils.FilamentType;
 
 import java.util.ArrayList;
@@ -19,7 +18,6 @@ public abstract class Printer {
     private final int maxZ;
     private boolean housed;
     private final List<Spool> spools;
-    private final List<PrintTaskObserver> observers;
     private final int maxColors;
 
     public Printer(int id, String printerName, String model, String manufacturer, int maxX, int maxY, int maxZ, boolean housed, int maxColors) {
@@ -33,7 +31,6 @@ public abstract class Printer {
         this.housed = housed;
         this.maxColors = maxColors;
         this.spools = new ArrayList<>();
-        this.observers = new ArrayList<>();
     }
 
     public int getId() {

@@ -42,7 +42,10 @@ public class PrinterManagerTest {
         List<Spool> spools = spoolManager.getSpools();
 
         Map<String, Map<String, Map<String, Boolean>>> results = new HashMap<>();
+        //filament type -> print name -> printer name -> can print
 
+        // order of prints to print in the table
+        // same as the table of truth
         List<String> printOrder = List.of(
                 "Acoustic Guitar Cooky Cutter",
                 "Stegosaurus Pickholder",
@@ -55,21 +58,28 @@ public class PrinterManagerTest {
                 "Tree Frog"
         );
 
-        // Prepare the file writer
+        // file writer
         try (BufferedWriter writer = new BufferedWriter(new FileWriter("tests/print_results.md"))) {
 
+            // for each spool
             for (Spool spool : spools) {
                 String filamentType = spool.getFilamentType().toString();
                 results.putIfAbsent(filamentType, new HashMap<>());
 
+                // for each print
                 for (String printName : printOrder) {
                     Print print = prints.stream().filter(p -> p.getName().equals(printName)).findFirst().orElse(null);
                     if (print == null) continue;
 
                     results.get(filamentType).putIfAbsent(print.getName(), new HashMap<>());
 
+                    // for each printer
                     for (Printer printer : printers) {
+                        // check if the printer can print the print with the spool and filament type
                         boolean canPrint = printer.canPrinterPrint(printer, spool.getFilamentType(), print);
+
+                        // store the result in the map for the table
+                        // filament type -> print name -> printer name -> can print
                         results.get(filamentType).get(print.getName()).put(printer.getName(), canPrint);
                     }
                 }
@@ -77,15 +87,17 @@ public class PrinterManagerTest {
 
             // tables for each filament type
             for (String filamentType : results.keySet()) {
-                // Write the Markdown table header for the filament type
+                // table header for the filament type
                 writer.write("| " + filamentType + " | " + String.join(" | ", printers.stream().map(Printer::getName).toList()) + " |\n");
                 writer.write("|-----|------------|----------|-----------|---------------|--------|-----------|-------|\n");
 
+                // for each print
                 for (String printName : printOrder) {
                     Print print = prints.stream().filter(p -> p.getName().equals(printName)).findFirst().orElse(null);
                     if (print == null) continue;
 
                     writer.write("| " + printName + " | ");
+                    // for each printer
                     for (String printerName : printers.stream().map(Printer::getName).toList()) {
                         boolean canPrint = results.get(filamentType).get(print.getName()).getOrDefault(printerName, false);
                         writer.write((canPrint ? "V" : "X") + " | ");
