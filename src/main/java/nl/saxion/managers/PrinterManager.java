@@ -190,6 +190,7 @@ public class PrinterManager {
         reduceLengthOfSpools(printTask, printer);
         removeTasksFromPrinter(printer, printTask);
         freePrinters.add(printer);
+        freeSpools.addAll(printer.getSpools());
 
         completeTask();
     }
@@ -198,6 +199,7 @@ public class PrinterManager {
         reduceLengthOfSpools(printTask, printer);
         pendingPrintTasks.add(printTask);
         freePrinters.add(printer);
+        freeSpools.addAll(printer.getSpools());
 
         failTask();
     }
