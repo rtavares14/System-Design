@@ -134,7 +134,7 @@ public class PrinterManager {
             }
             printerSpools.add(minSpool);
         }
-        freeSpools.removeAll(printerSpools);
+
         notifyObservers("changedSpool", printerSpools.size()); //observers about the number of spools changed
         System.out.println("Number of spools changed: " + printerSpools.size());
         freeSpools.removeAll(printerSpools);
