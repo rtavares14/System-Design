@@ -100,7 +100,7 @@ public class Facade {
         if (!optimizedSpoolStrategy) {
             printerManager.startFastestSpoolStrategy();
         } else {
-            printerManager.startOptimizedSpoolStrategy();
+            printerManager.selectPrintTask();
         }
     }
 

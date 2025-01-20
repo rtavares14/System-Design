@@ -35,12 +35,16 @@ public class PrinterManager {
     }
 
     public void selectPrintTask() {
-        for (Printer printer : freePrinters) {
-            for (PrintTask printTask : pendingPrintTasks) {
+        for (int g = 0; g < pendingPrintTasks.size(); g++) {
+            for (int j = 0; j < freePrinters.size(); j++) {
 
+
+            PrintTask printTask = pendingPrintTasks.get(g);
+            Printer printer = freePrinters.get(j);
 
                 if (printer.getSpools() != null) {
                     List<Spool> spools = printer.getSpools();
+
                     if (taskSuitsPrinter(printer, printTask) && printTask.getColors().size() == 1) {
 
                         if (spools.getFirst().spoolMatch(printTask.getColors().getFirst(), printTask.getFilamentType())) {
